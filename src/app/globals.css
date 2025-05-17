@@ -353,7 +353,7 @@ ul { list-style: none; }
     width: 100%; max-width: 1200px; margin: 0 auto;
     padding: 0 15px; position: relative;
 }
-.image-gallery-swiper { width: 100%; height: auto; padding-bottom: 60px; /* Increased padding for pagination */ }
+.image-gallery-swiper { width: 100%; height: auto; padding-bottom: 70px; /* Space for pagination */ }
 .image-gallery-swiper .swiper-slide { display: flex; justify-content: center; align-items: center; }
 .gallery-slide-grid { display: grid; gap: 15px; width: 100%; }
 .gallery-slide-grid.grid-desktop { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, auto); }
@@ -380,7 +380,7 @@ ul { list-style: none; }
 .image-gallery-swiper-container .swiper-button-next::after,
 .image-gallery-swiper-container .swiper-button-prev::after { font-size: 1.2rem; font-weight: bold; }
 .image-gallery-swiper-container .swiper-pagination {
-    bottom: 20px !important; left: 50%; transform: translateX(-50%); width: auto;
+    bottom: 25px !important; /* Adjusted to be above button */ left: 50%; transform: translateX(-50%); width: auto;
 }
 .image-gallery-swiper-container .swiper-pagination-bullet {
     background-color: var(--swiper-pagination-color); opacity: 0.5;
@@ -399,8 +399,8 @@ ul { list-style: none; }
 .gallery-extended-button:hover { background-color: var(--dark-blue-accent); border-color: var(--accent-color); }
 @media (max-width: 767px) {
      #image-gallery-swiper-section h2 { font-size: 2.2rem; margin-bottom: 3rem; }
-     .image-gallery-swiper { padding-bottom: 70px; }
-     .image-gallery-swiper-container .swiper-pagination { bottom: 30px !important; }
+     .image-gallery-swiper { padding-bottom: 70px; } /* Consistent padding */
+     .image-gallery-swiper-container .swiper-pagination { bottom: 30px !important; } /* Slightly more space on mobile if needed */
      .gallery-extended-button-container { margin-top: 20px; }
 }
 
@@ -453,7 +453,16 @@ ul { list-style: none; }
 .faq-item summary { padding: 25px 40px; font-weight: 700; font-size: 1.3rem; color: var(--faq-question-color); cursor: pointer; list-style: none; position: relative; transition: background-color 0.2s ease; display: flex; justify-content: space-between; align-items: center; }
 .faq-item summary:hover { background-color: var(--off-white-bg-color); }
 .faq-item summary::-webkit-details-marker { display: none; }
-.faq-item summary::after { content: '\\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 1.2rem; color: var(--faq-icon-color); transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1); margin-left: 20px; } /* Updated content for Font Awesome */
+.faq-item summary::after {
+    content: '▼'; /* Unicode down arrow */
+    font-family: var(--font-family);
+    font-weight: normal;
+    font-size: 1.2rem;
+    color: var(--faq-icon-color);
+    transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    margin-right: 20px; /* Adjusted for RTL */
+    margin-left: 0;
+}
 .faq-item details[open] summary { border-bottom: 1px solid var(--faq-border); background-color: var(--secondary-color); }
 .faq-item details[open] summary::after { transform: rotate(180deg); }
 .faq-answer { padding: 0px 40px; color: var(--faq-answer-color); line-height: 1.9; max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.4s ease-out, opacity 0.3s ease-in, padding 0.4s ease-out; }
@@ -481,9 +490,17 @@ ul { list-style: none; }
     font-size: 1.2rem; flex-grow: 1; line-height: 2; padding-top: 0; position: relative;
 }
 .testimonial-bubble .quote::before {
-    content: '\\f10d'; font-family: 'Font Awesome 6 Free'; font-weight: 900; /* Updated content for Font Awesome */
-    font-size: 2rem; color: var(--testimonial-quote-icon); opacity: 0.6;
-    margin-left: 8px; float: right; line-height: 1;
+    content: "“"; /* Using actual quote character */
+    font-family: var(--font-family);
+    font-weight: 900;
+    font-size: 3rem; 
+    color: var(--testimonial-quote-icon);
+    opacity: 1; 
+    margin-left: 10px; 
+    float: right; 
+    line-height: 0.8; 
+    position: relative;
+    top: -0.1em; /* Adjust to lift quote slightly */
 }
 .testimonial-bubble .author { font-weight: 700; color: var(--primary-text-color); text-align: left; margin-top: 20px; font-size: 1.15rem; }
 .testimonial-swiper-container .swiper-button-prev,
@@ -496,7 +513,7 @@ ul { list-style: none; }
 .testimonial-swiper-container .swiper-button-prev::after,
 .testimonial-swiper-container .swiper-button-next::after { font-size: 1rem; }
 @media (max-width: 768px) {
-    .testimonial-bubble { width: 90% !important; margin: 0 auto; }
+    /* .testimonial-bubble { width: 90% !important; margin: 0 auto; } Removed to allow swiper to manage width */
      .testimonial-swiper-container .swiper-button-prev,
      .testimonial-swiper-container .swiper-button-next {
          display: flex !important;
@@ -627,27 +644,27 @@ ul { list-style: none; }
 .floating-register-btn {
     background-color: var(--floating-btn-bg);
     color: var(--floating-btn-color);
-    width: auto; /* MODIFIED */
-    height: auto; /* MODIFIED */
-    border-radius: 50px; /* MODIFIED - Pill shape */
-    display: inline-flex; /* MODIFIED - Ensure flex for row layout */
-    flex-direction: row; /* MODIFIED */
+    width: auto; 
+    height: auto; 
+    border-radius: 50px; /* Pill shape */
+    display: inline-flex; 
+    flex-direction: row; 
     justify-content: center;
     align-items: center;
-    gap: 8px; /* MODIFIED - Space between icon and text */
+    gap: 8px; 
     box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-    padding: 10px 20px; /* MODIFIED - Example padding */
+    padding: 10px 20px; 
 }
 .floating-register-btn i {
-    font-size: 1.2rem; /* MODIFIED */
+    font-size: 1.2rem; 
     line-height: 1;
-    margin-bottom: 0; /* MODIFIED */
+    margin-bottom: 0; 
 }
 .floating-register-btn span {
-    font-size: 0.9rem; /* MODIFIED */
+    font-size: 0.9rem; 
     font-weight: 700;
-    line-height: 1; /* MODIFIED */
-    display: inline; /* MODIFIED */
+    line-height: 1; 
+    display: inline; 
 }
 .floating-register-btn:hover {
     transform: scale(1.1) translateY(-5px);
@@ -760,7 +777,6 @@ ul { list-style: none; }
     .about-content-block .about-text-card { order: 1; text-align: center; padding: 25px; width: 100%; max-width: 500px; margin: 0 auto; }
 
     .testimonials h2 { font-size: 2.2rem; margin-bottom: 4rem; }
-    .testimonial-bubble .quote::before { font-size: 1.8rem; }
 
     .principal-layout { display: flex; flex-direction: column; gap: 30px; }
     .principal-layout figure { order: 1; max-width: 300px; margin: 0 auto 2rem; }

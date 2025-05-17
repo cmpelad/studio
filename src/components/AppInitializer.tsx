@@ -53,7 +53,7 @@ export default function AppInitializer({ children }: AppInitializerProps) {
 
   const swiperInstances = useRef<{ [key: string]: SwiperCore | null }>({});
 
-  const YOUTUBE_VIDEO_ID_HERO = 'dQw4w9WgXcQ'; // Placeholder
+  const YOUTUBE_VIDEO_ID_HERO = 'b2SaA1dYwl0'; // Updated Video ID
   const galleryImageUrls = [
       "https://lh3.googleusercontent.com/pw/AP1GczNBtFaOAbpOMFUXx9DL4emQxGdSzYm1vjivTyDnUzlHQDWgHtaEy5K3G1OZGyAbhSIkCMkReGJOOnI2OCe_ZpjXz02f3RC4_rjHO2Sslf_pvdSJC-pbboOhWYvYjeCjXtFe9G8spEwvIYlWLorXm4Diik0haX2EUPWslXKEbwguIv80gXqwp2WLP9oOgyr7RwQQbtDMV-iDAQltUoLtg6l=w1379-h919-s-no-gm?authuser=0",
       "https://lh3.googleusercontent.com/pw/AP1GczPgSy83OmgsgZDuZoPBGqd3nFunosjH2KCqQ3OhDlKeK-MkSzR4Nn70TAtyICq2UjeiCY3ic_ln5uYf0rY5SSNqC_7IkhZ0idDT5kf3wUvkecjvivzQbrwiEizm_61rjRXLVuYgnkfWcBFd1CuS4pFc=w1379-h919-s-no-gm?authuser=0",
@@ -148,6 +148,7 @@ export default function AppInitializer({ children }: AppInitializerProps) {
         <div className="splash-screen" id="splashScreen">
           <div className="splash-content">
             <div className="splash-image-container">
+              {/* Updated splash image to match header logo */}
               <img src="https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0" alt="קעמפ גן ישראל אלעד" />
             </div>
             <div className="splash-box yellow"></div>
@@ -161,6 +162,5 @@ export default function AppInitializer({ children }: AppInitializerProps) {
     </GlobalContext.Provider>
   );
 }
-
 
     

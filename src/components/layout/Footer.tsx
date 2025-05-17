@@ -31,7 +31,7 @@ export default function Footer() {
           <Link href="#contact">צור קשר</Link>
         </div>
         <p className="footer-register-link" data-aos="fade-up" data-aos-delay="300">
-          <a href="#" className="registration-trigger" onClick={handleRegisterClick}>&gt;&gt; להרשמה מהירה לחצו כאן &lt;&lt;</a>
+          <a href="#" className="registration-trigger" onClick={handleRegisterClick}>&gt;&gt; להרשמה לחצו כאן &lt;&lt;</a>
         </p>
       </div>
     </footer>
