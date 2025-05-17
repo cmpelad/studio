@@ -627,20 +627,28 @@ ul { list-style: none; }
 .floating-register-btn {
     background-color: var(--floating-btn-bg);
     color: var(--floating-btn-color);
-    width: 75px;
-    height: 75px;
-    border-radius: 50%;
-    display: flex;
-    flex-direction: column;
+    width: auto; /* MODIFIED */
+    height: auto; /* MODIFIED */
+    border-radius: 50px; /* MODIFIED - Pill shape */
+    display: inline-flex; /* MODIFIED - Ensure flex for row layout */
+    flex-direction: row; /* MODIFIED */
     justify-content: center;
     align-items: center;
-    text-align: center;
+    gap: 8px; /* MODIFIED - Space between icon and text */
     box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-    padding-top: 8px;
-    padding-bottom: 6px;
+    padding: 10px 20px; /* MODIFIED - Example padding */
 }
-.floating-register-btn i { font-size: 2rem; line-height: 1; margin-bottom: 3px; }
-.floating-register-btn span { font-size: 0.8rem; font-weight: 700; line-height: 1.1; display: block; }
+.floating-register-btn i {
+    font-size: 1.2rem; /* MODIFIED */
+    line-height: 1;
+    margin-bottom: 0; /* MODIFIED */
+}
+.floating-register-btn span {
+    font-size: 0.9rem; /* MODIFIED */
+    font-weight: 700;
+    line-height: 1; /* MODIFIED */
+    display: inline; /* MODIFIED */
+}
 .floating-register-btn:hover {
     transform: scale(1.1) translateY(-5px);
     box-shadow: 0 12px 30px rgba(0,0,0,0.35);
