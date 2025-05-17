@@ -45,8 +45,8 @@ export default function DayGalleryPage({ params }: DayPageParams) {
       
       {currentDayData.images && currentDayData.images.length > 0 ? (
         <div className="images-grid">
-          {currentDayData.images.map((image: DayGalleryImage, index: number) => (
-            <div className="image-item" key={index}>
+          {currentDayData.images.map((image: DayGalleryImage) => (
+            <div className="image-item" key={image.src}> {/* Changed key from index to image.src */}
               <Image 
                 src={image.src} 
                 alt={image.alt} 
@@ -54,7 +54,7 @@ export default function DayGalleryPage({ params }: DayPageParams) {
                 height={400} 
                 className="gallery-image"
                 data-ai-hint={image.hint}
-                priority={index < 6} // Prioritize loading first few images
+                priority={currentDayData.images.indexOf(image) < 6} // Maintain priority logic
               />
             </div>
           ))}
@@ -65,3 +65,4 @@ export default function DayGalleryPage({ params }: DayPageParams) {
     </div>
   );
 }
+
