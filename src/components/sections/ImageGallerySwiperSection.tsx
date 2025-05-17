@@ -8,6 +8,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { GlobalContext } from '@/components/AppInitializer';
 import Image from 'next/image';
+import Link from 'next/link'; // Import Link
 
 export default function ImageGallerySwiperSection() {
   const swiperRef = useRef<HTMLDivElement>(null);
@@ -93,7 +94,7 @@ export default function ImageGallerySwiperSection() {
                         tabIndex={0}
                         onKeyDown={(e) => e.key === 'Enter' && openLightbox(imgUrl, `תמונה מהקעמפ ${slideIndex * itemsPerSlide + indexInChunk + 1}`)}
                       >
-                        <Image src={imgUrl} alt={`תמונה מהקעמפ ${slideIndex * itemsPerSlide + indexInChunk + 1}`} loading="lazy" width={400} height={300} style={{width: '100%', height: '100%', objectFit: 'cover'}} data-ai-hint="camp photo gallery" />
+                        <Image src={imgUrl} alt={`תמונה מהקעמפ ${slideIndex * itemsPerSlide + indexInChunk + 1}`} loading="lazy" width={400} height={300} style={{width: '100%', height: '100%', objectFit: 'cover'}} data-ai-hint="camp activity" />
                       </div>
                     ))}
                   </div>
@@ -106,11 +107,9 @@ export default function ImageGallerySwiperSection() {
           <div className="swiper-pagination"></div>
         </div>
         <div className="gallery-extended-button-container" data-aos="fade-up" data-aos-delay="300">
-          <a href="gallery-details.html" target="_blank" rel="noopener noreferrer" className="gallery-extended-button">לגלריה המורחבת</a>
+          <Link href="/gallery" className="gallery-extended-button">לגלריה המורחבת</Link>
         </div>
       </div>
     </section>
   );
 }
-
-    

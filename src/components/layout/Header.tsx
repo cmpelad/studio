@@ -24,13 +24,15 @@ export default function Header() {
       }
       return;
     }
+    
+    const isGalleryLink = href === '/gallery';
 
-    if (href && href.startsWith('#') && target !== '_blank') {
+    if (href && (href.startsWith('#') || isGalleryLink) && target !== '_blank') {
       if (isMobileNavActive) {
         setTimeout(closeMobileNav, 50);
       }
-      // Smooth scroll handled by CSS scroll-behavior: smooth
-      // For more complex scenarios, could implement JS smooth scroll here
+      // If it's not a hash link and not a gallery link that should open in new tab, NextLink handles it
+      // Smooth scroll handled by CSS scroll-behavior: smooth for hash links
     } else if (target === '_blank' && isMobileNavActive) {
       setTimeout(closeMobileNav, 50);
     }
@@ -67,13 +69,13 @@ export default function Header() {
         </div>
         <nav className="main-nav" id="main-nav" ref={mainNavRef} onClick={(e) => e.stopPropagation()}>
           <ul>
-            <li><Link href="#hero" className="active" onClick={handleNavLinkClick}>עמוד הבית</Link></li>
+            <li><Link href="/#hero" className="active" onClick={handleNavLinkClick}>עמוד הבית</Link></li>
             <li><a href="#" className="registration-trigger" onClick={handleNavLinkClick}>להרשמה</a></li>
-            <li><Link href="#about" onClick={handleNavLinkClick}>אודותינו</Link></li>
-            <li><a href="gallery-details.html" target="_blank" rel="noopener noreferrer" onClick={handleNavLinkClick}>גלריה</a></li>
+            <li><Link href="/#about" onClick={handleNavLinkClick}>אודותינו</Link></li>
+            <li><Link href="/gallery" onClick={handleNavLinkClick}>גלריה</Link></li>
             <li><a href="all-summary-videos.html" target="_blank" rel="noopener noreferrer" onClick={handleNavLinkClick}>סרטוני סיכום</a></li>
-            <li><Link href="#camp-songs-section" onClick={handleNavLinkClick}>שירי גן ישראל</Link></li>
-            <li><Link href="#contact" onClick={handleNavLinkClick}>צור קשר</Link></li>
+            <li><Link href="/#camp-songs-section" onClick={handleNavLinkClick}>שירי גן ישראל</Link></li>
+            <li><Link href="/#contact" onClick={handleNavLinkClick}>צור קשר</Link></li>
           </ul>
         </nav>
         <button 
@@ -90,5 +92,3 @@ export default function Header() {
     </header>
   );
 }
-
-    

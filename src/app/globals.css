@@ -218,11 +218,17 @@ ul { list-style: none; }
 .main-nav { margin-right: auto; overflow-x: auto; }
 .main-nav ul { display: flex; gap: 20px; white-space: nowrap; }
 .main-nav a { color: var(--dark-text-color); font-weight: 500; padding: 10px 0px; border-radius: var(--border-radius-small); transition: color var(--transition-speed) ease, transform 0.2s ease; position: relative; font-size: 0.95rem; display: inline-block; }
-.main-nav a:not([target="_blank"]):hover { color: var(--primary-color); transform: translateY(-3px); }
-.main-nav a:not([target="_blank"])::after { content: ''; position: absolute; width: 0; height: 3px; display: block; margin-top: 4px; right: 50%; transform: translateX(50%); background: var(--accent-color); transition: width .35s ease; }
-.main-nav a:not([target="_blank"]):hover::after, .main-nav a.active:not([target="_blank"])::after { width: 75%; }
-.main-nav a.active:not([target="_blank"]) { color: var(--primary-color); font-weight: 700; }
-.main-nav a.active:not([target="_blank"]):hover { transform: none; }
+.main-nav a:not([target="_blank"]):not(.registration-trigger):hover { color: var(--primary-color); transform: translateY(-3px); }
+.main-nav a:not([target="_blank"]):not(.registration-trigger)::after { content: ''; position: absolute; width: 0; height: 3px; display: block; margin-top: 4px; right: 50%; transform: translateX(50%); background: var(--accent-color); transition: width .35s ease; }
+.main-nav a:not([target="_blank"]):not(.registration-trigger):hover::after, .main-nav a.active:not([target="_blank"]):not(.registration-trigger)::after { width: 75%; }
+.main-nav a.active:not([target="_blank"]):not(.registration-trigger) { color: var(--primary-color); font-weight: 700; }
+.main-nav a.active:not([target="_blank"]):not(.registration-trigger):hover { transform: none; }
+/* Special style for registration trigger link in nav */
+.main-nav a.registration-trigger { color: var(--accent-color); font-weight: 700; }
+.main-nav a.registration-trigger:hover { color: var(--primary-color); }
+.main-nav a.registration-trigger::after { display:none; }
+
+
 .mobile-nav-toggle { display: none; background: none; border: none; font-size: 2.2rem; color: var(--primary-text-color); cursor: pointer; padding: 10px; line-height: 1; z-index: 1010; transition: transform 0.2s ease; }
 .mobile-nav-toggle:hover { transform: scale(1.1); }
 .mobile-nav-toggle .icon-close { display: none; }
@@ -249,8 +255,11 @@ ul { list-style: none; }
     body.mobile-nav-active nav#main-nav { left: 0; visibility: visible; transition: left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0s linear; }
     nav#main-nav ul { flex-direction: column; align-items: flex-start; gap: 15px; white-space: normal; }
     nav#main-nav a { padding: 15px 10px; width: 100%; border-radius: var(--border-radius-small); font-size: 1.2rem; color: var(--dark-text-color); }
-    nav#main-nav a::after { display: none; }
+    nav#main-nav a::after { display: none; } /* Remove underline effect for mobile nav items */
     nav#main-nav a:hover, nav#main-nav a.active { background-color: var(--off-white-bg-color); color: var(--primary-color); transform: none; }
+    nav#main-nav a.registration-trigger { background-color: transparent; color: var(--accent-color); }
+    nav#main-nav a.registration-trigger:hover { background-color: var(--off-white-bg-color); color: var(--primary-color); }
+
     .mobile-nav-toggle { display: block; }
     body:not(.mobile-nav-active) .mobile-nav-toggle .icon-menu { display: inline; }
     body:not(.mobile-nav-active) .mobile-nav-toggle .icon-close { display: none; }
@@ -366,12 +375,14 @@ ul { list-style: none; }
 }
 .gallery-item-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .gallery-item-wrapper:hover { transform: scale(1.05); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+
 .image-gallery-swiper-container .swiper-button-next,
 .image-gallery-swiper-container .swiper-button-prev {
     color: var(--swiper-navigation-color); background-color: rgba(255,255,255,0.7);
     border-radius: 50%; width: 44px; height: 44px;
     transition: background-color 0.3s ease, color 0.3s ease;
-    top: 50%; transform: translateY(-50%);
+    top: 50%; transform: translateY(-50%); /* Vertically center buttons */
+    z-index: 10; /* Ensure buttons are above slides */
 }
 .image-gallery-swiper-container .swiper-button-next:hover,
 .image-gallery-swiper-container .swiper-button-prev:hover {
@@ -379,8 +390,11 @@ ul { list-style: none; }
 }
 .image-gallery-swiper-container .swiper-button-next::after,
 .image-gallery-swiper-container .swiper-button-prev::after { font-size: 1.2rem; font-weight: bold; }
+
 .image-gallery-swiper-container .swiper-pagination {
-    bottom: 25px !important; /* Adjusted to be above button */ left: 50%; transform: translateX(-50%); width: auto;
+    bottom: 40px; /* Adjusted for better placement */
+    left: 50%; transform: translateX(-50%); width: auto;
+    z-index: 10; /* Ensure pagination is above slides */
 }
 .image-gallery-swiper-container .swiper-pagination-bullet {
     background-color: var(--swiper-pagination-color); opacity: 0.5;
@@ -397,10 +411,11 @@ ul { list-style: none; }
     transition: background-color 0.3s ease; border: 2px solid transparent;
 }
 .gallery-extended-button:hover { background-color: var(--dark-blue-accent); border-color: var(--accent-color); }
+
 @media (max-width: 767px) {
      #image-gallery-swiper-section h2 { font-size: 2.2rem; margin-bottom: 3rem; }
-     .image-gallery-swiper { padding-bottom: 70px; } /* Consistent padding */
-     .image-gallery-swiper-container .swiper-pagination { bottom: 30px !important; } /* Slightly more space on mobile if needed */
+     .image-gallery-swiper { padding-bottom: 70px; }
+     .image-gallery-swiper-container .swiper-pagination { bottom: 45px; } /* Adjusted for mobile */
      .gallery-extended-button-container { margin-top: 20px; }
 }
 
@@ -455,13 +470,13 @@ ul { list-style: none; }
 .faq-item summary::-webkit-details-marker { display: none; }
 .faq-item summary::after {
     content: '▼'; /* Unicode down arrow */
-    font-family: var(--font-family);
-    font-weight: normal;
-    font-size: 1.2rem;
+    font-family: var(--font-family); /* Ensure this matches for consistent icon rendering */
+    font-weight: normal; /* Reset weight if needed */
+    font-size: 1.2rem; /* Adjust size as needed */
     color: var(--faq-icon-color);
     transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
-    margin-right: 20px; /* Adjusted for RTL */
-    margin-left: 0;
+    margin-right: 20px; /* Space from text for RTL */
+    margin-left: 0; /* Reset for RTL */
 }
 .faq-item details[open] summary { border-bottom: 1px solid var(--faq-border); background-color: var(--secondary-color); }
 .faq-item details[open] summary::after { transform: rotate(180deg); }
@@ -477,12 +492,12 @@ ul { list-style: none; }
 .testimonials .shape-yellow-small-bottom-left { background-color: var(--accent-color); width: 60px; height: 60px; border-radius: 50%; bottom: 15%; left: 15%; opacity: 0.6; transform: rotate(10deg); z-index: 0; }
 .testimonials h2 { text-align: center; margin-bottom: 3.5rem; border-bottom: none; color: var(--primary-color); }
 .testimonial-swiper-container { max-width: 1100px; margin: 0 auto; padding: 0 15px; position: relative; }
-.testimonial-list { margin-top: 30px; z-index: 1; position: relative; overflow: hidden; }
-.testimonial-bubble {
+.testimonial-list { margin-top: 30px; z-index: 1; position: relative; overflow: hidden; } /* Swiper instance */
+.testimonial-bubble { /* Swiper slide */
     background-color: var(--testimonial-bubble-bg); border: 1px solid var(--testimonial-border);
     border-radius: var(--border-radius); padding: 30px 35px 35px;
     box-shadow: 0 8px 20px var(--shadow-light); display: flex; flex-direction: column;
-    transition: transform 0.3s ease, box-shadow 0.3s ease; height: auto; box-sizing: border-box;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; height: auto; /* Important for autoHeight */ box-sizing: border-box;
 }
 .testimonial-bubble:hover { transform: translateY(-8px); box-shadow: 0 12px 30px var(--shadow-medium); }
 .testimonial-bubble .quote {
@@ -490,17 +505,17 @@ ul { list-style: none; }
     font-size: 1.2rem; flex-grow: 1; line-height: 2; padding-top: 0; position: relative;
 }
 .testimonial-bubble .quote::before {
-    content: "“"; /* Using actual quote character */
-    font-family: var(--font-family);
-    font-weight: 900;
-    font-size: 3rem; 
-    color: var(--testimonial-quote-icon);
-    opacity: 1; 
-    margin-left: 10px; 
-    float: right; 
-    line-height: 0.8; 
+    content: "“"; /* Actual quote character */
+    font-family: var(--font-family); /* Ensure consistent font */
+    font-weight: 900; /* Make it bolder */
+    font-size: 3rem;  /* Larger quote mark */
+    color: var(--testimonial-quote-icon); /* Use defined color */
+    opacity: 1; /* Ensure it's visible */
+    margin-left: 10px; /* Space after quote for RTL */
+    float: right; /* Align to the right for RTL */
+    line-height: 0.8; /* Adjust line height to pull text closer */
     position: relative;
-    top: -0.1em; /* Adjust to lift quote slightly */
+    top: -0.1em; /* Fine-tune vertical alignment */
 }
 .testimonial-bubble .author { font-weight: 700; color: var(--primary-text-color); text-align: left; margin-top: 20px; font-size: 1.15rem; }
 .testimonial-swiper-container .swiper-button-prev,
@@ -508,15 +523,14 @@ ul { list-style: none; }
     color: var(--primary-color); background-color: rgba(255,255,255,0.8);
     width: 40px; height: 40px; border-radius: 50%;
     transition: all 0.3s ease;
-    /* display: none; מנוהל על ידי breakpoints ב-JS */
+    /* display: none; /* Managed by Swiper breakpoints/JS if needed */
 }
 .testimonial-swiper-container .swiper-button-prev::after,
 .testimonial-swiper-container .swiper-button-next::after { font-size: 1rem; }
 @media (max-width: 768px) {
-    /* .testimonial-bubble { width: 90% !important; margin: 0 auto; } Removed to allow swiper to manage width */
      .testimonial-swiper-container .swiper-button-prev,
      .testimonial-swiper-container .swiper-button-next {
-         display: flex !important;
+         display: flex !important; /* Ensure buttons are visible on mobile */
      }
 }
 
@@ -640,31 +654,31 @@ ul { list-style: none; }
     transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease, background-color 0.2s ease, color 0.2s ease;
     cursor: pointer;
 }
-/* סגנון מובייל (ברירת מחדל) */
+/* Default mobile style (pill shape, icon next to text) */
 .floating-register-btn {
     background-color: var(--floating-btn-bg);
     color: var(--floating-btn-color);
     width: auto; 
     height: auto; 
     border-radius: 50px; /* Pill shape */
-    display: inline-flex; 
-    flex-direction: row; 
+    display: inline-flex; /* Changed from flex to inline-flex for auto width */
+    flex-direction: row; /* Ensure icon and text are in a row */
     justify-content: center;
     align-items: center;
-    gap: 8px; 
+    gap: 8px; /* Space between icon and text */
     box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-    padding: 10px 20px; 
+    padding: 10px 18px; /* Adjusted padding for mobile pill */
 }
 .floating-register-btn i {
-    font-size: 1.2rem; 
+    font-size: 1.1rem; /* Slightly smaller icon for mobile */
     line-height: 1;
     margin-bottom: 0; 
 }
 .floating-register-btn span {
-    font-size: 0.9rem; 
+    font-size: 0.85rem; /* Slightly smaller text for mobile */
     font-weight: 700;
     line-height: 1; 
-    display: inline; 
+    display: inline; /* Ensure span is inline with icon */
 }
 .floating-register-btn:hover {
     transform: scale(1.1) translateY(-5px);
@@ -673,24 +687,25 @@ ul { list-style: none; }
     color: var(--floating-btn-hover-color);
 }
 
-@media (min-width: 769px) { /* סגנון דסקטופ */
+/* Desktop style override */
+@media (min-width: 769px) {
     .floating-register-btn {
         background-color: var(--accent-color);
         color: var(--primary-color);
-        padding: 15px 30px;
-        border-radius: 50px;
-        font-size: 1.2rem;
+        padding: 15px 30px; /* Desktop padding */
+        border-radius: 50px; /* Pill shape */
+        font-size: 1.2rem; /* Desktop font size for text */
         font-weight: 700;
         box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         border: 2px solid transparent;
-        display: inline-flex; /* כדי שהאייקון והטקסט יהיו בשורה */
+        display: inline-flex; 
         align-items: center;
-        gap: 10px; /* רווח בין אייקון לטקסט */
-        width: auto; /* רוחב אוטומטי */
-        height: auto; /* גובה אוטומטי */
+        gap: 10px; 
+        width: auto; 
+        height: auto; 
     }
-    .floating-register-btn i { font-size: 1.5rem; margin-bottom: 0; }
-    .floating-register-btn span { font-size: inherit; font-weight: inherit; line-height: 1; display: inline; } /* inline כדי שיהיה באותה שורה */
+    .floating-register-btn i { font-size: 1.5rem; margin-bottom: 0; } /* Desktop icon size */
+    .floating-register-btn span { font-size: inherit; font-weight: inherit; line-height: 1; display: inline; }
     .floating-register-btn:hover {
         background-color: var(--white-color);
         color: var(--primary-color);
@@ -792,5 +807,3 @@ ul { list-style: none; }
     .registration-modal-content { height: 90vh; max-height: 600px; }
 }
 /* End of User's Custom CSS */
-
-    

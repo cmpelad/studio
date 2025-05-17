@@ -37,8 +37,9 @@ export default function TestimonialsSection() {
         1025: { slidesPerView: 3, spaceBetween: 40, navigation: { enabled: true } }
       },
       on: {
-        init: function (s) { s.update(); },
-        resize: function (s) { s.update(); }
+        init: function (s) { s.update(); s.updateAutoHeight(300); },
+        resize: function (s) { s.update(); s.updateAutoHeight(300); },
+        slideChangeTransitionEnd: function(s) { s.updateAutoHeight(300); s.update(); }
       }
     });
     context.swiperInstances.current['testimonialSwiper'] = testimonialSwiper;
@@ -74,6 +75,10 @@ export default function TestimonialsSection() {
                 <p className="quote">"קעמפ ברמה גבוהה מאוד. הילדים נהנו מכל רגע, למדו המון ובעיקר התחברו לאווירה החסידית והשמחה."</p>
                 <p className="author" data-aos="fade-right" data-aos-delay="400">- דוד ביטון, אלעד</p>
               </div>
+               <div className="swiper-slide testimonial-bubble" data-aos="fade-up" data-aos-delay="350">
+                <p className="quote">"תודה רבה על קיץ מושלם! הבן שלי לא מפסיק לדבר על החוויות מהקעמפ. ממליצים בחום!"</p>
+                <p className="author" data-aos="fade-right" data-aos-delay="450">- משפחת אברהם, שוהם</p>
+              </div>
             </div>
           </div>
           <div className="swiper-button-prev"></div>
@@ -83,5 +88,3 @@ export default function TestimonialsSection() {
     </section>
   );
 }
-
-    
