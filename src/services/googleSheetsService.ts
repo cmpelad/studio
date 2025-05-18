@@ -35,7 +35,6 @@ const fallbackSiteConfig: Record<string, string> = {
     aboutImageAlt: "קבוצת ילדים בפעילות קעמפ (ברירת מחדל)",
     aboutImageHint: "camp activity",
     mainSummaryVideoId: "gqgfz0h0om4",
-    logoImageSrc: "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0",
 };
 
 const fallbackFaqs: FaqItem[] = [
@@ -69,7 +68,7 @@ const fallbackVideos: VideoItem[] = [
 if (!API_KEY || !SPREADSHEET_ID) {
   if (process.env.NODE_ENV === 'development') {
     console.warn(
-      'GOOGLE_SHEETS_API_KEY or GOOGLE_SHEETS_SPREADSHEET_ID is missing. Site will use hardcoded fallback data. Please check your .env.local file if you intend to use Google Sheets API.'
+      'GOOGLE_SHEETS_API_KEY or GOOGLE_SHEETS_SPREADSHEET_ID is missing. Site will use hardcoded fallback data for API-dependent features. Please check your .env.local file if you intend to use Google Sheets API.'
     );
   } else {
     console.error(
@@ -106,7 +105,7 @@ async function fetchSheetData<T extends string[]>(
       return null;
     }
     const data = await response.json();
-    console.log(`Successfully fetched data for ${sheetName}. Num rows: ${data.values ? data.values.length : 0}`);
+    console.log(`Successfully fetched data for ${sheetName} via API. Num rows: ${data.values ? data.values.length : 0}`);
     return (data.values || []) as T[];
   } catch (error) {
     console.error(`Exception fetching sheet data for ${sheetName} via API:`, error);
@@ -123,15 +122,37 @@ async function fetchCsvDataFromUrl(csvUrl: string): Promise<string[][] | null> {
       return null;
     }
     const text = await response.text();
-    console.log(`Successfully fetched CSV data from URL. Length: ${text.length}`);
-    // Basic CSV parsing: split by lines, then by commas
-    // This is a very basic parser and might need improvement for complex CSVs (e.g., with quoted commas)
-    const rows = text.split(/\r?\n/).map(line => {
-        // Naive split by comma. For robust CSV, a library might be better.
-        // This simple split won't handle commas within quoted fields correctly.
-        return line.split(',');
-    });
-    return rows.filter(row => row.length > 0 && row.some(cell => cell.trim() !== '')); // Filter out empty lines
+    console.log(`Successfully fetched CSV data from URL. Raw CSV Text length: ${text.length}`);
+    
+    const rows = text
+      .split(/\r?\n/)
+      .map(line => {
+        // More robust CSV parsing: handles quoted fields with commas inside
+        const row: string[] = [];
+        let currentField = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          if (char === '"') {
+            inQuotes = !inQuotes;
+            if (i + 1 < line.length && line[i+1] === '"') { // Handle escaped quote ""
+              currentField += '"';
+              i++; 
+            }
+          } else if (char === ',' && !inQuotes) {
+            row.push(currentField.trim());
+            currentField = '';
+          } else {
+            currentField += char;
+          }
+        }
+        row.push(currentField.trim()); // Add the last field
+        return row;
+      })
+      .filter(row => row.length > 0 && row.some(cell => cell.trim() !== ''));
+    
+    console.log(`Parsed CSV Data (first 5 rows):`, rows.slice(0,5));
+    return rows;
   } catch (error) {
     console.error(`Exception fetching or parsing CSV data from URL ${csvUrl}:`, error);
     return null;
@@ -147,45 +168,52 @@ export interface FaqItem {
 }
 
 export async function getFaqData(): Promise<FaqItem[]> {
-  const sheetName = 'FAQ'; // Target sheet name for API or CSV structure
-  // const directCsvUrl = 'YOUR_FAQ_CSV_EXPORT_LINK_HERE'; // Replace with actual CSV link if using direct CSV
-
-  /* // Option 1: Fetch directly from a CSV URL (if you have one specifically for FAQs)
-  if (directCsvUrl && directCsvUrl !== 'YOUR_FAQ_CSV_EXPORT_LINK_HERE') {
-    console.log(`getFaqData: Attempting to fetch from CSV URL: ${directCsvUrl}`);
+  const directCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=837718949&single=true&output=csv";
+  
+  console.log(`getFaqData: Attempting to fetch from direct CSV URL: ${directCsvUrl}`);
+  try {
     const rows = await fetchCsvDataFromUrl(directCsvUrl);
-    if (rows && rows.length > 1) { // Assuming first row is header
-      try {
-        const faqs = rows.slice(1).map((row, index) => ({
-          id: row[0] || `faq_csv_${index}`,
-          question: row[1] || '',
-          answer: row[2] || '',
+    if (rows && rows.length > 0) {
+      let dataRows = rows;
+      // Check if the first row is a header row (id,question,answer)
+      if (rows[0][0]?.trim().toLowerCase() === 'id' && rows[0][1]?.trim().toLowerCase() === 'question' && rows[0][2]?.trim().toLowerCase() === 'answer') {
+        dataRows = rows.slice(1); // Skip header row
+        console.log("getFaqData: CSV Header row detected and skipped.");
+      } else {
+        console.log("getFaqData: No CSV Header row detected, assuming direct data.");
+      }
+
+      if (dataRows.length > 0) {
+        const faqs = dataRows.map((row, index) => ({
+          id: row[0]?.trim() || `faq_csv_${index}`,
+          question: row[1]?.trim() || '',
+          answer: row[2]?.trim() || '', // Assuming answer is in the third column
           delay: String(index * 50),
         }));
-        if (faqs.length > 0) {
-          console.log(`getFaqData: Processed ${faqs.length} FAQ items from CSV URL.`);
-          return faqs;
-        }
-      } catch (e) {
-        console.error('getFaqData: Error processing CSV data, falling back.', e);
+        console.log(`getFaqData: Processed ${faqs.length} FAQ items from CSV URL.`);
+        return faqs;
+      } else {
+        console.log('getFaqData: No data rows found in CSV from URL after potential header skip.');
       }
     } else {
-      console.log('getFaqData: No data or only header in CSV from URL, or URL not set. Trying API or fallback.');
+      console.log('getFaqData: No data returned from CSV URL fetch.');
     }
+  } catch (e) {
+    console.error('getFaqData: Error processing CSV data from URL, falling back.', e);
   }
-  */
 
-  // Option 2: Fetch using Google Sheets API (current primary method)
+  // Fallback 1: Try Google Sheets API if CSV fails
   if (API_KEY && SPREADSHEET_ID) {
-    console.log(`getFaqData: Attempting to fetch from Google Sheets API, Sheet: ${sheetName}`);
+    const sheetName = 'FAQ';
+    console.log(`getFaqData: CSV fetch failed or returned no data. Attempting to fetch from Google Sheets API, Sheet: ${sheetName}`);
     try {
-      const rows = await fetchSheetData<[string, string, string]>({ sheetName }); // id, question, answer
-      if (rows && rows.length > 1) { // More than just header row
-        const faqs = rows.slice(1).map((row, index) => ({ // Skip header row
+      const rows = await fetchSheetData<[string, string, string]>({ sheetName });
+      if (rows && rows.length > 1) { // Assuming first row is header
+        const faqs = rows.slice(1).map((row, index) => ({
           id: row[0] || `faq_api_${index}`,
           question: row[1] || '',
           answer: row[2] || '',
-          delay: String(index * 50), // Auto-generate delay
+          delay: String(index * 50),
         }));
         console.log(`getFaqData: Processed ${faqs.length} FAQ items from Google Sheets API.`);
         return faqs;
@@ -198,7 +226,7 @@ export async function getFaqData(): Promise<FaqItem[]> {
   } else {
     console.log('getFaqData: API_KEY or SPREADSHEET_ID missing. Skipping API call for FAQ.');
   }
-
+  
   console.log('getFaqData: Using hardcoded fallbackFaqs data.');
   return fallbackFaqs;
 }
@@ -212,22 +240,21 @@ export interface ContactDetails {
 }
 
 export async function getSiteConfig(): Promise<Record<string, string>> {
-  const config: Record<string, string> = { ...fallbackSiteConfig }; // Start with fallbacks
-  const sheetName = 'SiteConfig'; // Sheet name in your Google Sheet
+  const config: Record<string, string> = { ...fallbackSiteConfig };
+  const sheetName = 'SiteConfig';
 
-  // Try fetching from Google Sheets API first if configured
   if (API_KEY && SPREADSHEET_ID) {
     console.log(`getSiteConfig: Attempting to fetch from Google Sheets API, Sheet: ${sheetName}`);
     try {
-      const rows = await fetchSheetData<[string, string]>({ sheetName }); // key, value
-      if (rows && rows.length > 1) { // header + data
-        rows.slice(1).forEach(row => { // Skip header
+      const rows = await fetchSheetData<[string, string]>({ sheetName });
+      if (rows && rows.length > 1) { // Assuming first row is header
+        rows.slice(1).forEach(row => {
           if (row[0] && typeof row[0] === 'string' && row[0].trim() !== '') {
             config[row[0].trim()] = row[1] || '';
           }
         });
         console.log(`getSiteConfig: Successfully loaded and merged ${rows.length -1} config items from API.`);
-        return config; // Return merged config
+        return config; // Return config from API if successful
       } else {
         console.log(`getSiteConfig: No data or only header in ${sheetName} sheet via API. Using fallbackSiteConfig.`);
       }
@@ -250,7 +277,7 @@ export interface Testimonial {
 }
 
 export async function getTestimonials(): Promise<Testimonial[]> {
-    // console.log("getTestimonials: Returning hardcoded data.");
+    // console.log("getTestimonials: Returning hardcoded fallbackTestimonials.");
     return fallbackTestimonials;
 }
 
@@ -265,7 +292,7 @@ export interface SwiperSlideItem {
 
 export async function getSwiperSlides(): Promise<SwiperSlideItem[]> {
   // console.log("getSwiperSlides: Returning hardcoded data.");
-  return fallbackSwiperSlides;
+  return fallbackSwiperSlides; // Corrected to use the defined constant
 }
 
 export interface VideoItem {
@@ -276,7 +303,7 @@ export interface VideoItem {
 }
 
 export async function getVideos(): Promise<VideoItem[]> {
-  // console.log("getVideos: Returning hardcoded data.");
+  // console.log("getVideos: Returning hardcoded fallbackVideos.");
   return fallbackVideos;
 }
     
