@@ -7,12 +7,12 @@ import { env } from 'process';
 const API_KEY = env.GOOGLE_SHEETS_API_KEY;
 const SPREADSHEET_ID = env.GOOGLE_SHEETS_SPREADSHEET_ID;
 
-// Fallback data remains, but is now clearly marked as fallback
+// Fallback data
 const fallbackSiteConfig: Record<string, string> = {
     siteTitle: "קעמפ גן ישראל - אלעד (ברירת מחדל)",
     siteDescription: "חוויה של פעם בחיים! מחנה הקיץ הכי שווה מחכה לכם עם פעילויות מגוונות, מדריכים תותחים, ואווירה חסידית מיוחדת. (ברירת מחדל)",
-    logoImageSrc: "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0", // Default logo
-    heroVideoId: "b2SaA1dYwl0", // Default hero video
+    logoImageSrc: "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0",
+    heroVideoId: "b2SaA1dYwl0",
     heroImageSrc: "https://images.unsplash.com/photo-1560707303-11e40c4110c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHw1fHxjaGlsZHJlbiUyMHN1bW1lciUyMGNhbXB8ZW58MHx8fHwxNzIwMDk5NzI4fDA&ixlib=rb-4.0.3&q=80&w=1080",
     heroImageAlt: "קדימון קעמפ גן ישראל אלעד (ברירת מחדל)",
     heroImageHint: "children summer camp",
@@ -34,27 +34,35 @@ const fallbackSiteConfig: Record<string, string> = {
     aboutImageSrc: "https://images.unsplash.com/photo-1504829857107-4acf85189b73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwyfHxzdW1tZXIlMjBjYW1wJTIwZnVufGVufDB8fHx8MTcyMDA5OTgwMHww&ixlib=rb-4.0.3&q=80&w=1080",
     aboutImageAlt: "קבוצת ילדים בפעילות קעמפ (ברירת מחדל)",
     aboutImageHint: "camp activity",
-    mainSummaryVideoId: "gqgfz0h0om4",
+    mainSummaryVideoId: "gqgfz0h0om4", // Default from siteConfig
 };
 
 const fallbackFaqs: FaqItem[] = [
     { id: "faq1_fallback", question: "לאילו גילאים מיועד הקעמפ? (ברירת מחדל)", answer: "הקעמפ מיועד לבנים בגילאי ז'-ט' (בוגרי כיתות ו'-ח'). אנו שמים דגש על התאמת הפעילויות והאווירה לגילאים אלו.", delay: "0" },
     { id: "faq2_fallback", question: "מהן שעות הפעילות בקעמפ? (ברירת מחדל)", answer: "שעות הפעילות הן בדרך כלל מ-09:00 בבוקר ועד 17:00 אחר הצהריים. ייתכנו ימים עם פעילויות ערב מיוחדות, עליהן תימסר הודעה מראש.", delay: "50" },
+    { id: "faq3_fallback", question: "האם יש צורך להביא אוכל? (ברירת מחדל)", answer: "לא, הקעמפ מספק ארוחות בוקר, צהריים וערב כשרות למהדרין, וכן כיבוד קל בין הארוחות. במקרה של רגישויות מזון, יש לעדכן אותנו מראש.", delay: "100" },
+    { id: "faq4_fallback", question: "איזה ציוד יש להביא לקעמפ? (ברירת מחדל)", answer: "רשימת ציוד מפורטת תישלח לנרשמים. באופן כללי, יש להצטייד בבגדים נוחים, כובע, בקבוק מים, קרם הגנה, ופריטים אישיים. לטיולים יש להצטייד בנעלי הליכה נוחות.", delay: "150" },
+    { id: "faq5_fallback", question: "מהי מדיניות הביטולים? (ברירת מחדל)", answer: "מדיניות הביטולים מפורטת בתקנון ההרשמה. באופן כללי, ניתן לבטל עד תאריך מסוים ולקבל החזר חלקי או מלא, בהתאם לתנאים.", delay: "200" },
 ];
 
 const fallbackTestimonials: Testimonial[] = [
-    { id: "testimonial1_fallback", quote: "הבן שלי חזר מאושר מהקעמפ! (ברירת מחדל)", author: "משפחת כהן, אלעד" },
+    { id: "testimonial1_fallback", quote: "הבן שלי חזר מאושר מהקעמפ! הוא לא הפסיק לספר חוויות ונהנה מכל רגע. הצוות היה מדהים והפעילויות מגוונות. ממליצים בחום! (ברירת מחדל)", author: "משפחת כהן, אלעד" },
+    { id: "testimonial2_fallback", quote: "זו השנה השנייה שאנחנו שולחים את הילד לקעמפ גן ישראל אלעד, וכל פעם מחדש אנחנו מתרשמים מהמקצועיות, מהאווירה החסידית ומההשקעה בכל פרט. יישר כח! (ברירת מחדל)", author: "משפחת לוי, פתח תקווה" },
+    { id: "testimonial3_fallback", quote: "המדריכים בקעמפ פשוט אלופים! הם יצרו קשר אישי וחם עם הילדים, והיוו עבורם דוגמה אישית. הילד שלנו מחכה כבר לשנה הבאה. תודה רבה! (ברירת מחדל)", author: "משפחת אברמוביץ, בני ברק" },
 ];
 
 const fallbackSwiperSlides: SwiperSlideItem[] = [
-    { id: "slide1_fallback", imageSrc: "https://placehold.co/1770x1000.png?text=Fallback+Slide+1", imageAlt: "תמונת אווירה 1 (ברירת מחדל)", imageHint: "placeholder", captionTitle: "חוויה של פעם בחיים! (ברירת מחדל)", captionText: "מחנה הקיץ הכי שווה מחכה לכם עם מגוון פעילויות." },
+    { id: "slide1_fallback", imageSrc: "https://images.unsplash.com/photo-1542868187-c40917f680a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwzfHxzdW1tZXIlMjBjYW1wJTIwY2hpbGRyZW58ZW58MHx8fHwxNzIwMDk5NjUxfDA&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "תמונת אווירה 1 (ברירת מחדל)", imageHint: "camp activities", captionTitle: "חוויה של פעם בחיים! (ברירת מחדל)", captionText: "מחנה הקיץ הכי שווה מחכה לכם עם מגוון פעילויות." },
+    { id: "slide2_fallback", imageSrc: "https://images.unsplash.com/photo-1504829857107-4acf85189b73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwyfHxzdW1tZXIlMjBjYW1wJTIwZnVufGVufDB8fHx8MTcyMDA5OTgwMHww&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "תמונת אווירה 2 (ברירת מחדל)", imageHint: "children outdoors", captionTitle: "מדריכים תותחים ואווירה מיוחדת! (ברירת מחדל)", captionText: "הצטרפו אלינו לקיץ של כיף, חברות וערכים." },
+    { id: "slide3_fallback", imageSrc: "https://images.unsplash.com/photo-1600904332802-915c1a0600a2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwxMHx8c3VtbWVyJTIwY2FtcCUyMGZ1bnxlbnwwfHx8fDE3MjAwOTk4MDB8MA&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "תמונת אווירה 3 (ברירת מחדל)", imageHint: "camp games", captionTitle: "פעילויות מגוונות ומרתקות! (ברירת מחדל)", captionText: "טיולים, סדנאות, התוועדויות ועוד המון הפתעות." },
 ];
 
 const fallbackVideos: VideoItem[] = [
     { id: "song1_fallback", videoId: "6aRI-emxQlU", title: "שיר הנושא - קעמפ גן ישראל (ברירת מחדל)", category: "campSong" },
+    { id: "song2_fallback", videoId: "jNQXAC9IVRw", title: "המנון הקעמפ (דוגמה)", category: "campSong" }, // Example, replace with actual ID
     { id: "summary1_fallback", videoId: "gqgfz0h0om4", title: "סרטון סיכום קעמפ תשפ\"ג (ברירת מחדל)", category: "summaryVideo" },
+    { id: "summary2_fallback", videoId: "dQw4w9WgXcQ", title: "סרטון סיכום נוסף (דוגמה)", category: "summaryVideo" }, // Example
 ];
-
 
 if (!API_KEY || !SPREADSHEET_ID) {
   if (process.env.NODE_ENV === 'development') {
@@ -109,7 +117,7 @@ export interface FaqItem {
   id: string;
   question: string;
   answer: string;
-  delay?: string; // This was part of the original static data, can be generated client-side too
+  delay?: string;
 }
 
 export async function getFaqData(): Promise<FaqItem[]> {
@@ -121,7 +129,7 @@ export async function getFaqData(): Promise<FaqItem[]> {
         id: row[0] || `faq_item_${index}`,
         question: row[1] || '',
         answer: row[2] || '',
-        // delay can be added here if needed or handled in component
+        delay: String(index * 50), // Auto-generate delay
       }));
       console.log(`Processed ${faqs.length} FAQ items from Google Sheets.`);
       return faqs;
@@ -145,27 +153,8 @@ export interface ContactDetails {
 
 // Fetches all data from SiteConfig sheet and transforms it into a Record<string, string>
 export async function getSiteConfig(): Promise<Record<string, string>> {
-  const sheetName = 'SiteConfig';
-  const config: Record<string, string> = { ...fallbackSiteConfig }; // Start with fallbacks
-
-  try {
-    const rows = await fetchSheetData<[string, string]>({ sheetName }); // key, value
-    if (rows && rows.length > 1) { // More than just header row
-      rows.slice(1).forEach(row => { // Skip header row
-        if (row && row.length >= 2 && row[0]) {
-          config[row[0]] = row[1] || ''; // Ensure value is string, even if empty
-        }
-      });
-      console.log('SiteConfig: Successfully merged data from Google Sheets with fallbacks.');
-      return config;
-    } else if (rows && rows.length <= 1) {
-      console.log(`No data rows found in ${sheetName} sheet (or only header). Using only fallback config.`);
-    }
-  } catch (error) {
-    console.error('Error processing SiteConfig data from Google Sheets:', error);
-  }
-  console.log('getSiteConfig: Using hardcoded fallback data due to fetch error or no data.');
-  return fallbackSiteConfig; // Return only fallbacks if fetch failed or no data
+  console.log('getSiteConfig: Using hardcoded fallback data.');
+  return fallbackSiteConfig;
 }
 
 
@@ -176,7 +165,7 @@ export interface Testimonial {
 }
 
 export async function getTestimonials(): Promise<Testimonial[]> {
-    // console.log("getTestimonials: Returning hardcoded data.");
+    console.log("getTestimonials: Using hardcoded fallback data.");
     return fallbackTestimonials;
 }
 
@@ -190,8 +179,8 @@ export interface SwiperSlideItem {
 }
 
 export async function getSwiperSlides(): Promise<SwiperSlideItem[]> {
-  // console.log("getSwiperSlides: Returning hardcoded data.");
-  return fallbackSlides;
+  console.log("getSwiperSlides: Using hardcoded fallback data.");
+  return fallbackSwiperSlides;
 }
 
 export interface VideoItem {
@@ -202,8 +191,6 @@ export interface VideoItem {
 }
 
 export async function getVideos(): Promise<VideoItem[]> {
-  // console.log("getVideos: Returning hardcoded data.");
+  console.log("getVideos: Using hardcoded fallback data.");
   return fallbackVideos;
 }
-
-    
