@@ -1,7 +1,19 @@
 
+"use client";
+import { useContext } from 'react';
 import Image from 'next/image';
+import { GlobalContext } from '@/components/AppInitializer';
 
 export default function PrincipalMessageSection() {
+  const context = useContext(GlobalContext);
+
+  const principalName = context?.siteConfig?.principalName || "שם המנהל (טעינה...)";
+  const messageP1 = context?.siteConfig?.principalMessageParagraph1 || "טוען תוכן...";
+  const messageP2 = context?.siteConfig?.principalMessageParagraph2 || "טוען תוכן...";
+  const imageSrc = context?.siteConfig?.principalImageSrc || "https://placehold.co/400x500.png";
+  const imageAlt = context?.siteConfig?.principalImageAlt || "מנהל הקעמפ";
+  const imageHint = context?.siteConfig?.principalImageHint || "manager portrait";
+
   return (
     <section className="principal-message" data-aos="fade-up" data-aos-duration="1000">
       <div className="decorative-shape-abstract shape-yellow-top-left shape-circle" data-aos="zoom-in" data-aos-delay="100" data-aos-duration="800"></div>
@@ -11,18 +23,22 @@ export default function PrincipalMessageSection() {
       <div className="container">
         <div className="principal-layout">
           <figure data-aos="fade-right" data-aos-delay="200">
-            <Image src="https://placehold.co/400x500.png" alt="מנהל הקעמפ" width={400} height={500} data-ai-hint="manager portrait" />
+            <Image 
+              src={imageSrc} 
+              alt={imageAlt} 
+              width={400} 
+              height={500} 
+              data-ai-hint={imageHint} 
+            />
           </figure>
           <div className="principal-text-card" data-aos="fade-left" data-aos-delay="200">
             <h2>דבר מנהל הקעמפ</h2>
-            <p data-aos="fade-left" data-aos-delay="300">הורים וחניכים יקרים, אנו נרגשים להזמין אתכם להצטרף אלינו לקיץ נוסף של קעמפ גן ישראל אלעד! אנו משקיעים את מירב המאמצים כדי להעניק לילדיכם חוויה משמעותית, מהנה ובטוחה, המשלבת ערכים חסידיים עם כיף והנאה.</p>
-            <p data-aos="fade-left" data-aos-delay="350">הצוות המסור שלנו מוכן ומזומן להעניק לכל חניך יחס אישי וחם, ולהפוך את הקיץ הזה לחוויה בלתי נשכחת. נתראה בקעמפ!</p>
-            <p data-aos="fade-left" data-aos-delay="400"><strong>בברכה,<br />שם המנהל</strong></p>
+            <p data-aos="fade-left" data-aos-delay="300">{messageP1}</p>
+            <p data-aos="fade-left" data-aos-delay="350">{messageP2}</p>
+            <p data-aos="fade-left" data-aos-delay="400"><strong>בברכה,<br />{principalName}</strong></p>
           </div>
         </div>
       </div>
     </section>
   );
 }
-
-    

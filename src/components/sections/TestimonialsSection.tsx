@@ -6,18 +6,22 @@ import { Navigation, Keyboard } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { GlobalContext } from '@/components/AppInitializer';
-
+import type { Testimonial } from '@/services/googleSheetsService';
 
 export default function TestimonialsSection() {
   const swiperRef = useRef<HTMLDivElement>(null);
   const context = useContext(GlobalContext);
+  
+  const testimonials: Testimonial[] = context?.testimonials || [
+    { id: "loading1", quote: "טוען המלצות...", author: "אנא המתן" }
+  ];
 
   useEffect(() => {
-    if (!swiperRef.current || !context) return;
+    if (!swiperRef.current || !context || testimonials.length === 0) return;
 
     const testimonialSwiper = new Swiper(swiperRef.current, {
       modules: [Navigation, Keyboard],
-      loop: true,
+      loop: testimonials.length > 3, // Loop only if enough items for all views
       slidesPerView: 1,
       spaceBetween: 30,
       grabCursor: true,
@@ -30,13 +34,13 @@ export default function TestimonialsSection() {
       watchOverflow: true,
       observer: true,
       observeParents: true,
-      autoHeight: true,
+      autoHeight: true, // Let swiper calculate height
       breakpoints: {
         0: { slidesPerView: 1, spaceBetween: 20, navigation: { enabled: true } },
         769: { slidesPerView: 2, spaceBetween: 30, navigation: { enabled: true } },
         1025: { slidesPerView: 3, spaceBetween: 40, navigation: { enabled: true } }
       },
-      on: {
+       on: {
         init: function (s) { s.update(); s.updateAutoHeight(300); },
         resize: function (s) { s.update(); s.updateAutoHeight(300); },
         slideChangeTransitionEnd: function(s) { s.updateAutoHeight(300); s.update(); }
@@ -50,7 +54,15 @@ export default function TestimonialsSection() {
         delete context.swiperInstances.current['testimonialSwiper'];
       }
     };
-  }, [context]);
+  }, [context, testimonials]);
+
+  if (!context) {
+    return (
+      <section className="testimonials content-section bg-accent-color">
+        <div className="container"><h2 className="text-center">טוען מידע...</h2></div>
+      </section>
+    );
+  }
 
   return (
     <section className="testimonials content-section bg-accent-color" data-aos="fade-up" data-aos-duration="1000">
@@ -63,22 +75,12 @@ export default function TestimonialsSection() {
         <div className="testimonial-swiper-container" data-aos="fade-up" data-aos-delay="150">
           <div className="swiper testimonial-list" ref={swiperRef}>
             <div className="swiper-wrapper">
-              <div className="swiper-slide testimonial-bubble" data-aos="fade-up" data-aos-delay="200">
-                <p className="quote">"הילד חזר מאושר! הצוות היה מדהים, הפעילויות היו מגוונות והאווירה הייתה פשוט קסומה. מחכים כבר לשנה הבאה!"</p>
-                <p className="author" data-aos="fade-right" data-aos-delay="300">- משפחת כהן, אלעד</p>
-              </div>
-              <div className="swiper-slide testimonial-bubble" data-aos="fade-up" data-aos-delay="250">
-                <p className="quote">"זו השנה השלישית שלנו בקעמפ וכל פעם אנחנו מתרשמים מחדש מההשקעה, מהתוכן האיכותי ומהיחס האישי לכל ילד."</p>
-                <p className="author" data-aos="fade-right" data-aos-delay="350">- רחל לוי, אלעד</p>
-              </div>
-              <div className="swiper-slide testimonial-bubble" data-aos="fade-up" data-aos-delay="300">
-                <p className="quote">"קעמפ ברמה גבוהה מאוד. הילדים נהנו מכל רגע, למדו המון ובעיקר התחברו לאווירה החסידית והשמחה."</p>
-                <p className="author" data-aos="fade-right" data-aos-delay="400">- דוד ביטון, אלעד</p>
-              </div>
-               <div className="swiper-slide testimonial-bubble" data-aos="fade-up" data-aos-delay="350">
-                <p className="quote">"תודה רבה על קיץ מושלם! הבן שלי לא מפסיק לדבר על החוויות מהקעמפ. ממליצים בחום!"</p>
-                <p className="author" data-aos="fade-right" data-aos-delay="450">- משפחת אברהם, שוהם</p>
-              </div>
+              {testimonials.map((testimonial, index) => (
+                <div className="swiper-slide testimonial-bubble" key={testimonial.id || index} data-aos="fade-up" data-aos-delay={String(200 + index * 50)}>
+                  <p className="quote">{testimonial.quote}</p>
+                  <p className="author" data-aos="fade-right" data-aos-delay={String(300 + index * 50)}>{testimonial.author}</p>
+                </div>
+              ))}
             </div>
           </div>
           <div className="swiper-button-prev"></div>

@@ -6,11 +6,16 @@ import { Navigation, Keyboard } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { GlobalContext } from '@/components/AppInitializer';
+import type { VideoItem } from '@/services/googleSheetsService';
 
 export default function CampSongsSection() {
   const swiperRef = useRef<HTMLDivElement>(null);
   const context = useContext(GlobalContext);
   const [isMobile, setIsMobile] = useState(false);
+
+  const songs: VideoItem[] = context?.videos?.filter(v => v.category === 'campSong') || [
+    { id: "loadingSong1", videoId: "dQw4w9WgXcQ", title: "טוען שיר...", category: "campSong" }
+  ];
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
@@ -20,8 +25,7 @@ export default function CampSongsSection() {
   }, []);
 
   useEffect(() => {
-    if (!isMobile || !swiperRef.current || !context) {
-      // Destroy swiper if it exists and we are not in mobile view
+    if (!isMobile || !swiperRef.current || !context || songs.length === 0) {
       if (context?.swiperInstances.current['campSongsSwiper']) {
         context.swiperInstances.current['campSongsSwiper']?.destroy(true, true);
         delete context.swiperInstances.current['campSongsSwiper'];
@@ -31,7 +35,7 @@ export default function CampSongsSection() {
     
     const campSongsSwiper = new Swiper(swiperRef.current, {
         modules: [Navigation, Keyboard],
-        loop: false, // As per original JS
+        loop: songs.length > 1,
         slidesPerView: 1,
         spaceBetween: 20,
         navigation: {
@@ -42,11 +46,11 @@ export default function CampSongsSection() {
         rtl: true,
         observer: true,
         observeParents: true,
-        watchOverflow: true, // Important for hiding nav if not enough slides
+        watchOverflow: true, 
         on: {
           init: function (s) {
             const navButtons = [s.el.querySelector('.swiper-button-next') as HTMLElement, s.el.querySelector('.swiper-button-prev') as HTMLElement];
-            if (s.isLocked) { // isLocked is true if not enough slides for navigation/loop
+            if (s.isLocked) { 
                 navButtons.forEach(btn => { if(btn) btn.style.display = 'none'; });
             } else {
                  navButtons.forEach(btn => { if(btn) btn.style.display = 'flex'; });
@@ -68,38 +72,39 @@ export default function CampSongsSection() {
 
     return () => {
         campSongsSwiper.destroy(true, true);
-        if(context.swiperInstances.current['campSongsSwiper']){
+        if(context?.swiperInstances.current['campSongsSwiper']){
           delete context.swiperInstances.current['campSongsSwiper'];
         }
     };
-  }, [isMobile, context]);
+  }, [isMobile, context, songs]);
 
-  const songs = [
-    { id: "6aRI-emxQlU", title: "שיר גן ישראל 1" },
-    { id: "I5P4PNUtJ80", title: "שיר גן ישראל 2" },
-  ];
+  if (!context) {
+    return (
+      <section id="camp-songs-section" className="content-section">
+        <div className="container"><h2 className="text-center">טוען מידע...</h2></div>
+      </section>
+    );
+  }
 
   return (
     <section id="camp-songs-section" className="content-section" data-aos="fade-up" data-aos-duration="1000">
       <div className="container">
         <h2 className="text-center" data-aos="fade-up" data-aos-delay="100">שירי גן ישראל</h2>
         
-        {/* Grid for desktop */}
         <div className="camp-songs-grid" data-aos="fade-up" data-aos-delay="200">
           {songs.map(song => (
             <div className="camp-song-item" key={song.id}>
-              <iframe src={`https://www.youtube.com/embed/${song.id}`} title={song.title} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+              <iframe src={`https://www.youtube.com/embed/${song.videoId}`} title={song.title} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
             </div>
           ))}
         </div>
 
-        {/* Swiper for mobile */}
         <div className="camp-songs-swiper-container" data-aos="fade-up" data-aos-delay="200">
           <div className="swiper camp-songs-swiper" ref={swiperRef}>
             <div className="swiper-wrapper">
               {songs.map(song => (
                 <div className="swiper-slide camp-song-item" key={`swiper-${song.id}`}>
-                  <iframe src={`https://www.youtube.com/embed/${song.id}`} title={song.title} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+                  <iframe src={`https://www.youtube.com/embed/${song.videoId}`} title={song.title} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
                 </div>
               ))}
             </div>
@@ -111,5 +116,3 @@ export default function CampSongsSection() {
     </section>
   );
 }
-
-    

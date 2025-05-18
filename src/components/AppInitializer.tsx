@@ -5,13 +5,15 @@ import { useEffect, useState, useCallback, useRef, createContext } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import type SwiperCore from 'swiper';
-import type { FaqItem, ContactDetails } from '@/services/googleSheetsService'; // Import new types
+import type { FaqItem, ContactDetails, Testimonial, SwiperSlideItem, VideoItem } from '@/services/googleSheetsService';
 
-// Initial data that will be fetched (or fallback)
 export interface InitialSiteData {
   faqItems: FaqItem[];
   contactDetails: ContactDetails;
-  siteConfig: Record<string, string>; // For other general configs
+  siteConfig: Record<string, string>;
+  testimonials: Testimonial[];
+  swiperSlides: SwiperSlideItem[];
+  videos: VideoItem[];
 }
 
 export interface GlobalContextProps extends InitialSiteData {
@@ -29,19 +31,19 @@ export interface GlobalContextProps extends InitialSiteData {
   isVideoLightboxOpen: boolean;
   openVideoLightbox: (videoId: string) => void;
   closeVideoLightbox: () => void;
+  videoLightboxVideoId: string | null; // Added this to store current video ID for lightbox
   swiperInstances: React.MutableRefObject<{ [key: string]: SwiperCore | null }>;
   YOUTUBE_VIDEO_ID_HERO: string;
-  galleryImageUrls: string[]; // This might also move to sheets later
+  galleryImageUrls: string[]; 
   googleFormBaseUrl: string;
   paymentRedirectUrl: string;
 }
 
 export const GlobalContext = createContext<GlobalContextProps | null>(null);
 
-
 interface AppInitializerProps {
   children: React.ReactNode;
-  initialData: InitialSiteData; // Pass fetched data as prop
+  initialData: InitialSiteData;
 }
 
 export default function AppInitializer({ children, initialData }: AppInitializerProps) {
@@ -58,13 +60,11 @@ export default function AppInitializer({ children, initialData }: AppInitializer
 
   const swiperInstances = useRef<{ [key: string]: SwiperCore | null }>({});
 
-  // Some values might come from initialData.siteConfig now
   const YOUTUBE_VIDEO_ID_HERO = initialData.siteConfig.heroVideoId || 'b2SaA1dYwl0';
   const googleFormBaseUrl = initialData.siteConfig.registrationFormUrl || "https://docs.google.com/forms/d/e/1FAIpQLSc4BOspqh2ohsp6W0OGHqGtuXWrMb3e6C1c0bhw4bbYwnCmWA/viewform?embedded=true";
   const paymentRedirectUrl = initialData.siteConfig.paymentRedirectUrl || "https://icredit.rivhit.co.il/payment/PaymentFullPage.aspx?GroupId=5375c290-a52c-487d-ab47-14c0b0ef5365";
   
-  // Gallery images could also be fetched or managed differently later
-  const galleryImageUrls = [
+  const galleryImageUrls = [ // This is for the main page gallery swiper, not the /gallery route
       "https://lh3.googleusercontent.com/pw/AP1GczNBtFaOAbpOMFUXx9DL4emQxGdSzYm1vjivTyDnUzlHQDWgHtaEy5K3G1OZGyAbhSIkCMkReGJOOnI2OCe_ZpjXz02f3RC4_rjHO2Sslf_pvdSJC-pbboOhWYvYjeCjXtFe9G8spEwvIYlWLorXm4Diik0haX2EUPWslXKEbwguIv80gXqwp2WLP9oOgyr7RwQQbtDMV-iDAQltUoLtg6l=w1379-h919-s-no-gm?authuser=0",
       "https://lh3.googleusercontent.com/pw/AP1GczPgSy83OmgsgZDuZoPBGqd3nFunosjH2KCqQ3OhDlKeK-MkSzR4Nn70TAtyICq2UjeiCY3ic_ln5uYf0rY5SSNqC_7IkhZ0idDT5kf3wUvkecjvivzQbrwiEizm_61rjRXLVuYgnkfWcBFd1CuS4pFc=w1379-h919-s-no-gm?authuser=0",
       "https://lh3.googleusercontent.com/pw/AP1GczMsQ7kLfOlgRiMTNIGPg2y65mr-4ySFISouO0yBvZNufdxGztE9HoBwzJ2xNpwu-dNNd1eapdEwvIYlWLorXm4Diik0haX2EUPWslXKEbwguIv80gXqwp2WLP9oOgyr7RwQQbtDMV-iDAQltUoLtg6l=w1225-h919-s-no-gm?authuser=0",
@@ -136,11 +136,14 @@ export default function AppInitializer({ children, initialData }: AppInitializer
     setVideoLightboxVideoId(videoId);
     setIsVideoLightboxOpen(true);
   }, []);
-  const closeVideoLightbox = useCallback(() => setIsVideoLightboxOpen(false), []);
+  const closeVideoLightbox = useCallback(() => {
+    setIsVideoLightboxOpen(false);
+    setVideoLightboxVideoId(null); // Clear the video ID
+  }, []);
 
 
   const contextValue: GlobalContextProps = {
-    ...initialData, // Spread fetched initial data
+    ...initialData, 
     isMobileNavActive, toggleMobileNav, closeMobileNav,
     isRegistrationModalOpen, openRegistrationModal, closeRegistrationModal,
     isLightboxOpen, openLightbox, closeLightbox, lightboxImgSrc, lightboxImgAlt,
@@ -155,7 +158,7 @@ export default function AppInitializer({ children, initialData }: AppInitializer
         <div className="splash-screen" id="splashScreen">
           <div className="splash-content">
             <div className="splash-image-container">
-              <img src="https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0" alt="קעמפ גן ישראל אלעד" />
+              <img src={initialData.siteConfig.logoImageSrc || "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0"} alt="קעמפ גן ישראל אלעד" />
             </div>
             <div className="splash-box yellow"></div>
             <div className="splash-box blue"></div>

@@ -1,11 +1,10 @@
 
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-// Script import from next/script is not strictly needed if scripts are in head or AppInitializer
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import AppInitializer, { type InitialSiteData } from '@/components/AppInitializer';
-import { getFaqData, getSiteConfig } from '@/services/googleSheetsService'; // Import data fetching functions
+import { getFaqData, getSiteConfig, getTestimonials, getSwiperSlides, getVideos } from '@/services/googleSheetsService';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -17,7 +16,6 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-// Metadata can also be dynamic based on fetched data if needed later
 export async function generateMetadata(): Promise<Metadata> {
   const siteConfig = await getSiteConfig();
   return {
@@ -31,9 +29,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Fetch initial data on the server
-  const faqItems = await getFaqData();
   const siteConfig = await getSiteConfig();
+  const faqItems = await getFaqData();
+  const testimonials = await getTestimonials();
+  const swiperSlides = await getSwiperSlides();
+  const videos = await getVideos();
+  
   const contactDetails = {
     officeAddress: siteConfig.contactOfficeAddress,
     phoneNumber: siteConfig.contactPhoneNumber,
@@ -42,9 +43,12 @@ export default async function RootLayout({
   };
 
   const initialData: InitialSiteData = {
+    siteConfig,
     faqItems,
     contactDetails,
-    siteConfig,
+    testimonials,
+    swiperSlides,
+    videos,
   };
 
   return (
