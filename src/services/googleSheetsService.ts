@@ -7,14 +7,15 @@ import { env } from 'process';
 const API_KEY = env.GOOGLE_SHEETS_API_KEY;
 const SPREADSHEET_ID = env.GOOGLE_SHEETS_SPREADSHEET_ID;
 
+// This warning remains relevant as other functions still use API_KEY and SPREADSHEET_ID
 if (!API_KEY || !SPREADSHEET_ID) {
   if (process.env.NODE_ENV === 'development') {
     console.warn(
-      'Google Sheets API Key or Spreadsheet ID is missing. Site will use fallback data or fail to load dynamic content from Sheets. Please check your .env.local file.'
+      'Google Sheets API Key or Spreadsheet ID is missing. Parts of the site using the API (e.g., FAQ, Testimonials) will use fallback data or fail to load. Please check your .env.local file.'
     );
   } else {
     console.error(
-      'CRITICAL: Google Sheets API Key or Spreadsheet ID is missing in production.'
+      'CRITICAL: Google Sheets API Key or Spreadsheet ID is missing in production. This will affect parts of the site relying on the Google Sheets API.'
     );
   }
 }
@@ -24,10 +25,44 @@ interface FetchSheetDataOptions {
   range?: string; // e.g., "A1:B10"
 }
 
+// Helper function to parse simple CSV text into a 2D array
+async function parseCsv(csvText: string): Promise<string[][]> {
+  const rows = csvText.trim().split('\n');
+  return rows.map(row => {
+    // This is a very basic CSV parser. It won't handle commas within quoted fields correctly.
+    // For more complex CSVs, a library would be better.
+    return row.split(',').map(cell => cell.trim());
+  });
+}
+
+// Helper function to fetch data from a public CSV URL
+async function fetchCsvData(url: string): Promise<string[][] | null> {
+  try {
+    const response = await fetch(url, { next: { revalidate: 3600 } }); // Revalidate every hour
+    if (!response.ok) {
+      console.error(`Error fetching CSV data from ${url}: ${response.statusText}`);
+      const errorBody = await response.text();
+      console.error('Error body:', errorBody);
+      return null;
+    }
+    const csvText = await response.text();
+    if (!csvText) {
+      console.error(`Empty CSV data from ${url}`);
+      return null;
+    }
+    return parseCsv(csvText);
+  } catch (error) {
+    console.error(`Exception fetching or parsing CSV data from ${url}:`, error);
+    return null;
+  }
+}
+
+
 async function fetchSheetData<T>(
   options: FetchSheetDataOptions
 ): Promise<T | null> {
-  if (!API_KEY || !SPREADSHEET_ID) {
+  if (!API_KEY || !SPREADSHEET_ID) { // Check for API key for functions that use this method
+    console.warn(`Skipping fetch for ${options.sheetName} via API due to missing API_KEY or SPREADSHEET_ID.`);
     return null;
   }
 
@@ -39,7 +74,7 @@ async function fetchSheetData<T>(
     const response = await fetch(url, { next: { revalidate: 3600 } }); // Revalidate every hour
     if (!response.ok) {
       console.error(
-        `Error fetching sheet data for ${sheetName}: ${response.statusText}`
+        `Error fetching sheet data for ${sheetName} via API: ${response.statusText}`
       );
       const errorBody = await response.text();
       console.error('Error body:', errorBody);
@@ -48,7 +83,7 @@ async function fetchSheetData<T>(
     const data = await response.json();
     return data.values || [];
   } catch (error) {
-    console.error(`Exception fetching sheet data for ${sheetName}:`, error);
+    console.error(`Exception fetching sheet data for ${sheetName} via API:`, error);
     return null;
   }
 }
@@ -68,7 +103,7 @@ export async function getFaqData(): Promise<FaqItem[]> {
 
   if (!rawData) {
     return [
-      { id: "fallback1", question: "Could not load FAQ.", answer: "Please check configuration." }
+      { id: "fallback1", question: "Could not load FAQ.", answer: "Please check configuration or Google Sheets availability." }
     ];
   }
 
@@ -88,46 +123,64 @@ export interface ContactDetails {
 }
 
 export async function getSiteConfig(): Promise<Record<string, string>> {
-  const rawData = await fetchSheetData<Array<[string, string]>>({
-    sheetName: 'SiteConfig',
-    range: 'A1:B',
-  });
-
+  const siteConfigCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?output=csv";
+  
   const defaultConfig: Record<string, string> = {
-    siteTitle: "קעמפ גן ישראל - אלעד (ברירת מחדל)",
-    siteDescription: "תיאור אתר ברירת מחדל.",
-    heroVideoId: "b2SaA1dYwl0", // Default Hero Video
+    siteTitle: "קעמפ גן ישראל - אלעד (טעינה)",
+    siteDescription: "תיאור אתר (טעינה).",
+    logoImageSrc: "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0", // Default logo
+    heroVideoId: "b2SaA1dYwl0",
+    heroImageSrc: "https://picsum.photos/1200/675?random=hero_camp_elad_main",
+    heroImageAlt: "קדימון קעמפ גן ישראל אלעד",
+    heroImageHint: "children summer camp",
     registrationFormUrl: "https://docs.google.com/forms/d/e/1FAIpQLSc4BOspqh2ohsp6W0OGHqGtuXWrMb3e6C1c0bhw4bbYwnCmWA/viewform?embedded=true",
     paymentRedirectUrl: "https://icredit.rivhit.co.il/payment/PaymentFullPage.aspx?GroupId=5375c290-a52c-487d-ab47-14c0b0ef5365",
-    contactOfficeAddress: "כתובת משרד (ברירת מחדל)",
-    contactPhoneNumber: "050-0000000 (ברירת מחדל)",
-    contactEmail: "email@example.com (ברירת מחדל)",
-    contactHours: "שעות פעילות (ברירת מחדל)",
-    principalName: "שם המנהל (ברירת מחדל)",
-    principalMessageParagraph1: "הודעת מנהל פסקה 1 (ברירת מחדל).",
-    principalMessageParagraph2: "הודעת מנהל פסקה 2 (ברירת מחדל).",
+    contactOfficeAddress: "כתובת משרד (טעינה)",
+    contactPhoneNumber: "050-0000000 (טעינה)",
+    contactEmail: "email@example.com (טעינה)",
+    contactHours: "שעות פעילות (טעינה)",
+    principalName: "שם המנהל (טעינה)",
+    principalMessageParagraph1: "הודעת מנהל פסקה 1 (טעינה).",
+    principalMessageParagraph2: "הודעת מנהל פסקה 2 (טעינה).",
     principalImageSrc: "https://placehold.co/400x500.png",
     principalImageAlt: "מנהל הקעמפ",
     principalImageHint: "manager portrait",
-    aboutTitle: "אודותינו (ברירת מחדל)",
-    aboutParagraph1: "פסקה ראשונה אודותינו (ברירת מחדל).",
-    aboutParagraph2: "פסקה שניה אודותינו (ברירת מחדל).",
+    aboutTitle: "אודותינו (טעינה)",
+    aboutParagraph1: "פסקה ראשונה אודותינו (טעינה).",
+    aboutParagraph2: "פסקה שניה אודותינו (טעינה).",
     aboutImageSrc: "https://placehold.co/450x562.png",
     aboutImageAlt: "אודות קעמפ גן ישראל אלעד",
     aboutImageHint: "camp team",
-    mainSummaryVideoId: "gqgfz0h0om4", // Default Main Summary Video
+    mainSummaryVideoId: "gqgfz0h0om4",
   };
 
-  if (!rawData) {
-    return defaultConfig;
-  }
-
+  const rawCsvData = await fetchCsvData(siteConfigCsvUrl);
   const config: Record<string, string> = { ...defaultConfig };
-  rawData.forEach(row => {
-    if (row[0] && row[1] !== undefined && row[1] !== null) {
-      config[row[0]] = String(row[1]);
+
+  if (rawCsvData && rawCsvData.length > 1) { // rawCsvData[0] is headers
+    // Start from the second row (index 1) to skip headers
+    rawCsvData.slice(1).forEach(row => {
+      // Assuming the first column is 'key' and the second is 'value'
+      if (row && row.length >= 2 && row[0] && row[1] !== undefined && row[1] !== null) {
+        config[String(row[0]).trim()] = String(row[1]).trim();
+      }
+    });
+  } else {
+    console.warn("Could not fetch or parse SiteConfig CSV, or CSV is empty/missing headers. Using default values.");
+  }
+  
+  // Ensure essential fallbacks if CSV is missing certain keys
+  Object.keys(defaultConfig).forEach(key => {
+    if (config[key] === undefined || config[key] === null || config[key] === "") {
+        // If CSV value is missing, empty, or explicitly "null"/"undefined" string, use default
+        if (config[key] === "" || config[key]?.toLowerCase() === "null" || config[key]?.toLowerCase() === "undefined") {
+             config[key] = defaultConfig[key];
+        } else if (!config.hasOwnProperty(key)) {
+            config[key] = defaultConfig[key];
+        }
     }
   });
+
   return config;
 }
 
@@ -166,7 +219,7 @@ export interface SwiperSlideItem {
 
 export async function getSwiperSlides(): Promise<SwiperSlideItem[]> {
   const rawData = await fetchSheetData<Array<[string | number, string, string, string, string, string]>>({
-    sheetName: 'SwiperSlides', // For secondary hero swiper
+    sheetName: 'SwiperSlides', 
     range: 'A2:F',
   });
   if (!rawData) {
@@ -189,7 +242,7 @@ export interface VideoItem {
   id: string;
   videoId: string; // YouTube video ID
   title: string;
-  category: 'campSong' | 'summaryVideo' | string; // Allow other categories
+  category: 'campSong' | 'summaryVideo' | string; 
 }
 
 export async function getVideos(): Promise<VideoItem[]> {
@@ -205,8 +258,10 @@ export async function getVideos(): Promise<VideoItem[]> {
   }
   return rawData.map((row, index) => ({
     id: String(row[0] || `video-${index}`),
-    videoId: row[1] || 'dQw4w9WgXcQ', // Default to a known placeholder if missing
+    videoId: row[1] || 'dQw4w9WgXcQ', 
     title: row[2] || 'סרטון ללא כותרת',
     category: row[3] || 'general',
   }));
 }
+
+    
