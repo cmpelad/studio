@@ -1,14 +1,17 @@
 
 "use client";
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useContext } from 'react';
+import { GlobalContext, type InitialSiteData } from '@/components/AppInitializer'; // Import FaqItem type
+import type { FaqItem } from '@/services/googleSheetsService';
 
-interface FaqItemProps {
+interface FaqItemComponentProps {
   question: string;
   answer: string;
   delay: string;
+  isOpen?: boolean; // Optional: for potentially opening the first item
 }
 
-const FaqItemComponent: React.FC<FaqItemProps> = ({ question, answer, delay }) => {
+const FaqItemComponent: React.FC<FaqItemComponentProps> = ({ question, answer, delay, isOpen }) => {
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const summaryRef = useRef<HTMLElement>(null);
   const answerRef = useRef<HTMLDivElement>(null);
@@ -36,8 +39,8 @@ const FaqItemComponent: React.FC<FaqItemProps> = ({ question, answer, delay }) =
         }
       });
 
-      const isOpen = detailsNode.hasAttribute('open');
-      if (isOpen) {
+      const currentlyOpen = detailsNode.hasAttribute('open');
+      if (currentlyOpen) {
         answerNode.style.maxHeight = '0';
         answerNode.style.opacity = '0';
         answerNode.style.paddingTop = '0';
@@ -45,7 +48,7 @@ const FaqItemComponent: React.FC<FaqItemProps> = ({ question, answer, delay }) =
         setTimeout(() => detailsNode.removeAttribute('open'), 450);
       } else {
         detailsNode.setAttribute('open', '');
-        requestAnimationFrame(() => { // Ensure DOM update before calculating scrollHeight
+        requestAnimationFrame(() => { 
           answerNode.style.paddingTop = '30px';
           answerNode.style.paddingBottom = '30px';
           answerNode.style.maxHeight = answerNode.scrollHeight + 'px';
@@ -56,24 +59,31 @@ const FaqItemComponent: React.FC<FaqItemProps> = ({ question, answer, delay }) =
 
     summaryNode.addEventListener('click', handleClick);
 
-    // Initial state for closed items
-    if (!detailsNode.hasAttribute('open')) {
+    // Initial state
+    if (isOpen && !detailsNode.hasAttribute('open')) {
+        detailsNode.setAttribute('open', '');
+        requestAnimationFrame(() => { 
+            answerNode.style.paddingTop = '30px';
+            answerNode.style.paddingBottom = '30px';
+            answerNode.style.maxHeight = answerNode.scrollHeight + 'px';
+            answerNode.style.opacity = '1';
+        });
+    } else if (!detailsNode.hasAttribute('open')) {
         answerNode.style.maxHeight = '0';
         answerNode.style.opacity = '0';
         answerNode.style.paddingTop = '0';
         answerNode.style.paddingBottom = '0';
-    } else { // If server-rendered open or JS sets it before this effect
+    } else {
         answerNode.style.paddingTop = '30px';
         answerNode.style.paddingBottom = '30px';
         answerNode.style.maxHeight = answerNode.scrollHeight + 'px';
         answerNode.style.opacity = '1';
     }
 
-
     return () => {
       summaryNode.removeEventListener('click', handleClick);
     };
-  }, []);
+  }, [isOpen]);
 
 
   return (
@@ -81,7 +91,7 @@ const FaqItemComponent: React.FC<FaqItemProps> = ({ question, answer, delay }) =
       <details ref={detailsRef}>
         <summary ref={summaryRef}>{question}</summary>
         <div className="faq-answer" ref={answerRef}>
-          <p>{answer}</p>
+          <p dangerouslySetInnerHTML={{ __html: answer.replace(/\\n/g, '<br />') }} />
         </div>
       </details>
     </div>
@@ -90,13 +100,23 @@ const FaqItemComponent: React.FC<FaqItemProps> = ({ question, answer, delay }) =
 
 
 export default function FaqSection() {
-  const faqs = [
-    { q: "לאילו גילאים מיועד הקעמפ?", a: "הקעמפ מיועד לבנים בגילאי 6-13 (בוגרי כיתות א'-ז'). אנו מחלקים את החניכים לקבוצות גיל הומוגניות על מנת להתאים את הפעילויות והתכנים.", delay: "0" },
-    { q: "מהן שעות הפעילות?", a: "הפעילות מתקיימת בימים ראשון עד חמישי, בין השעות 08:30 בבוקר ועד 16:00 אחר הצהריים. בימי שישי הפעילות מסתיימת מוקדם יותר, לקראת כניסת השבת.", delay: "50" },
-    { q: "האם יש הסעות מאורגנות?", a: "כן, אנו מפעילים מערך הסעות מסודר מנקודות איסוף מרכזיות ברחבי אלעד והסביבה. פרטים מדויקים על מסלולי ההסעות יימסרו לנרשמים.", delay: "100" },
-    { q: "איזו ארוחת צהריים מוגשת?", a: "אנו מספקים ארוחת צהריים חמה, מזינה וכשרה למהדרין מדי יום, ממטבח המפוקח על ידי גורמי כשרות מוסמכים. התפריט מגוון ומותאם לילדים.", delay: "150" },
-    { q: "מה לגבי ביטוח ובטיחות?", a: "בטיחות החניכים נמצאת בראש סדר העדיפויות שלנו. כל הפעילויות מבוצעות בליווי צוות מדריכים מנוסה ומוסמך, ואנו מחזיקים בכל אישורי הבטיחות הנדרשים ופוליסת ביטוח מקיפה לכל חניך.", delay: "200" },
+  const context = useContext(GlobalContext);
+  
+  // Use FAQ data from context, or provide a fallback if context is not yet available or data is missing
+  const faqs: FaqItem[] = context?.faqItems || [
+    { id: "loading1", question: "טוען שאלות ותשובות...", answer: "אנא המתן.", delay: "0" }
   ];
+
+  if (!context) {
+     return (
+      <section id="faq-section" className="content-section bg-ultra-light-beige" data-aos="fade-up" data-aos-duration="1000">
+        <div className="container">
+          <h2 className="text-center">טוען מידע...</h2>
+        </div>
+      </section>
+    );
+  }
+
 
   return (
     <section id="faq-section" className="content-section bg-ultra-light-beige" data-aos="fade-up" data-aos-duration="1000">
@@ -107,12 +127,15 @@ export default function FaqSection() {
         <h2 className="text-center" data-aos="fade-up" data-aos-delay="100">שאלות ותשובות נפוצות</h2>
         <div className="faq-list" data-aos="fade-up" data-aos-delay="150">
           {faqs.map((faq, index) => (
-            <FaqItemComponent key={index} question={faq.q} answer={faq.a} delay={faq.delay} />
+            <FaqItemComponent 
+              key={faq.id || index} 
+              question={faq.question} 
+              answer={faq.answer} 
+              delay={faq.delay || String(index * 50)} 
+            />
           ))}
         </div>
       </div>
     </section>
   );
 }
-
-    
