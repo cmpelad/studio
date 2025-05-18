@@ -38,41 +38,37 @@ const fallbackSiteConfig: Record<string, string> = {
 };
 
 const fallbackFaqs: FaqItem[] = [
-    { id: "faq1_fallback", question: "לאילו גילאים מיועד הקעמפ? (ברירת מחדל)", answer: "הקעמפ מיועד לבנים בגילאי ז'-ט' (בוגרי כיתות ו'-ח'). אנו שמים דגש על התאמת הפעילויות והאווירה לגילאים אלו.", delay: "0" },
-    { id: "faq2_fallback", question: "מהן שעות הפעילות בקעמפ? (ברירת מחדל)", answer: "שעות הפעילות הן בדרך כלל מ-09:00 בבוקר ועד 17:00 אחר הצהריים. ייתכנו ימים עם פעילויות ערב מיוחדות, עליהן תימסר הודעה מראש.", delay: "50" },
-    { id: "faq3_fallback", question: "האם יש צורך להביא אוכל? (ברירת מחדל)", answer: "לא, הקעמפ מספק ארוחות בוקר, צהריים וערב כשרות למהדרין, וכן כיבוד קל בין הארוחות. במקרה של רגישויות מזון, יש לעדכן אותנו מראש.", delay: "100" },
-    { id: "faq4_fallback", question: "איזה ציוד יש להביא לקעמפ? (ברירת מחדל)", answer: "רשימת ציוד מפורטת תישלח לנרשמים. באופן כללי, יש להצטייד בבגדים נוחים, כובע, בקבוק מים, קרם הגנה, ופריטים אישיים. לטיולים יש להצטייד בנעלי הליכה נוחות.", delay: "150" },
-    { id: "faq5_fallback", question: "מהי מדיניות הביטולים? (ברירת מחדל)", answer: "מדיניות הביטולים מפורטת בתקנון ההרשמה. באופן כללי, ניתן לבטל עד תאריך מסוים ולקבל החזר חלקי או מלא, בהתאם לתנאים.", delay: "200" },
+    { id: "faq1_fallback", question: "לאילו גילאים מיועד הקעמפ? (מקומי)", answer: "הקעמפ מיועד לבנים בגילאי ז'-ט' (בוגרי כיתות ו'-ח'). אנו שמים דגש על התאמת הפעילויות והאווירה לגילאים אלו.", delay: "0" },
+    { id: "faq2_fallback", question: "מהן שעות הפעילות בקעמפ? (מקומי)", answer: "שעות הפעילויות הן בדרך כלל מ-09:00 בבוקר ועד 17:00 אחר הצהריים. ייתכנו ימים עם פעילויות ערב מיוחדות, עליהן תימסר הודעה מראש.", delay: "50" },
+    { id: "faq3_fallback", question: "האם יש צורך להביא אוכל? (מקומי)", answer: "לא, הקעמפ מספק ארוחות בוקר, צהריים וערב כשרות למהדרין, וכן כיבוד קל בין הארוחות. במקרה של רגישויות מזון, יש לעדכן אותנו מראש.", delay: "100" },
+    { id: "faq4_fallback", question: "איזה ציוד יש להביא לקעמפ? (מקומי)", answer: "רשימת ציוד מפורטת תישלח לנרשמים. באופן כללי, יש להצטייד בבגדים נוחים, כובע, בקבוק מים, קרם הגנה, ופריטים אישיים. לטיולים יש להצטייד בנעלי הליכה נוחות.", delay: "150" },
+    { id: "faq5_fallback", question: "מהי מדיניות הביטולים? (מקומי)", answer: "מדיניות הביטולים מפורטת בתקנון ההרשמה. באופן כללי, ניתן לבטל עד תאריך מסוים ולקבל החזר חלקי או מלא, בהתאם לתנאים.", delay: "200" },
 ];
 
 const fallbackTestimonials: Testimonial[] = [
-    { id: "testimonial1_fallback", quote: "הבן שלי חזר מאושר מהקעמפ! הוא לא הפסיק לספר חוויות ונהנה מכל רגע. הצוות היה מדהים והפעילויות מגוונות. ממליצים בחום! (ברירת מחדל)", author: "משפחת כהן, אלעד" },
-    { id: "testimonial2_fallback", quote: "זו השנה השנייה שאנחנו שולחים את הילד לקעמפ גן ישראל אלעד, וכל פעם מחדש אנחנו מתרשמים מהמקצועיות, מהאווירה החסידית ומההשקעה בכל פרט. יישר כח! (ברירת מחדל)", author: "משפחת לוי, פתח תקווה" },
-    { id: "testimonial3_fallback", quote: "המדריכים בקעמפ פשוט אלופים! הם יצרו קשר אישי וחם עם הילדים, והיוו עבורם דוגמה אישית. הילד שלנו מחכה כבר לשנה הבאה. תודה רבה! (ברירת מחדל)", author: "משפחת אברמוביץ, בני ברק" },
+    { id: "testimonial1_fallback", quote: "הבן שלי חזר מאושר מהקעמפ! הוא לא הפסיק לספר חוויות ונהנה מכל רגע. הצוות היה מדהים והפעילויות מגוונות. ממליצים בחום! (מקומי)", author: "משפחת כהן, אלעד" },
+    { id: "testimonial2_fallback", quote: "זו השנה השנייה שאנחנו שולחים את הילד לקעמפ גן ישראל אלעד, וכל פעם מחדש אנחנו מתרשמים מהמקצועיות, מהאווירה החסידית ומההשקעה בכל פרט. יישר כח! (מקומי)", author: "משפחת לוי, פתח תקווה" },
+    { id: "testimonial3_fallback", quote: "המדריכים בקעמפ פשוט אלופים! הם יצרו קשר אישי וחם עם הילדים, והיוו עבורם דוגמה אישית. הילד שלנו מחכה כבר לשנה הבאה. תודה רבה! (מקומי)", author: "משפחת אברמוביץ, בני ברק" },
 ];
 
 const fallbackSwiperSlides: SwiperSlideItem[] = [
-    { id: "slide1_fallback", imageSrc: "https://images.unsplash.com/photo-1542868187-c40917f680a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwzfHxzdW1tZXIlMjBjYW1wJTIwY2hpbGRyZW58ZW58MHx8fHwxNzIwMDk5NjUxfDA&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "תמונת אווירה 1 (ברירת מחדל)", imageHint: "camp activities", captionTitle: "חוויה של פעם בחיים! (ברירת מחדל)", captionText: "מחנה הקיץ הכי שווה מחכה לכם עם מגוון פעילויות." },
-    { id: "slide2_fallback", imageSrc: "https://images.unsplash.com/photo-1504829857107-4acf85189b73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwyfHxzdW1tZXIlMjBjYW1wJTIwZnVufGVufDB8fHx8MTcyMDA5OTgwMHww&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "תמונת אווירה 2 (ברירת מחדל)", imageHint: "children outdoors", captionTitle: "מדריכים תותחים ואווירה מיוחדת! (ברירת מחדל)", captionText: "הצטרפו אלינו לקיץ של כיף, חברות וערכים." },
-    { id: "slide3_fallback", imageSrc: "https://images.unsplash.com/photo-1600904332802-915c1a0600a2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwxMHx8c3VtbWVyJTIwY2FtcCUyMGZ1bnxlbnwwfHx8fDE3MjAwOTk4MDB8MA&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "תמונת אווירה 3 (ברירת מחדל)", imageHint: "camp games", captionTitle: "פעילויות מגוונות ומרתקות! (ברירת מחדל)", captionText: "טיולים, סדנאות, התוועדויות ועוד המון הפתעות." },
+    { id: "slide1_fallback", imageSrc: "https://images.unsplash.com/photo-1542868187-c40917f680a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwzfHxzdW1tZXIlMjBjYW1wJTIwY2hpbGRyZW58ZW58MHx8fHwxNzIwMDk5NjUxfDA&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "תמונת אווירה 1 (מקומי)", imageHint: "camp activities", captionTitle: "חוויה של פעם בחיים! (מקומי)", captionText: "מחנה הקיץ הכי שווה מחכה לכם עם מגוון פעילויות." },
+    { id: "slide2_fallback", imageSrc: "https://images.unsplash.com/photo-1504829857107-4acf85189b73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwyfHxzdW1tZXIlMjBjYW1wJTIwZnVufGVufDB8fHx8MTcyMDA5OTgwMHww&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "תמונת אווירה 2 (מקומי)", imageHint: "children outdoors", captionTitle: "מדריכים תותחים ואווירה מיוחדת! (מקומי)", captionText: "הצטרפו אלינו לקיץ של כיף, חברות וערכים." },
+    { id: "slide3_fallback", imageSrc: "https://images.unsplash.com/photo-1600904332802-915c1a0600a2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwxMHx8c3VtbWVyJTIwY2FtcCUyMGZ1bnxlbnwwfHx8fDE3MjAwOTk4MDB8MA&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "תמונת אווירה 3 (מקומי)", imageHint: "camp games", captionTitle: "פעילויות מגוונות ומרתקות! (מקומי)", captionText: "טיולים, סדנאות, התוועדויות ועוד המון הפתעות." },
 ];
 
 const fallbackVideos: VideoItem[] = [
-    { id: "song1_fallback", videoId: "6aRI-emxQlU", title: "שיר הנושא - קעמפ גן ישראל (ברירת מחדל)", category: "campSong" },
-    { id: "song2_fallback", videoId: "jNQXAC9IVRw", title: "המנון הקעמפ (דוגמה)", category: "campSong" },
-    { id: "summary1_fallback", videoId: "gqgfz0h0om4", title: "סרטון סיכום קעמפ תשפ\"ג (ברירת מחדל)", category: "summaryVideo" },
-    { id: "summary2_fallback", videoId: "dQw4w9WgXcQ", title: "סרטון סיכום נוסף (דוגמה)", category: "summaryVideo" },
+    { id: "song1_fallback", videoId: "6aRI-emxQlU", title: "שיר הנושא - קעמפ גן ישראל (מקומי)", category: "campSong" },
+    { id: "song2_fallback", videoId: "jNQXAC9IVRw", title: "המנון הקעמפ (דוגמה מקומית)", category: "campSong" },
+    { id: "summary1_fallback", videoId: "gqgfz0h0om4", title: "סרטון סיכום קעמפ תשפ\"ג (מקומי)", category: "summaryVideo" },
+    { id: "summary2_fallback", videoId: "dQw4w9WgXcQ", title: "סרטון סיכום נוסף (דוגמה מקומית)", category: "summaryVideo" },
 ];
 
 
 if (!API_KEY || !SPREADSHEET_ID) {
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') { // Log in both dev and prod if keys are missing
     console.warn(
-      'GOOGLE_SHEETS_API_KEY or GOOGLE_SHEETS_SPREADSHEET_ID is missing. Site will use hardcoded fallback data for API-dependent features. Please check your .env.local file if you intend to use Google Sheets API.'
-    );
-  } else {
-    console.error(
-      'CRITICAL: GOOGLE_SHEETS_API_KEY or GOOGLE_SHEETS_SPREADSHEET_ID is missing in production. This will affect parts of the site relying on the Google Sheets API.'
+      'GOOGLE_SHEETS_API_KEY or GOOGLE_SHEETS_SPREADSHEET_ID is missing. Site will use hardcoded fallback data for API-dependent features. Please check your environment variables.'
     );
   }
 }
@@ -94,7 +90,7 @@ async function fetchSheetData<T extends string[]>(
   const sheetRange = range ? `${sheetName}!${range}` : sheetName;
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(sheetRange)}?key=${API_KEY}&valueRenderOption=UNFORMATTED_VALUE&majorDimension=ROWS`;
 
-  console.log(`Attempting to fetch data from Google Sheet: ${sheetName}, Range: ${sheetRange}`);
+  console.log(`Attempting to fetch data from Google Sheet API: ${sheetName}, Range: ${sheetRange}`);
   try {
     const response = await fetch(url, { next: { revalidate: 3600 } }); // Revalidate every hour
     if (!response.ok) {
@@ -127,17 +123,18 @@ async function fetchCsvDataFromUrl(csvUrl: string): Promise<string[][] | null> {
     const rows = text
       .split(/\r?\n/)
       .map(line => {
-        // More robust CSV parsing: handles quoted fields with commas inside
         const row: string[] = [];
         let currentField = '';
         let inQuotes = false;
         for (let i = 0; i < line.length; i++) {
           const char = line[i];
           if (char === '"') {
-            inQuotes = !inQuotes;
-            if (i + 1 < line.length && line[i+1] === '"') { // Handle escaped quote ""
+            // Check for escaped quote ""
+            if (inQuotes && i + 1 < line.length && line[i+1] === '"') {
               currentField += '"';
-              i++; 
+              i++; // Skip next quote
+            } else {
+              inQuotes = !inQuotes;
             }
           } else if (char === ',' && !inQuotes) {
             row.push(currentField.trim());
@@ -146,7 +143,7 @@ async function fetchCsvDataFromUrl(csvUrl: string): Promise<string[][] | null> {
             currentField += char;
           }
         }
-        row.push(currentField.trim()); // Add the last field
+        row.push(currentField.trim());
         return row;
       })
       .filter(row => row.length > 0 && row.some(cell => cell.trim() !== ''));
@@ -175,21 +172,41 @@ export async function getFaqData(): Promise<FaqItem[]> {
     const rows = await fetchCsvDataFromUrl(directCsvUrl);
     if (rows && rows.length > 0) {
       let dataRows = rows;
+      let hasHeader = false;
       // Check if the first row is a header row (id,question,answer)
-      if (rows[0][0]?.trim().toLowerCase() === 'id' && rows[0][1]?.trim().toLowerCase() === 'question' && rows[0][2]?.trim().toLowerCase() === 'answer') {
+      if (rows[0].length >=3 && rows[0][0]?.trim().toLowerCase() === 'id' && rows[0][1]?.trim().toLowerCase() === 'question' && rows[0][2]?.trim().toLowerCase() === 'answer') {
         dataRows = rows.slice(1); // Skip header row
-        console.log("getFaqData: CSV Header row detected and skipped.");
+        hasHeader = true;
+        console.log("getFaqData: CSV Header row (id,question,answer) detected and skipped.");
+      } else if (rows[0].length >=2 && rows[0][0]?.trim().toLowerCase() === 'question' && rows[0][1]?.trim().toLowerCase() === 'answer') {
+        // CSV has only question and answer headers
+        dataRows = rows.slice(1);
+        hasHeader = true; // Still a header, just different format
+        console.log("getFaqData: CSV Header row (question,answer) detected and skipped.");
       } else {
-        console.log("getFaqData: No CSV Header row detected, assuming direct data.");
+        console.log("getFaqData: No specific CSV Header row detected, assuming direct data.");
       }
 
       if (dataRows.length > 0) {
-        const faqs = dataRows.map((row, index) => ({
-          id: row[0]?.trim() || `faq_csv_${index}`,
-          question: row[1]?.trim() || '',
-          answer: row[2]?.trim() || '', // Assuming answer is in the third column
-          delay: String(index * 50),
-        }));
+        const faqs = dataRows.map((row, index) => {
+          if (hasHeader && rows[0].length >= 3 && rows[0][0]?.trim().toLowerCase() === 'id') { // CSV with id, question, answer
+            console.log(`Processing CSV row (id,q,a): ${row[0]}, ${row[1]}, ${row[2]}`);
+            return {
+              id: row[0]?.trim() || `faq_csv_${index}`,
+              question: row[1]?.trim() || '',
+              answer: row[2]?.trim() || '',
+              delay: String(index * 50),
+            };
+          } else { // CSV with only question, answer (or no header assumed)
+            console.log(`Processing CSV row (q,a or direct): ${row[0]}, ${row[1]}`);
+            return {
+              id: `faq_csv_${index}`, // Generate ID if not present
+              question: row[0]?.trim() || '',
+              answer: row[1]?.trim() || '',
+              delay: String(index * 50),
+            };
+          }
+        });
         console.log(`getFaqData: Processed ${faqs.length} FAQ items from CSV URL.`);
         return faqs;
       } else {
@@ -207,7 +224,7 @@ export async function getFaqData(): Promise<FaqItem[]> {
     const sheetName = 'FAQ';
     console.log(`getFaqData: CSV fetch failed or returned no data. Attempting to fetch from Google Sheets API, Sheet: ${sheetName}`);
     try {
-      const rows = await fetchSheetData<[string, string, string]>({ sheetName });
+      const rows = await fetchSheetData<[string, string, string]>({ sheetName }); // Expects 3 columns: id, question, answer
       if (rows && rows.length > 1) { // Assuming first row is header
         const faqs = rows.slice(1).map((row, index) => ({
           id: row[0] || `faq_api_${index}`,
@@ -241,6 +258,8 @@ export interface ContactDetails {
 
 export async function getSiteConfig(): Promise<Record<string, string>> {
   const config: Record<string, string> = { ...fallbackSiteConfig };
+  
+  // No CSV fetching for SiteConfig for now, revert to API or fallback
   const sheetName = 'SiteConfig';
 
   if (API_KEY && SPREADSHEET_ID) {
@@ -254,7 +273,7 @@ export async function getSiteConfig(): Promise<Record<string, string>> {
           }
         });
         console.log(`getSiteConfig: Successfully loaded and merged ${rows.length -1} config items from API.`);
-        return config; // Return config from API if successful
+        return config; 
       } else {
         console.log(`getSiteConfig: No data or only header in ${sheetName} sheet via API. Using fallbackSiteConfig.`);
       }
@@ -277,7 +296,7 @@ export interface Testimonial {
 }
 
 export async function getTestimonials(): Promise<Testimonial[]> {
-    // console.log("getTestimonials: Returning hardcoded fallbackTestimonials.");
+    console.log("getTestimonials: Returning hardcoded fallbackTestimonials.");
     return fallbackTestimonials;
 }
 
@@ -291,8 +310,8 @@ export interface SwiperSlideItem {
 }
 
 export async function getSwiperSlides(): Promise<SwiperSlideItem[]> {
-  // console.log("getSwiperSlides: Returning hardcoded data.");
-  return fallbackSwiperSlides; // Corrected to use the defined constant
+  console.log("getSwiperSlides: Returning hardcoded fallbackSwiperSlides."); // Corrected variable name
+  return fallbackSwiperSlides;
 }
 
 export interface VideoItem {
@@ -303,7 +322,9 @@ export interface VideoItem {
 }
 
 export async function getVideos(): Promise<VideoItem[]> {
-  // console.log("getVideos: Returning hardcoded fallbackVideos.");
+  console.log("getVideos: Returning hardcoded fallbackVideos.");
   return fallbackVideos;
 }
+    
+
     
