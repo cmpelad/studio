@@ -1,13 +1,19 @@
 
-body.gallery-page { /* Apply to HTML or body tag via layout */
+.gallery-layout-container {
     font-family: 'Rubik', sans-serif;
-    direction: rtl;
-    margin: 0;
-    padding: 0;
-    background-color: #f9f9f9;
-    color: #333;
+    /* direction: rtl; is inherited from RootLayout's html tag */
+    background-color: #f9f9f9; /* Specific background for gallery pages */
+    color: #333; /* Specific text color for gallery pages */
     line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - var(--header-height, 75px)); /* Adjust based on actual header height if needed */
 }
+
+.gallery-layout-container > .gallery-main-content {
+    flex-grow: 1; /* Allows main content to fill available space */
+}
+
 
 .gallery-header {
     background-color: #1E3A8A; /* Primary color from site */
@@ -102,7 +108,7 @@ body.gallery-page { /* Apply to HTML or body tag via layout */
 .back-link-container {
     text-align: center;
     margin-top: 40px;
-    margin-bottom: 20px;
+    margin-bottom: 20px; /* Added margin to bottom for spacing */
 }
 
 .back-link {
