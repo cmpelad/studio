@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
+  // Using static/hardcoded data from getSiteConfig
   const siteConfig = await getSiteConfig();
   return {
     title: siteConfig.siteTitle || 'קעמפ גן ישראל - אלעד',
@@ -29,6 +30,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Fetching all data (which will now be hardcoded from the service)
   const siteConfig = await getSiteConfig();
   const faqItems = await getFaqData();
   const testimonials = await getTestimonials();

@@ -2,66 +2,34 @@
 // src/services/googleSheetsService.ts
 'use server';
 
+// Note: API_KEY and SPREADSHEET_ID are no longer used by getSiteConfig,
+// but kept for other functions if they are reactivated later.
 import { env } from 'process';
 
 const API_KEY = env.GOOGLE_SHEETS_API_KEY;
 const SPREADSHEET_ID = env.GOOGLE_SHEETS_SPREADSHEET_ID;
 
-// This warning remains relevant as other functions still use API_KEY and SPREADSHEET_ID
 if (!API_KEY || !SPREADSHEET_ID) {
   if (process.env.NODE_ENV === 'development') {
     console.warn(
-      'Google Sheets API Key or Spreadsheet ID is missing. Parts of the site using the API (e.g., FAQ, Testimonials) will use fallback data or fail to load. Please check your .env.local file.'
+      'Google Sheets API Key or Spreadsheet ID is missing. Parts of the site using the API (e.g., FAQ, Testimonials if re-enabled) will use fallback data or fail to load. Please check your .env.local file.'
     );
   } else {
     console.error(
-      'CRITICAL: Google Sheets API Key or Spreadsheet ID is missing in production. This will affect parts of the site relying on the Google Sheets API.'
+      'CRITICAL: Google Sheets API Key or Spreadsheet ID is missing in production. This will affect parts of the site relying on the Google Sheets API if those parts are re-enabled.'
     );
   }
 }
 
 interface FetchSheetDataOptions {
   sheetName: string;
-  range?: string; // e.g., "A1:B10"
+  range?: string;
 }
-
-// Helper function to parse simple CSV text into a 2D array
-async function parseCsv(csvText: string): Promise<string[][]> {
-  const rows = csvText.trim().split('\n');
-  return rows.map(row => {
-    // This is a very basic CSV parser. It won't handle commas within quoted fields correctly.
-    // For more complex CSVs, a library would be better.
-    return row.split(',').map(cell => cell.trim());
-  });
-}
-
-// Helper function to fetch data from a public CSV URL
-async function fetchCsvData(url: string): Promise<string[][] | null> {
-  try {
-    const response = await fetch(url, { next: { revalidate: 3600 } }); // Revalidate every hour
-    if (!response.ok) {
-      console.error(`Error fetching CSV data from ${url}: ${response.statusText}`);
-      const errorBody = await response.text();
-      console.error('Error body:', errorBody);
-      return null;
-    }
-    const csvText = await response.text();
-    if (!csvText) {
-      console.error(`Empty CSV data from ${url}`);
-      return null;
-    }
-    return parseCsv(csvText);
-  } catch (error) {
-    console.error(`Exception fetching or parsing CSV data from ${url}:`, error);
-    return null;
-  }
-}
-
 
 async function fetchSheetData<T>(
   options: FetchSheetDataOptions
 ): Promise<T | null> {
-  if (!API_KEY || !SPREADSHEET_ID) { // Check for API key for functions that use this method
+  if (!API_KEY || !SPREADSHEET_ID) {
     console.warn(`Skipping fetch for ${options.sheetName} via API due to missing API_KEY or SPREADSHEET_ID.`);
     return null;
   }
@@ -71,7 +39,7 @@ async function fetchSheetData<T>(
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(sheetRange)}?key=${API_KEY}&valueRenderOption=UNFORMATTED_VALUE&majorDimension=ROWS`;
 
   try {
-    const response = await fetch(url, { next: { revalidate: 3600 } }); // Revalidate every hour
+    const response = await fetch(url, { next: { revalidate: 3600 } });
     if (!response.ok) {
       console.error(
         `Error fetching sheet data for ${sheetName} via API: ${response.statusText}`
@@ -96,23 +64,16 @@ export interface FaqItem {
 }
 
 export async function getFaqData(): Promise<FaqItem[]> {
-  const rawData = await fetchSheetData<Array<[string | number, string, string]>>({
-    sheetName: 'FAQ',
-    range: 'A2:C', 
-  });
-
-  if (!rawData) {
-    return [
-      { id: "fallback1", question: "Could not load FAQ.", answer: "Please check configuration or Google Sheets availability." }
-    ];
-  }
-
-  return rawData.map((row, index) => ({
-    id: String(row[0] || `faq-${index}`),
-    question: row[1] || 'No question',
-    answer: row[2] || 'No answer',
-    delay: String(index * 50),
-  }));
+  // Returning hardcoded FAQ data
+  const fallbackFaqs: FaqItem[] = [
+    { id: "faq1", question: "לאילו גילאים מיועד הקעמפ?", answer: "הקעמפ מיועד לבנים בגילאי ז'-ט' (בוגרי כיתות ו'-ח'). אנו שמים דגש על התאמת הפעילויות והאווירה לגילאים אלו.", delay: "0" },
+    { id: "faq2", question: "מהן שעות הפעילות בקעמפ?", answer: "שעות הפעילות הן בדרך כלל מ-09:00 בבוקר ועד 17:00 אחר הצהריים. ייתכנו ימים עם פעילויות ערב מיוחדות, עליהן תימסר הודעה מראש.", delay: "50" },
+    { id: "faq3", question: "האם יש צורך להביא אוכל?", answer: "לא, הקעמפ מספק ארוחות בוקר, צהריים וערב כשרות למהדרין, וכן כיבוד קל בין הארוחות. במקרה של רגישויות מזון, יש לעדכן אותנו מראש.", delay: "100" },
+    { id: "faq4", question: "איזה ציוד יש להביא לקעמפ?", answer: "רשימת ציוד מפורטת תישלח לנרשמים. באופן כללי, יש להצטייד בבגדים נוחים, כובע, בקבוק מים, קרם הגנה, ופריטים אישיים. לטיולים יש להצטייד בנעלי הליכה נוחות.", delay: "150" },
+    { id: "faq5", question: "מהי מדיניות הביטולים?", answer: "מדיניות הביטולים מפורטת בתקנון ההרשמה. באופן כללי, ניתן לבטל עד תאריך מסוים ולקבל החזר חלקי או מלא, בהתאם לתנאים.", delay: "200" }
+  ];
+  console.log("getFaqData: Returning hardcoded data.");
+  return fallbackFaqs;
 }
 
 export interface ContactDetails {
@@ -123,65 +84,37 @@ export interface ContactDetails {
 }
 
 export async function getSiteConfig(): Promise<Record<string, string>> {
-  const siteConfigCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?output=csv";
-  
+  console.log("getSiteConfig: Returning hardcoded data.");
+  // Returning hardcoded site configuration
   const defaultConfig: Record<string, string> = {
-    siteTitle: "קעמפ גן ישראל - אלעד (טעינה)",
-    siteDescription: "תיאור אתר (טעינה).",
-    logoImageSrc: "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0", // Default logo
+    siteTitle: "קעמפ גן ישראל - אלעד",
+    siteDescription: "חוויה של פעם בחיים! מחנה הקיץ הכי שווה מחכה לכם עם פעילויות מגוונות, מדריכים תותחים, ואווירה חסידית מיוחדת.",
+    logoImageSrc: "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0",
     heroVideoId: "b2SaA1dYwl0",
-    heroImageSrc: "https://picsum.photos/1200/675?random=hero_camp_elad_main",
+    heroImageSrc: "https://images.unsplash.com/photo-1560707303-11e40c4110c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHw1fHxjaGlsZHJlbiUyMHN1bW1lciUyMGNhbXB8ZW58MHx8fHwxNzIwMDk5NzI4fDA&ixlib=rb-4.0.3&q=80&w=1080",
     heroImageAlt: "קדימון קעמפ גן ישראל אלעד",
     heroImageHint: "children summer camp",
     registrationFormUrl: "https://docs.google.com/forms/d/e/1FAIpQLSc4BOspqh2ohsp6W0OGHqGtuXWrMb3e6C1c0bhw4bbYwnCmWA/viewform?embedded=true",
     paymentRedirectUrl: "https://icredit.rivhit.co.il/payment/PaymentFullPage.aspx?GroupId=5375c290-a52c-487d-ab47-14c0b0ef5365",
-    contactOfficeAddress: "כתובת משרד (טעינה)",
-    contactPhoneNumber: "050-0000000 (טעינה)",
-    contactEmail: "email@example.com (טעינה)",
-    contactHours: "שעות פעילות (טעינה)",
-    principalName: "שם המנהל (טעינה)",
-    principalMessageParagraph1: "הודעת מנהל פסקה 1 (טעינה).",
-    principalMessageParagraph2: "הודעת מנהל פסקה 2 (טעינה).",
+    contactOfficeAddress: "המשרד הראשי: רחוב רבי יהודה הנשיא 22, אלעד",
+    contactPhoneNumber: "050-1234567",
+    contactEmail: "office@camp-elad.org.il",
+    contactHours: "ימים א'-ה': 9:00-17:00, יום ו': 9:00-12:00",
+    principalName: "הרב מנחם מענדל גרינפלד",
+    principalMessageParagraph1: "הורים וחניכים יקרים, אנו נרגשים לפתוח את שעריו של קעמפ גן ישראל אלעד לשנה נוספת של חוויות בלתי נשכחות. הקעמפ שלנו הוא לא רק מקום של כיף והנאה, אלא גם בית חם שמחנך לאורם של ערכי היהדות והחסידות.",
+    principalMessageParagraph2: "הצוות המסור שלנו, המורכב ממדריכים מנוסים וחדורי שליחות, עמל ימים כלילות כדי להכין תוכנית עשירה ומגוונת שתשלב פעילויות אתגריות, סדנאות יצירה, טיולים מרתקים, וכמובן – לימוד והעמקה בתכנים חסידיים בצורה חווייתית ומהנה. אנו מזמינים אתכם להצטרף למשפחת קעמפ גן ישראל אלעד!",
     principalImageSrc: "https://placehold.co/400x500.png",
-    principalImageAlt: "מנהל הקעמפ",
-    principalImageHint: "manager portrait",
-    aboutTitle: "אודותינו (טעינה)",
-    aboutParagraph1: "פסקה ראשונה אודותינו (טעינה).",
-    aboutParagraph2: "פסקה שניה אודותינו (טעינה).",
-    aboutImageSrc: "https://placehold.co/450x562.png",
-    aboutImageAlt: "אודות קעמפ גן ישראל אלעד",
-    aboutImageHint: "camp team",
-    mainSummaryVideoId: "gqgfz0h0om4",
+    principalImageAlt: "מנהל הקעמפ הרב מנחם מענדל גרינפלד",
+    principalImageHint: "rabbi portrait",
+    aboutTitle: "קעמפ גן ישראל אלעד: חוויה יהודית, חסידית ומהנה!",
+    aboutParagraph1: "קעמפ גן ישראל אלעד מציע לילדיכם חווית קיץ ייחודית המשלבת הנאה, תוכן ערכי ואווירה חסידית תוססת. אנו מאמינים שכל ילד הוא עולם ומלואו, ושואפים להעניק לכל חניך יחס אישי וחם, תוך פיתוח כישרונותיו וחיזוק הקשר שלו למורשת ישראל.",
+    aboutParagraph2: "הצוות המסור שלנו, המורכב ממדריכים בוגרים, אחראיים ובעלי ניסיון, מלווה את החניכים לאורך כל היום בפעילויות מגוונות, טיולים, סדנאות, התוועדויות ושיעורים מרתקים. אנו מקפידים על סטנדרטים גבוהים של בטיחות, כשרות ותנאים נאותים, כדי להבטיח לילדיכם קיץ בטוח, מהנה ובלתי נשכח.",
+    aboutImageSrc: "https://images.unsplash.com/photo-1504829857107-4acf85189b73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwyfHxzdW1tZXIlMjBjYW1wJTIwZnVufGVufDB8fHx8MTcyMDA5OTgwMHww&ixlib=rb-4.0.3&q=80&w=1080",
+    aboutImageAlt: "קבוצת ילדים בפעילות קעמפ",
+    aboutImageHint: "camp team activity",
+    mainSummaryVideoId: "gqgfz0h0om4", // Default, can be overridden by the first video in 'summaryVideo' category from getVideos()
   };
-
-  const rawCsvData = await fetchCsvData(siteConfigCsvUrl);
-  const config: Record<string, string> = { ...defaultConfig };
-
-  if (rawCsvData && rawCsvData.length > 1) { // rawCsvData[0] is headers
-    // Start from the second row (index 1) to skip headers
-    rawCsvData.slice(1).forEach(row => {
-      // Assuming the first column is 'key' and the second is 'value'
-      if (row && row.length >= 2 && row[0] && row[1] !== undefined && row[1] !== null) {
-        config[String(row[0]).trim()] = String(row[1]).trim();
-      }
-    });
-  } else {
-    console.warn("Could not fetch or parse SiteConfig CSV, or CSV is empty/missing headers. Using default values.");
-  }
-  
-  // Ensure essential fallbacks if CSV is missing certain keys
-  Object.keys(defaultConfig).forEach(key => {
-    if (config[key] === undefined || config[key] === null || config[key] === "") {
-        // If CSV value is missing, empty, or explicitly "null"/"undefined" string, use default
-        if (config[key] === "" || config[key]?.toLowerCase() === "null" || config[key]?.toLowerCase() === "undefined") {
-             config[key] = defaultConfig[key];
-        } else if (!config.hasOwnProperty(key)) {
-            config[key] = defaultConfig[key];
-        }
-    }
-  });
-
-  return config;
+  return defaultConfig;
 }
 
 export interface Testimonial {
@@ -191,21 +124,15 @@ export interface Testimonial {
 }
 
 export async function getTestimonials(): Promise<Testimonial[]> {
-  const rawData = await fetchSheetData<Array<[string | number, string, string]>>({
-    sheetName: 'Testimonials',
-    range: 'A2:C',
-  });
-
-  if (!rawData) {
-    return [
-      { id: "fallbackTestimonial1", quote: "טעינת המלצה נכשלה.", author: "בודק האתר" }
-    ];
-  }
-  return rawData.map((row, index) => ({
-    id: String(row[0] || `testimonial-${index}`),
-    quote: row[1] || 'תוכן המלצה חסר',
-    author: row[2] || 'מחבר לא ידוע',
-  }));
+  // Returning hardcoded testimonial data
+  const fallbackTestimonials: Testimonial[] = [
+    { id: "testimonial1", quote: "הבן שלי חזר מאושר מהקעמפ! הוא לא הפסיק לדבר על הפעילויות והמדריכים הנהדרים. תודה רבה לכם על חוויה מדהימה!", author: "משפחת כהן, אלעד" },
+    { id: "testimonial2", quote: "הארגון היה למופת, האוכל בשפע והתוכן החסידי הועבר בצורה מרתקת. ממליצים בחום!", author: "משפחת לוי, פתח תקווה" },
+    { id: "testimonial3", quote: "הקעמפ הזה הוא פשוט ברמה אחרת. רואים את ההשקעה בכל פרט. הבן שלנו כבר מחכה לשנה הבאה!", author: "משפחת אברמוביץ, בני ברק" },
+    { id: "testimonial4", quote: "הצוות היה קשוב ואכפתי, והילד הרגיש בבית מהרגע הראשון. זו הייתה הפעם הראשונה שלו בקעמפ ואנחנו כל כך שמחים שבחרנו בכם.", author: "משפחת מזרחי, ראש העין" }
+  ];
+  console.log("getTestimonials: Returning hardcoded data.");
+  return fallbackTestimonials;
 }
 
 export interface SwiperSlideItem {
@@ -218,50 +145,31 @@ export interface SwiperSlideItem {
 }
 
 export async function getSwiperSlides(): Promise<SwiperSlideItem[]> {
-  const rawData = await fetchSheetData<Array<[string | number, string, string, string, string, string]>>({
-    sheetName: 'SwiperSlides', 
-    range: 'A2:F',
-  });
-  if (!rawData) {
-    return [
-      { id: "fallbackSlide1", imageSrc: "https://placehold.co/1200x800.png", imageAlt: "תמונה חלופית 1", imageHint: "placeholder", captionTitle: "כותרת חלופית 1", captionText: "טקסט חלופי 1" },
-      { id: "fallbackSlide2", imageSrc: "https://placehold.co/1200x800.png", imageAlt: "תמונה חלופית 2", imageHint: "placeholder", captionTitle: "כותרת חלופית 2", captionText: "טקסט חלופי 2" },
-    ];
-  }
-  return rawData.map((row, index) => ({
-    id: String(row[0] || `slide-${index}`),
-    imageSrc: row[1] || 'https://placehold.co/1200x800.png',
-    imageAlt: row[2] || 'תמונה חלופית',
-    imageHint: row[3] || 'placeholder',
-    captionTitle: row[4] || 'כותרת חלופית',
-    captionText: row[5] || 'טקסט חלופי',
-  }));
+  // Returning hardcoded swiper slide data
+  const fallbackSlides: SwiperSlideItem[] = [
+    { id: "slide1", imageSrc: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwxfHxzdW1tZXIlMjBjYW1wJTIwYXRtb3NwaGVyZXxlbnwwfHx8fDE3MjAxMDE0NDR8MA&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "אווירת קעמפ קיץ", imageHint: "camp bonfire", captionTitle: "חוויה של פעם בחיים!", captionText: "מחנה הקיץ הכי שווה מחכה לכם עם מגוון פעילויות." },
+    { id: "slide2", imageSrc: "https://images.unsplash.com/photo-1509344461902-e3a57336c832?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwzfHxjaGlsZHJlbiUyMGNhbXBpbmd8ZW58MHx8fHwxNzIwMTAxNTAyfDA&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "ילדים בפעילות קבוצתית", imageHint: "team building", captionTitle: "מדריכים תותחים ואווירה מיוחדת", captionText: "צוות מקצועי ומסור שילווה אתכם בכל רגע." },
+    { id: "slide3", imageSrc: "https://images.unsplash.com/photo-1558021009-b2a490f9a29b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHw1fHxzdW1tZXIlMjBjYW1wJTIwYWN0aXZpdGllc3xlbnwwfHx8fDE3MjAxMDE1NDR8MA&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "פעילות ספורט בקעמפ", imageHint: "camp sports", captionTitle: "כיף, חברים וערכים", captionText: "שילוב מושלם של הנאה, תוכן חינוכי וקשר חם." },
+  ];
+  console.log("getSwiperSlides: Returning hardcoded data.");
+  return fallbackSlides;
 }
 
 export interface VideoItem {
   id: string;
-  videoId: string; // YouTube video ID
+  videoId: string; 
   title: string;
   category: 'campSong' | 'summaryVideo' | string; 
 }
 
 export async function getVideos(): Promise<VideoItem[]> {
-  const rawData = await fetchSheetData<Array<[string | number, string, string, string]>>({
-    sheetName: 'Videos',
-    range: 'A2:D',
-  });
-
-  if (!rawData) {
-    return [
-      { id: "fallbackVideo1", videoId: "dQw4w9WgXcQ", title: "סרטון ברירת מחדל", category: "campSong" }
-    ];
-  }
-  return rawData.map((row, index) => ({
-    id: String(row[0] || `video-${index}`),
-    videoId: row[1] || 'dQw4w9WgXcQ', 
-    title: row[2] || 'סרטון ללא כותרת',
-    category: row[3] || 'general',
-  }));
+  // Returning hardcoded video data
+  const fallbackVideos: VideoItem[] = [
+    { id: "song1", videoId: "6aRI-emxQlU", title: "שיר הנושא - קעמפ גן ישראל", category: "campSong" },
+    { id: "song2", videoId: "P3QkXTKAPh4", title: "המנון הקעמפ", category: "campSong" },
+    { id: "summary1", videoId: "gqgfz0h0om4", title: "סרטון סיכום קעמפ תשפ\"ג", category: "summaryVideo" },
+    { id: "summary2", videoId: "b2SaA1dYwl0", title: "קדימון לקעמפ תשפ\"ד", category: "summaryVideo" }
+  ];
+  console.log("getVideos: Returning hardcoded data.");
+  return fallbackVideos;
 }
-
-    
