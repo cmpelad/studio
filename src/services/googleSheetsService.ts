@@ -7,7 +7,7 @@ import { env } from 'process';
 const API_KEY = env.GOOGLE_SHEETS_API_KEY;
 const SPREADSHEET_ID = env.GOOGLE_SHEETS_SPREADSHEET_ID;
 
-// Fallback data
+// Fallback data - These are used if fetching from Google Sheets fails or is not configured.
 const fallbackSiteConfig: Record<string, string> = {
     siteTitle: "קעמפ גן ישראל - אלעד (ברירת מחדל)",
     siteDescription: "חוויה של פעם בחיים! מחנה הקיץ הכי שווה מחכה לכם עם פעילויות מגוונות, מדריכים תותחים, ואווירה חסידית מיוחדת. (ברירת מחדל)",
@@ -34,7 +34,8 @@ const fallbackSiteConfig: Record<string, string> = {
     aboutImageSrc: "https://images.unsplash.com/photo-1504829857107-4acf85189b73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwyfHxzdW1tZXIlMjBjYW1wJTIwZnVufGVufDB8fHx8MTcyMDA5OTgwMHww&ixlib=rb-4.0.3&q=80&w=1080",
     aboutImageAlt: "קבוצת ילדים בפעילות קעמפ (ברירת מחדל)",
     aboutImageHint: "camp activity",
-    mainSummaryVideoId: "gqgfz0h0om4", // Default from siteConfig
+    mainSummaryVideoId: "gqgfz0h0om4",
+    logoImageSrc: "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0",
 };
 
 const fallbackFaqs: FaqItem[] = [
@@ -59,15 +60,16 @@ const fallbackSwiperSlides: SwiperSlideItem[] = [
 
 const fallbackVideos: VideoItem[] = [
     { id: "song1_fallback", videoId: "6aRI-emxQlU", title: "שיר הנושא - קעמפ גן ישראל (ברירת מחדל)", category: "campSong" },
-    { id: "song2_fallback", videoId: "jNQXAC9IVRw", title: "המנון הקעמפ (דוגמה)", category: "campSong" }, // Example, replace with actual ID
+    { id: "song2_fallback", videoId: "jNQXAC9IVRw", title: "המנון הקעמפ (דוגמה)", category: "campSong" },
     { id: "summary1_fallback", videoId: "gqgfz0h0om4", title: "סרטון סיכום קעמפ תשפ\"ג (ברירת מחדל)", category: "summaryVideo" },
-    { id: "summary2_fallback", videoId: "dQw4w9WgXcQ", title: "סרטון סיכום נוסף (דוגמה)", category: "summaryVideo" }, // Example
+    { id: "summary2_fallback", videoId: "dQw4w9WgXcQ", title: "סרטון סיכום נוסף (דוגמה)", category: "summaryVideo" },
 ];
+
 
 if (!API_KEY || !SPREADSHEET_ID) {
   if (process.env.NODE_ENV === 'development') {
     console.warn(
-      'GOOGLE_SHEETS_API_KEY or GOOGLE_SHEETS_SPREADSHEET_ID is missing. Site will use hardcoded fallback data. Please check your .env.local file.'
+      'GOOGLE_SHEETS_API_KEY or GOOGLE_SHEETS_SPREADSHEET_ID is missing. Site will use hardcoded fallback data. Please check your .env.local file if you intend to use Google Sheets API.'
     );
   } else {
     console.error(
@@ -85,7 +87,7 @@ async function fetchSheetData<T extends string[]>(
   options: FetchSheetDataOptions
 ): Promise<T[] | null> {
   if (!API_KEY || !SPREADSHEET_ID) {
-    // console.warn(`Skipping API fetch for ${options.sheetName} due to missing API_KEY or SPREADSHEET_ID.`);
+    console.warn(`Skipping API fetch for ${options.sheetName} due to missing API_KEY or SPREADSHEET_ID.`);
     return null;
   }
 
@@ -112,6 +114,30 @@ async function fetchSheetData<T extends string[]>(
   }
 }
 
+async function fetchCsvDataFromUrl(csvUrl: string): Promise<string[][] | null> {
+  console.log(`Attempting to fetch CSV from URL: ${csvUrl}`);
+  try {
+    const response = await fetch(csvUrl, { next: { revalidate: 3600 } }); // Revalidate every hour
+    if (!response.ok) {
+      console.error(`Error fetching CSV data from URL ${csvUrl}: ${response.status} ${response.statusText}`);
+      return null;
+    }
+    const text = await response.text();
+    console.log(`Successfully fetched CSV data from URL. Length: ${text.length}`);
+    // Basic CSV parsing: split by lines, then by commas
+    // This is a very basic parser and might need improvement for complex CSVs (e.g., with quoted commas)
+    const rows = text.split(/\r?\n/).map(line => {
+        // Naive split by comma. For robust CSV, a library might be better.
+        // This simple split won't handle commas within quoted fields correctly.
+        return line.split(',');
+    });
+    return rows.filter(row => row.length > 0 && row.some(cell => cell.trim() !== '')); // Filter out empty lines
+  } catch (error) {
+    console.error(`Exception fetching or parsing CSV data from URL ${csvUrl}:`, error);
+    return null;
+  }
+}
+
 
 export interface FaqItem {
   id: string;
@@ -121,28 +147,62 @@ export interface FaqItem {
 }
 
 export async function getFaqData(): Promise<FaqItem[]> {
-  const sheetName = 'FAQ';
-  try {
-    const rows = await fetchSheetData<[string, string, string]>({ sheetName }); // id, question, answer
-    if (rows && rows.length > 1) { // More than just header row
-      const faqs = rows.slice(1).map((row, index) => ({ // Skip header row
-        id: row[0] || `faq_item_${index}`,
-        question: row[1] || '',
-        answer: row[2] || '',
-        delay: String(index * 50), // Auto-generate delay
-      }));
-      console.log(`Processed ${faqs.length} FAQ items from Google Sheets.`);
-      return faqs;
-    } else if (rows && rows.length <= 1) {
-      console.log(`No data rows found in ${sheetName} sheet (or only header). Using fallback.`);
-      return fallbackFaqs;
+  const sheetName = 'FAQ'; // Target sheet name for API or CSV structure
+  // const directCsvUrl = 'YOUR_FAQ_CSV_EXPORT_LINK_HERE'; // Replace with actual CSV link if using direct CSV
+
+  /* // Option 1: Fetch directly from a CSV URL (if you have one specifically for FAQs)
+  if (directCsvUrl && directCsvUrl !== 'YOUR_FAQ_CSV_EXPORT_LINK_HERE') {
+    console.log(`getFaqData: Attempting to fetch from CSV URL: ${directCsvUrl}`);
+    const rows = await fetchCsvDataFromUrl(directCsvUrl);
+    if (rows && rows.length > 1) { // Assuming first row is header
+      try {
+        const faqs = rows.slice(1).map((row, index) => ({
+          id: row[0] || `faq_csv_${index}`,
+          question: row[1] || '',
+          answer: row[2] || '',
+          delay: String(index * 50),
+        }));
+        if (faqs.length > 0) {
+          console.log(`getFaqData: Processed ${faqs.length} FAQ items from CSV URL.`);
+          return faqs;
+        }
+      } catch (e) {
+        console.error('getFaqData: Error processing CSV data, falling back.', e);
+      }
+    } else {
+      console.log('getFaqData: No data or only header in CSV from URL, or URL not set. Trying API or fallback.');
     }
-  } catch (error) {
-    console.error('Error processing FAQ data from Google Sheets:', error);
   }
-  console.log('getFaqData: Using hardcoded fallback data due to fetch error or no data.');
+  */
+
+  // Option 2: Fetch using Google Sheets API (current primary method)
+  if (API_KEY && SPREADSHEET_ID) {
+    console.log(`getFaqData: Attempting to fetch from Google Sheets API, Sheet: ${sheetName}`);
+    try {
+      const rows = await fetchSheetData<[string, string, string]>({ sheetName }); // id, question, answer
+      if (rows && rows.length > 1) { // More than just header row
+        const faqs = rows.slice(1).map((row, index) => ({ // Skip header row
+          id: row[0] || `faq_api_${index}`,
+          question: row[1] || '',
+          answer: row[2] || '',
+          delay: String(index * 50), // Auto-generate delay
+        }));
+        console.log(`getFaqData: Processed ${faqs.length} FAQ items from Google Sheets API.`);
+        return faqs;
+      } else if (rows && rows.length <= 1) {
+        console.log(`getFaqData: No data rows found in ${sheetName} sheet (or only header) via API. Using fallbackFaqs.`);
+      }
+    } catch (error) {
+      console.error('getFaqData: Error processing FAQ data from Google Sheets API, using fallbackFaqs:', error);
+    }
+  } else {
+    console.log('getFaqData: API_KEY or SPREADSHEET_ID missing. Skipping API call for FAQ.');
+  }
+
+  console.log('getFaqData: Using hardcoded fallbackFaqs data.');
   return fallbackFaqs;
 }
+
 
 export interface ContactDetails {
   officeAddress?: string;
@@ -151,10 +211,35 @@ export interface ContactDetails {
   contactHours?: string;
 }
 
-// Fetches all data from SiteConfig sheet and transforms it into a Record<string, string>
 export async function getSiteConfig(): Promise<Record<string, string>> {
-  console.log('getSiteConfig: Using hardcoded fallback data.');
-  return fallbackSiteConfig;
+  const config: Record<string, string> = { ...fallbackSiteConfig }; // Start with fallbacks
+  const sheetName = 'SiteConfig'; // Sheet name in your Google Sheet
+
+  // Try fetching from Google Sheets API first if configured
+  if (API_KEY && SPREADSHEET_ID) {
+    console.log(`getSiteConfig: Attempting to fetch from Google Sheets API, Sheet: ${sheetName}`);
+    try {
+      const rows = await fetchSheetData<[string, string]>({ sheetName }); // key, value
+      if (rows && rows.length > 1) { // header + data
+        rows.slice(1).forEach(row => { // Skip header
+          if (row[0] && typeof row[0] === 'string' && row[0].trim() !== '') {
+            config[row[0].trim()] = row[1] || '';
+          }
+        });
+        console.log(`getSiteConfig: Successfully loaded and merged ${rows.length -1} config items from API.`);
+        return config; // Return merged config
+      } else {
+        console.log(`getSiteConfig: No data or only header in ${sheetName} sheet via API. Using fallbackSiteConfig.`);
+      }
+    } catch (error) {
+      console.error('getSiteConfig: Error processing SiteConfig from API, using fallbackSiteConfig:', error);
+    }
+  } else {
+     console.log('getSiteConfig: API_KEY or SPREADSHEET_ID missing. Skipping API call for SiteConfig.');
+  }
+  
+  console.log('getSiteConfig: Using hardcoded fallbackSiteConfig data only.');
+  return fallbackSiteConfig; 
 }
 
 
@@ -165,7 +250,7 @@ export interface Testimonial {
 }
 
 export async function getTestimonials(): Promise<Testimonial[]> {
-    console.log("getTestimonials: Using hardcoded fallback data.");
+    // console.log("getTestimonials: Returning hardcoded data.");
     return fallbackTestimonials;
 }
 
@@ -179,7 +264,7 @@ export interface SwiperSlideItem {
 }
 
 export async function getSwiperSlides(): Promise<SwiperSlideItem[]> {
-  console.log("getSwiperSlides: Using hardcoded fallback data.");
+  // console.log("getSwiperSlides: Returning hardcoded data.");
   return fallbackSwiperSlides;
 }
 
@@ -191,6 +276,7 @@ export interface VideoItem {
 }
 
 export async function getVideos(): Promise<VideoItem[]> {
-  console.log("getVideos: Using hardcoded fallback data.");
+  // console.log("getVideos: Returning hardcoded data.");
   return fallbackVideos;
 }
+    
