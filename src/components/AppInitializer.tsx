@@ -77,7 +77,7 @@ export default function AppInitializer({ children, initialData }: AppInitializer
       "https://picsum.photos/seed/img11/400/300?random=11", "https://picsum.photos/seed/img12/400/300?random=12"
   ];
 
-  // Use the logoImageSrc from siteConfig for the splash screen, with a fallback.
+  // Use a direct, known-working link for the splash screen logo to simplify debugging
   const splashScreenLogoSrc = initialData.siteConfig.logoImageSrc || "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0";
 
 
