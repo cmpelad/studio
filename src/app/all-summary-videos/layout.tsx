@@ -1,6 +1,7 @@
 
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import './videos.css'; // Import videos page specific styles
 
 export const metadata: Metadata = {
@@ -15,15 +16,11 @@ export default function AllSummaryVideosLayout({
 }) {
   return (
     <div className="videos-page-layout">
-      <div className="header">
-        <h1>כל סרטוני הסיכום</h1>
-      </div>
-      <main>{children}</main>
-      <div style={{ textAlign: 'center', marginTop: '30px', paddingBottom: '30px' }}>
-        <Link href="/" className="back-link">
-          חזרה לאתר הראשי
-        </Link>
-      </div>
+      <Header />
+      <main className="videos-main-content">
+        {children}
+      </main>
+      <Footer />
     </div>
   );
 }

@@ -9,26 +9,19 @@
     padding: 0;
     background-color: #f4f4f4; /* רקע אפור בהיר */
     color: #333; /* צבע טקסט ראשי */
-    min-height: 100vh;
+    min-height: 100vh; /* Ensure layout takes full height */
     display: flex;
     flex-direction: column;
 }
 
-.videos-page-layout > main {
-    flex-grow: 1;
+.videos-page-layout > .videos-main-content {
+    flex-grow: 1; /* Allows main content to fill available space */
+    padding-top: var(--header-height, 75px); /* Add padding to avoid overlap with fixed/sticky header if any */
 }
 
-.header {
-    background-color: #1E3A8A; /* צבע כחול כהה מהאתר המקורי */
-    color: white;
-    padding: 20px;
-    text-align: center;
-}
-.header h1 {
-    margin: 0;
-    font-size: 2.5rem; /* גודל כותרת ראשית */
-}
-.container {
+/* Removed custom .header styles as it's replaced by main Header */
+
+.container { /* This class is used inside the page.tsx for content wrapping */
     max-width: 1200px; /* רוחב מקסימלי של התוכן */
     margin: 30px auto; /* מרכוז התוכן */
     padding: 20px;
@@ -75,25 +68,11 @@
     margin-bottom: 0;
     flex-grow: 1;
 }
-.back-link {
-    display: inline-block;
-    /* margin-top: 30px; Moved to layout */
-    padding: 12px 25px; /* ריווח פנימי מוגדל לכפתור */
-    background-color: #FFC107; /* צבע צהוב מהאתר המקורי */
-    color: #1E3A8A; /* צבע טקסט כחול */
-    text-decoration: none;
-    border-radius: 5px; /* פינות מעוגלות לכפתור */
-    font-weight: bold; /* טקסט מודגש */
-    transition: background-color 0.3s, color 0.3s; /* אנימציית מעבר צבע */
-}
-.back-link:hover {
-    background-color: #e0a800; /* צבע רקע בהיר יותר בהעברת עכבר */
-    color: white; /* צבע טקסט לבן בהעברת עכבר */
-}
+/* Removed .back-link styles as it's replaced by main Footer/Header */
+
 
 /* התאמות למסכים קטנים (מובייל) */
 @media (max-width: 768px) {
-    .header h1 { font-size: 2rem; } /* הקטנת כותרת ראשית */
     .video-grid {
         grid-template-columns: 1fr; /* הצגת סרטון אחד בכל שורה */
     }
