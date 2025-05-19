@@ -43,13 +43,13 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'drive.usercontent.google.com',
+        hostname: 'drive.usercontent.google.com', // For direct download links
         port: '',
         pathname: '/**',
       },
       {
         protocol: 'https',
-        hostname: 'photos.fife.usercontent.google.com',
+        hostname: 'photos.fife.usercontent.google.com', // For some Google Photos direct links
         port: '',
         pathname: '/**',
       }
