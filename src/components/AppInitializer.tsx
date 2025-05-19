@@ -77,8 +77,8 @@ export default function AppInitializer({ children, initialData }: AppInitializer
       "https://picsum.photos/seed/img11/400/300?random=11", "https://picsum.photos/seed/img12/400/300?random=12"
   ];
 
-  // Use the new Google Drive link for the splash screen logo
-  const splashScreenLogoSrc = initialData.siteConfig.logoImageSrc || "https://drive.usercontent.google.com/download?id=1wh8OEZj3be-MIMVj8UyzktIRdyUosqlJ&authuser=0";
+  // Use the logoImageSrc from siteConfig for the splash screen, with a fallback.
+  const splashScreenLogoSrc = initialData.siteConfig.logoImageSrc || "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0";
 
 
   useEffect(() => {
