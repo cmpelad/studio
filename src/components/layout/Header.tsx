@@ -105,7 +105,7 @@ export default function Header() {
         </div>
         <nav className="main-nav" id="main-nav" ref={mainNavRef} onClick={(e) => e.stopPropagation()}>
           <ul>
-            <li><Link href="/#hero" className="active" onClick={handleNavLinkClick}>עמוד הבית</Link></li>
+            <li><Link href="/#hero" onClick={handleNavLinkClick}>עמוד הבית</Link></li>
             <li><a href="#" className="registration-trigger" onClick={handleNavLinkClick}>להרשמה</a></li>
             <li><Link href="/#about" onClick={handleNavLinkClick}>אודותינו</Link></li>
             <li><Link href="/gallery" onClick={handleNavLinkClick}>גלריה</Link></li>
