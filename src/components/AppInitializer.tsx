@@ -6,6 +6,7 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import type SwiperCore from 'swiper';
 import type { SiteConfig, FaqItem, ContactDetails, Testimonial, SwiperSlideItem, VideoItem, GalleryYearData, GalleryDayData, GalleryImageItem } from '@/services/googleSheetsService';
+import Image from 'next/image'; // Import next/image
 
 export interface InitialSiteData {
   siteConfig: SiteConfig;
@@ -67,7 +68,7 @@ export default function AppInitializer({ children, initialData }: AppInitializer
   const googleFormBaseUrl = initialData.siteConfig.registrationFormUrl || "https://docs.google.com/forms/d/e/1FAIpQLSc4BOspqh2ohsp6W0OGHqGtuXWrMb3e6C1c0bhw4bbYwnCmWA/viewform?embedded=true";
   const paymentRedirectUrl = initialData.siteConfig.paymentRedirectUrl || "https://icredit.rivhit.co.il/payment/PaymentFullPage.aspx?GroupId=5375c290-a52c-487d-ab47-14c0b0ef5365";
   
-  const galleryImageUrls = [ // This is for the main page gallery swiper, not the /gallery route
+  const galleryImageUrls = [ 
       "https://lh3.googleusercontent.com/pw/AP1GczNBtFaOAbpOMFUXx9DL4emQxGdSzYm1vjivTyDnUzlHQDWgHtaEy5K3G1OZGyAbhSIkCMkReGJOOnI2OCe_ZpjXz02f3RC4_rjHO2Sslf_pvdSJC-pbboOhWYvYjeCjXtFe9G8spEwvIYlWLorXm4Diik0haX2EUPWslXKEbwguIv80gXqwp2WLP9oOgyr7RwQQbtDMV-iDAQltUoLtg6l=w1379-h919-s-no-gm?authuser=0",
       "https://lh3.googleusercontent.com/pw/AP1GczPgSy83OmgsgZDuZoPBGqd3nFunosjH2KCqQ3OhDlKeK-MkSzR4Nn70TAtyICq2UjeiCY3ic_ln5uYf0rY5SSNqC_7IkhZ0idDT5kf3wUvkecjvivzQbrwiEizm_61rjRXLVuYgnkfWcBFd1CuS4pFc=w1379-h919-s-no-gm?authuser=0",
       "https://lh3.googleusercontent.com/pw/AP1GczMsQ7kLfOlgRiMTNIGPg2y65mr-4ySFISouO0yBvZNufdxGztE9HoBwzJ2xNpwu-dNNd1eapdEwvIYlWLorXm4Diik0haX2EUPWslXKEbwguIv80gXqwp2WLP9oOgyr7RwQQbtDMV-iDAQltUoLtg6l=w1225-h919-s-no-gm?authuser=0",
@@ -77,7 +78,7 @@ export default function AppInitializer({ children, initialData }: AppInitializer
       "https://picsum.photos/seed/img11/400/300?random=11", "https://picsum.photos/seed/img12/400/300?random=12"
   ];
 
-  // Use a direct, known-working link for the splash screen logo to simplify debugging
+  // Use the confirmed working Google Drive link for the splash screen logo
   const splashScreenLogoSrc = initialData.siteConfig.logoImageSrc || "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0";
 
 
@@ -164,7 +165,15 @@ export default function AppInitializer({ children, initialData }: AppInitializer
         <div className="splash-screen" id="splashScreen">
           <div className="splash-content">
             <div className="splash-image-container">
-              <img src={splashScreenLogoSrc} alt="קעמפ גן ישראל אלעד" />
+              {/* Using next/image for the splash screen logo */}
+              <Image 
+                src={splashScreenLogoSrc} 
+                alt="קעמפ גן ישראל אלעד" 
+                width={250} // You can adjust these dimensions
+                height={250} // You can adjust these dimensions
+                style={{objectFit: 'contain', borderRadius: '20px', boxShadow: '0 5px 20px rgba(0,0,0,0.1)'}}
+                priority // Prioritize loading this image
+              />
             </div>
             <div className="splash-box yellow"></div>
             <div className="splash-box blue"></div>
