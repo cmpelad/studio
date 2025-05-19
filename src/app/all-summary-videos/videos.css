@@ -32,7 +32,6 @@
 
 .videos-page-layout > .videos-main-content {
     flex-grow: 1; /* Allows main content to fill available space */
-     /* padding-top is NOT needed if the Header component itself is sticky and manages its own height offset */
 }
 
 
@@ -40,9 +39,9 @@
     max-width: 1200px; /* רוחב מקסימלי של התוכן */
     margin: 30px auto; /* מרכוז התוכן */
     padding: 20px;
-    background-color: white; /* רקע לבן לאזור התוכן */
-    box-shadow: 0 0 10px rgba(0,0,0,0.1); /* הצללה עדינה */
-    border-radius: 8px; /* פינות מעוגלות */
+    background-color: transparent; /* שינוי רקע לשקוף */
+    box-shadow: none; /* הסרת הצללה */
+    border-radius: 8px; /* פינות מעוגלות עדיין יכולות להיות שימושיות אם יש גבול */
 }
 .video-grid {
     display: grid;

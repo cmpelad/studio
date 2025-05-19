@@ -1,7 +1,6 @@
 
 import type { Metadata } from 'next';
 import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer'; // הוספת ייבוא
 import './videos.css'; // Import videos page specific styles
 
 export const metadata: Metadata = {
@@ -18,12 +17,12 @@ export default function AllSummaryVideosLayout({
     <div className="videos-page-layout">
       <Header />
       <div className="videos-page-specific-header">
-        <h1 style={{ color: '#1E3A8A' }}>כל סרטוני הסיכום</h1> {/* צבע טקסט שונה בגלל רקע לבן */}
+        <h1>כל סרטוני הסיכום</h1> {/* הסרת style מוטבע */}
       </div>
       <main className="videos-main-content">
         {children}
       </main>
-      <Footer /> {/* הוספת Footer */}
+      {/* Footer is now global, no need for back link here if Footer handles navigation */}
     </div>
   );
 }
