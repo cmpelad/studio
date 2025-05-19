@@ -362,7 +362,7 @@ ul { list-style: none; }
     width: 100%; max-width: 1200px; margin: 0 auto;
     padding: 0 15px; position: relative;
 }
-.image-gallery-swiper { width: 100%; height: auto; padding-bottom: 80px; /* Increased space for pagination + button */ }
+.image-gallery-swiper { width: 100%; height: auto; padding-bottom: 70px; /* Increased space for pagination + button */ }
 .image-gallery-swiper .swiper-slide { display: flex; justify-content: center; align-items: center; }
 .gallery-slide-grid { display: grid; gap: 15px; width: 100%; }
 .gallery-slide-grid.grid-desktop { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, auto); }
@@ -392,7 +392,7 @@ ul { list-style: none; }
 .image-gallery-swiper-container .swiper-button-prev::after { font-size: 1.2rem; font-weight: bold; }
 
 .image-gallery-swiper-container .swiper-pagination {
-    bottom: 50px !important; /* Position pagination above the button, increased bottom */
+    bottom: 35px !important; /* Adjusted: Position pagination above the button */
     left: 50%; transform: translateX(-50%); width: auto;
     z-index: 10; /* Ensure pagination is above slides */
 }
@@ -403,7 +403,7 @@ ul { list-style: none; }
 .image-gallery-swiper-container .swiper-pagination-bullet-active {
     opacity: 1; background-color: var(--swiper-pagination-color);
 }
-.gallery-extended-button-container { text-align: center; margin-top: 30px; }
+.gallery-extended-button-container { text-align: center; margin-top: 25px; /* Reduced margin-top so button is closer to pagination */ }
 .gallery-extended-button {
     display: inline-block; padding: 12px 30px; background-color: var(--primary-color);
     color: var(--white-color); border-radius: var(--border-radius-small);
@@ -414,9 +414,9 @@ ul { list-style: none; }
 
 @media (max-width: 767px) {
      #image-gallery-swiper-section h2 { font-size: 2.2rem; margin-bottom: 3rem; }
-     .image-gallery-swiper { padding-bottom: 80px; } /* consistent padding */
-     .image-gallery-swiper-container .swiper-pagination { bottom: 55px !important; } /* Adjusted for mobile */
-     .gallery-extended-button-container { margin-top: 20px; }
+     .image-gallery-swiper { padding-bottom: 70px; } /* consistent padding */
+     .image-gallery-swiper-container .swiper-pagination { bottom: 40px !important; } /* Adjusted for mobile */
+     .gallery-extended-button-container { margin-top: 15px; }
 }
 
 /* --- Summary Videos Section --- */
@@ -807,6 +807,7 @@ ul { list-style: none; }
     .registration-modal-content { height: 90vh; max-height: 600px; }
 }
 /* End of User's Custom CSS */
+
 
 
 
