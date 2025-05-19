@@ -35,7 +35,7 @@ export default function DayGalleryPage({ params }: DayPageParams) {
   }
 
   return (
-    <div className="gallery-container">
+    <>
       <div className="day-gallery-header">
         <h1>{`${currentDayData.name} - ${currentYearData.yearName}`}</h1>
         <p className="breadcrumb">
@@ -43,26 +43,30 @@ export default function DayGalleryPage({ params }: DayPageParams) {
         </p>
       </div>
       
-      {currentDayData.images && currentDayData.images.length > 0 ? (
-        <div className="images-grid">
-          {currentDayData.images.map((image: DayGalleryImage) => (
-            <div className="image-item" key={image.src}> {/* Changed key from index to image.src */}
-              <Image 
-                src={image.src} 
-                alt={image.alt} 
-                width={600} 
-                height={400} 
-                className="gallery-image"
-                data-ai-hint={image.hint}
-                priority={currentDayData.images.indexOf(image) < 6} // Maintain priority logic
-              />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p>אין תמונות להצגה עבור יום זה.</p>
-      )}
-    </div>
+      <div className="gallery-container"> {/* Use gallery-container for consistent padding */}
+        {currentDayData.images && currentDayData.images.length > 0 ? (
+          <div className="images-grid">
+            {currentDayData.images.map((image: DayGalleryImage) => (
+              <div className="image-item" key={image.src}>
+                <Image 
+                  src={image.src} 
+                  alt={image.alt} 
+                  width={600} 
+                  height={400} 
+                  className="gallery-image"
+                  data-ai-hint={image.hint}
+                  priority={currentDayData.images.indexOf(image) < 6}
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>אין תמונות להצגה עבור יום זה.</p>
+        )}
+      </div>
+      <div className="back-link-container">
+        <Link href="/" className="back-link">חזרה לאתר הראשי</Link>
+      </div>
+    </>
   );
 }
-

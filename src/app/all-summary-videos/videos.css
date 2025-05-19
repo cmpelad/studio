@@ -14,12 +14,27 @@
     flex-direction: column;
 }
 
-.videos-page-layout > .videos-main-content {
-    flex-grow: 1; /* Allows main content to fill available space */
-    padding-top: var(--header-height, 75px); /* Add padding to avoid overlap with fixed/sticky header if any */
+/* Specific header for the videos page */
+.videos-page-specific-header {
+    background-color: #1E3A8A; /* Navy Blue from original site */
+    color: white; /* White text color */
+    padding: 20px; /* Match original header padding */
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional shadow */
 }
 
-/* Removed custom .header styles as it's replaced by main Header */
+.videos-page-specific-header h1 {
+    margin: 0;
+    font-size: 2.5rem; /* Original H1 size */
+    font-weight: 800; /* Assuming similar weight */
+    color: white; /* Explicitly set H1 text to white */
+}
+
+.videos-page-layout > .videos-main-content {
+    flex-grow: 1; /* Allows main content to fill available space */
+     /* padding-top is NOT needed if the Header component itself is sticky and manages its own height offset */
+}
+
 
 .container { /* This class is used inside the page.tsx for content wrapping */
     max-width: 1200px; /* רוחב מקסימלי של התוכן */
@@ -68,11 +83,33 @@
     margin-bottom: 0;
     flex-grow: 1;
 }
-/* Removed .back-link styles as it's replaced by main Footer/Header */
+
+.back-link-container { /* For videos page */
+    text-align: center;
+    margin-top: 30px; /* Space above the link */
+    padding-bottom: 20px; /* Add some padding at the bottom */
+}
+
+.back-link {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #FFC107;
+    color: #1E3A8A;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: background-color 0.3s, color 0.3s;
+}
+.back-link:hover {
+    background-color: #e0a800;
+    color: white;
+}
 
 
 /* התאמות למסכים קטנים (מובייל) */
 @media (max-width: 768px) {
+    .videos-page-specific-header h1 { font-size: 2rem; }
     .video-grid {
         grid-template-columns: 1fr; /* הצגת סרטון אחד בכל שורה */
     }

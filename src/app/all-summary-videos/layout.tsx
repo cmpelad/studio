@@ -1,7 +1,7 @@
 
 import type { Metadata } from 'next';
 import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
+// Removed Footer import
 import './videos.css'; // Import videos page specific styles
 
 export const metadata: Metadata = {
@@ -17,10 +17,14 @@ export default function AllSummaryVideosLayout({
   return (
     <div className="videos-page-layout">
       <Header />
+      {/* Example of a dedicated title bar for videos page */}
+      <div className="videos-page-specific-header">
+        <h1>כל סרטוני הסיכום</h1>
+      </div>
       <main className="videos-main-content">
         {children}
       </main>
-      <Footer />
+      {/* Removed general Footer */}
     </div>
   );
 }

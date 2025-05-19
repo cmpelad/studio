@@ -10,12 +10,28 @@
     min-height: 100vh; /* Ensure layout takes full height if content is short */
 }
 
-.gallery-layout-container > .gallery-main-content {
-    flex-grow: 1; /* Allows main content to fill available space */
-    padding-top: var(--header-height, 75px); /* Add padding to avoid overlap with fixed/sticky header if any */
+/* Specific header for the gallery main page */
+.gallery-page-specific-header {
+    background-color: #1E3A8A; /* Navy Blue from original site */
+    color: white; /* White text color */
+    padding: 25px 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Removed .gallery-header styles as it's replaced by main Header */
+.gallery-page-specific-header h1 {
+    margin: 0;
+    font-size: 2.8rem; /* Original H1 size */
+    font-weight: 800;
+}
+
+
+.gallery-layout-container > .gallery-main-content {
+    flex-grow: 1; /* Allows main content to fill available space */
+    /* padding-top is NOT needed if the Header component itself is sticky and manages its own height offset */
+    /* If Header is not sticky, or specific-header pushes content, adjust padding here or on main */
+}
+
 
 .gallery-container { /* Renamed from .container to avoid conflict */
     max-width: 1200px;
@@ -93,26 +109,26 @@
     margin: 0;
 }
 
-/* Removed .back-link-container and .back-link as it's replaced by main Footer/Header */
-
 /* Day gallery specific styles */
-.day-gallery-header { /* This might be used if a specific day page needs its own sub-header below the main one */
-    background-color: #1E3A8A;
-    color: white;
+.day-gallery-header {
+    background-color: #1E3A8A; /* Navy blue */
+    color: white; /* White text */
     padding: 20px;
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 30px; /* Add margin to separate from content below */
 }
 .day-gallery-header h1 {
     margin: 0;
     font-size: 2.4rem;
+    color: white; /* Ensure h1 text is white */
 }
 .day-gallery-header .breadcrumb {
     font-size: 0.9rem;
     opacity: 0.8;
+    margin-top: 5px;
 }
 .day-gallery-header .breadcrumb a {
-    color: #FFC107;
+    color: #FFC107; /* Accent color for links */
     text-decoration: none;
 }
 .day-gallery-header .breadcrumb a:hover {
@@ -148,7 +164,30 @@
     display: block;
 }
 
+.back-link-container { /* For gallery main page */
+    text-align: center;
+    margin-top: 40px;
+    padding-bottom: 20px; /* Add some padding at the bottom */
+}
+.back-link {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #FFC107;
+    color: #1E3A8A;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: background-color 0.3s, color 0.3s;
+}
+.back-link:hover {
+    background-color: #e0a800;
+    color: white;
+}
+
+
 @media (max-width: 768px) {
+    .gallery-page-specific-header h1 { font-size: 2.2rem; }
     .year-header { flex-direction: column; text-align: center; }
     .year-header img.year-main-image { width: 120px; height: 120px; }
     .year-header h2 { font-size: 1.8rem; }
@@ -164,4 +203,3 @@
     .folders-grid { grid-template-columns: 1fr 1fr; }
     .images-grid { grid-template-columns: 1fr; } /* Single column on very small screens */
 }
-
