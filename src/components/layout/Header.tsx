@@ -1,16 +1,41 @@
 
 "use client";
-import { useContext, useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import Link from 'next/link'; // Use Next.js Link for client-side navigation for internal links
 import { GlobalContext } from '@/components/AppInitializer';
 import Image from 'next/image';
 
+// New component to render logo text only on the client side
+const ClientOnlyLogoText = ({ children }: { children: React.ReactNode }) => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null; // Or a placeholder if needed, but null is fine for this case
+  }
+
+  return (
+    <div className="logo-text" data-aos="fade-right" data-aos-delay="100" data-aos-duration="600" data-aos-once="true">
+      {children}
+    </div>
+  );
+};
+
 export default function Header() {
   const context = useContext(GlobalContext);
   const mainNavRef = useRef<HTMLElement>(null);
+  const [isClientMounted, setIsClientMounted] = useState(false);
+
+  useEffect(() => {
+    setIsClientMounted(true);
+  }, []);
+
 
   if (!context) return null; // Or some fallback UI
-  const { isMobileNavActive, toggleMobileNav, closeMobileNav, openRegistrationModal } = context;
+  const { isMobileNavActive, toggleMobileNav, closeMobileNav, openRegistrationModal, siteConfig } = context;
 
   const handleNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const href = e.currentTarget.getAttribute('href');
@@ -27,7 +52,7 @@ export default function Header() {
     
     const isInternalPageLink = href === '/gallery' || href === '/all-summary-videos';
 
-    if (href && (href.startsWith('#') || isInternalPageLink) && target !== '_blank') {
+    if (href && (href.startsWith('/#') || href.startsWith('#') || isInternalPageLink) && target !== '_blank') {
       if (isMobileNavActive) {
         setTimeout(closeMobileNav, 50);
       }
@@ -62,10 +87,21 @@ export default function Header() {
     <header className="main-header">
       <div className="container">
         <div className="logo-area">
-          <Image id="logo-img" src={context.siteConfig.logoImageSrc || "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0"} alt="לוגו קעמפ גן ישראל אלעד" data-aos="zoom-in" data-aos-duration="600" data-aos-once="true" width={200} height={55} style={{height: '55px', width: 'auto'}} />
-          <div className="logo-text" data-aos="fade-right" data-aos-delay="100" data-aos-duration="600" data-aos-once="true">
-            <Link href="/#hero" onClick={handleNavLinkClick}>קעמפ גן ישראל אלעד</Link>
-          </div>
+          <Image 
+            id="logo-img" 
+            src={siteConfig.logoImageSrc || "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0"} 
+            alt="לוגו קעמפ גן ישראל אלעד" 
+            data-aos={isClientMounted ? "zoom-in" : undefined}
+            data-aos-duration="600" 
+            data-aos-once="true" 
+            width={200} 
+            height={55} 
+            style={{height: '55px', width: 'auto'}} 
+            priority // Added priority as it's LCP
+          />
+          <ClientOnlyLogoText>
+            <Link href="/#hero">קעמפ גן ישראל אלעד</Link>
+          </ClientOnlyLogoText>
         </div>
         <nav className="main-nav" id="main-nav" ref={mainNavRef} onClick={(e) => e.stopPropagation()}>
           <ul>
