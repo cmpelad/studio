@@ -10,9 +10,7 @@ export default async function AllSummaryVideosPage() {
     return (
       <div className="container">
         <p>לא נמצאו סרטוני סיכום להצגה.</p>
-        <div className="back-link-container">
-          <Link href="/" className="back-link">חזרה לאתר הראשי</Link>
-        </div>
+        {/* Removed back-link-container from here as Footer is now global */}
       </div>
     );
   }
@@ -36,9 +34,7 @@ export default async function AllSummaryVideosPage() {
           ))}
         </div>
       </div>
-      <div className="back-link-container">
-        <Link href="/" className="back-link">חזרה לאתר הראשי</Link>
-      </div>
+      {/* Removed back-link-container from here as Footer is now global */}
     </>
   );
 }

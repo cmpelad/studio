@@ -1,6 +1,6 @@
 
 import Header from '@/components/layout/Header';
-// Removed Footer import
+import Footer from '@/components/layout/Footer'; // הוספת ייבוא מחדש
 import HeroSection from '@/components/sections/HeroSection';
 import SecondarySwiperSection from '@/components/sections/SecondarySwiperSection';
 import AboutSection from '@/components/sections/AboutSection';
@@ -36,7 +36,7 @@ export default function HomePage() {
         <ContactSection />
       </main>
       <FloatingRegisterButton />
-      {/* Footer component removed from here */}
+      <Footer /> {/* הוספת Footer מחדש */}
       
       {/* Modals */}
       <Lightbox />

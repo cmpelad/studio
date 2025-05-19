@@ -64,9 +64,7 @@ export default function DayGalleryPage({ params }: DayPageParams) {
           <p>אין תמונות להצגה עבור יום זה.</p>
         )}
       </div>
-      <div className="back-link-container">
-        <Link href="/" className="back-link">חזרה לאתר הראשי</Link>
-      </div>
+      {/* Removed back-link-container from here as Footer is now global */}
     </>
   );
 }
