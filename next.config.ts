@@ -40,6 +40,18 @@ const nextConfig: NextConfig = {
         hostname: 'picsum.photos',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'drive.usercontent.google.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'photos.fife.usercontent.google.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
