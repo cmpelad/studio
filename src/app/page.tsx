@@ -1,6 +1,6 @@
 
 import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
+// Removed Footer import
 import HeroSection from '@/components/sections/HeroSection';
 import SecondarySwiperSection from '@/components/sections/SecondarySwiperSection';
 import AboutSection from '@/components/sections/AboutSection';
@@ -36,7 +36,7 @@ export default function HomePage() {
         <ContactSection />
       </main>
       <FloatingRegisterButton />
-      <Footer />
+      {/* Footer component removed from here */}
       
       {/* Modals */}
       <Lightbox />
