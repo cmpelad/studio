@@ -78,7 +78,7 @@ export default function AppInitializer({ children, initialData }: AppInitializer
   ];
 
   // Use the new Google Drive link for the splash screen logo
-  const splashScreenLogoSrc = initialData.siteConfig.logoImageSrc || "https://drive.google.com/uc?id=1wh8OEZj3be-MIMVj8UyzktIRdyUosqlJ";
+  const splashScreenLogoSrc = initialData.siteConfig.logoImageSrc || "https://drive.usercontent.google.com/download?id=1wh8OEZj3be-MIMVj8UyzktIRdyUosqlJ";
 
 
   useEffect(() => {
