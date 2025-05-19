@@ -5,10 +5,10 @@ import { useEffect, useState, useCallback, useRef, createContext } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import type SwiperCore from 'swiper';
-import type { FaqItem, ContactDetails, Testimonial, SwiperSlideItem, VideoItem, GalleryYearData, GalleryDayData, GalleryImageItem } from '@/services/googleSheetsService';
+import type { SiteConfig, FaqItem, ContactDetails, Testimonial, SwiperSlideItem, VideoItem, GalleryYearData, GalleryDayData, GalleryImageItem } from '@/services/googleSheetsService';
 
 export interface InitialSiteData {
-  siteConfig: Record<string, string>;
+  siteConfig: SiteConfig;
   faqItems: FaqItem[];
   contactDetails: ContactDetails;
   testimonials: Testimonial[];
@@ -76,6 +76,9 @@ export default function AppInitializer({ children, initialData }: AppInitializer
       "https://picsum.photos/seed/img9/400/300?random=9", "https://picsum.photos/seed/img10/400/300?random=10",
       "https://picsum.photos/seed/img11/400/300?random=11", "https://picsum.photos/seed/img12/400/300?random=12"
   ];
+
+  // Use the new Google Drive link for the splash screen logo
+  const splashScreenLogoSrc = initialData.siteConfig.logoImageSrc || "https://drive.google.com/uc?id=1wh8OEZj3be-MIMVj8UyzktIRdyUosqlJ";
 
 
   useEffect(() => {
@@ -161,7 +164,7 @@ export default function AppInitializer({ children, initialData }: AppInitializer
         <div className="splash-screen" id="splashScreen">
           <div className="splash-content">
             <div className="splash-image-container">
-              <img src={initialData.siteConfig.logoImageSrc || "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0"} alt="קעמפ גן ישראל אלעד" />
+              <img src={splashScreenLogoSrc} alt="קעמפ גן ישראל אלעד" />
             </div>
             <div className="splash-box yellow"></div>
             <div className="splash-box blue"></div>
