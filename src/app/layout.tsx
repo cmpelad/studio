@@ -4,7 +4,16 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import AppInitializer, { type InitialSiteData } from '@/components/AppInitializer';
-import { getFaqData, getSiteConfig, getTestimonials, getSwiperSlides, getVideos } from '@/services/googleSheetsService';
+import { 
+  getFaqData, 
+  getSiteConfig, 
+  getTestimonials, 
+  getSwiperSlides, 
+  getVideos,
+  getGalleryYears,
+  getGalleryDays,
+  getGalleryImages
+} from '@/services/googleSheetsService';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -17,7 +26,6 @@ const geistMono = Geist_Mono({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  // Using static/hardcoded data from getSiteConfig
   const siteConfig = await getSiteConfig();
   return {
     title: siteConfig.siteTitle || 'קעמפ גן ישראל - אלעד',
@@ -30,12 +38,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Fetching all data (which will now be hardcoded from the service)
   const siteConfig = await getSiteConfig();
   const faqItems = await getFaqData();
   const testimonials = await getTestimonials();
   const swiperSlides = await getSwiperSlides();
   const videos = await getVideos();
+  const galleryYears = await getGalleryYears();
+  const galleryDays = await getGalleryDays();
+  const galleryImages = await getGalleryImages();
   
   const contactDetails = {
     officeAddress: siteConfig.contactOfficeAddress,
@@ -51,6 +61,9 @@ export default async function RootLayout({
     testimonials,
     swiperSlides,
     videos,
+    galleryYears,
+    galleryDays,
+    galleryImages,
   };
 
   return (

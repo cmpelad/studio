@@ -1,16 +1,28 @@
 
+"use client";
+import { useContext } from 'react';
 import Link from 'next/link';
-import { getVideos, type VideoItem } from '@/services/googleSheetsService';
+import { GlobalContext } from '@/components/AppInitializer';
+import type { VideoItem } from '@/services/googleSheetsService';
 
-export default async function AllSummaryVideosPage() {
-  const allVideos = await getVideos();
+export default function AllSummaryVideosPage() {
+  const context = useContext(GlobalContext);
+  
+  const allVideos = context?.videos || [];
   const summaryVideos = allVideos.filter(video => video.category === 'summaryVideo');
 
+  if (!context) {
+    return (
+      <div className="container">
+        <p>טוען סרטונים...</p>
+      </div>
+    );
+  }
+  
   if (!summaryVideos || summaryVideos.length === 0) {
     return (
       <div className="container">
         <p>לא נמצאו סרטוני סיכום להצגה.</p>
-        {/* Removed back-link-container from here as Footer is now global */}
       </div>
     );
   }
@@ -28,13 +40,10 @@ export default async function AllSummaryVideosPage() {
                 allowFullScreen
               ></iframe>
               <h3>{video.title}</h3>
-              {/* You can add a description field to your VideoItem interface and Google Sheet if needed */}
-              {/* <p>תיאור קצר של הסרטון.</p> */}
             </div>
           ))}
         </div>
       </div>
-      {/* Removed back-link-container from here as Footer is now global */}
     </>
   );
 }

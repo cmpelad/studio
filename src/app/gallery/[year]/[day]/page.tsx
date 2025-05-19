@@ -1,61 +1,95 @@
 
+"use client";
+import { useContext, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { galleryData, type YearData, type DayData, type DayGalleryImage } from '@/lib/gallery-data';
-import { notFound } from 'next/navigation';
+import { GlobalContext } from '@/components/AppInitializer';
+import type { GalleryImageItem } from '@/services/googleSheetsService';
+import { useParams, notFound } from 'next/navigation'; // Import notFound
 
-interface DayPageParams {
-  params: {
-    year: string;
-    day: string;
-  };
-}
+// generateStaticParams can still be useful if you pre-render some popular gallery pages
+// For now, we'll rely on dynamic rendering based on context
+// export async function generateStaticParams() {
+//   // This would need access to galleryYears and galleryDays,
+//   // which might be complex if they are fully dynamic from sheets at build time.
+//   // For simplicity, we'll skip this for now.
+//   return [];
+// }
 
-export async function generateStaticParams() {
-  const paths = [];
-  for (const year of galleryData) {
-    for (const day of year.days) {
-      paths.push({ year: year.yearSlug, day: day.slug });
-    }
-  }
-  return paths;
-}
-
-export default function DayGalleryPage({ params }: DayPageParams) {
+export default function DayGalleryPage() {
+  const context = useContext(GlobalContext);
+  const params = useParams<{ year: string; day: string }>();
   const { year: yearSlug, day: daySlug } = params;
 
-  const currentYearData = galleryData.find((y: YearData) => y.yearSlug === yearSlug);
-  if (!currentYearData) {
-    notFound();
+  const currentYearData = useMemo(() => 
+    context?.galleryYears?.find(y => y.yearSlug === yearSlug),
+  [context?.galleryYears, yearSlug]);
+  
+  const currentDayData = useMemo(() =>
+    context?.galleryDays?.find(d => d.yearSlug === yearSlug && d.daySlug === daySlug),
+  [context?.galleryDays, yearSlug, daySlug]);
+
+  const dayImages = useMemo(() =>
+    context?.galleryImages?.filter(img => img.yearSlug === yearSlug && img.daySlug === daySlug)
+      .sort((a, b) => (a.imageOrder || 0) - (b.imageOrder || 0)) || [],
+  [context?.galleryImages, yearSlug, daySlug]);
+
+  if (!context) {
+    return <div className="gallery-container"><p>טוען תמונות...</p></div>;
+  }
+  
+  // If context is loaded but data for current year/day is not found
+  if (!currentYearData || !currentDayData) {
+    console.log("Data not found for year/day:", yearSlug, daySlug, currentYearData, currentDayData);
+    // Call notFound() to render the nearest not-found page
+    // This should ideally be handled on the server if possible, or a more graceful client-side message
+    // For now, a simple message:
+     return (
+      <>
+        <div className="day-gallery-header">
+          <h1>הגלריה לא נמצאה</h1>
+            <p className="breadcrumb">
+                <Link href="/gallery">בחזרה לגלריה הראשית</Link>
+            </p>
+        </div>
+        <div className="gallery-container">
+            <p>מצטערים, לא מצאנו את הגלריה שחיפשת.</p>
+        </div>
+      </>
+    );
   }
 
-  const currentDayData = currentYearData.days.find((d: DayData) => d.slug === daySlug);
-  if (!currentDayData) {
-    notFound();
-  }
 
   return (
     <>
       <div className="day-gallery-header">
-        <h1>{`${currentDayData.name} - ${currentYearData.yearName}`}</h1>
+        <h1>{`${currentDayData.dayName} - ${currentYearData.yearName}`}</h1>
         <p className="breadcrumb">
-            <Link href="/gallery">כל השנים</Link> &gt; {currentYearData.yearName}
+            <Link href="/gallery">גלריה</Link> &gt; 
+            <Link href={`/gallery`}> {currentYearData.yearName}</Link> {/* Adjusted to link to main gallery if year pages don't exist */}
         </p>
       </div>
       
-      <div className="gallery-container"> {/* Use gallery-container for consistent padding */}
-        {currentDayData.images && currentDayData.images.length > 0 ? (
+      <div className="gallery-container">
+        {dayImages && dayImages.length > 0 ? (
           <div className="images-grid">
-            {currentDayData.images.map((image: DayGalleryImage) => (
-              <div className="image-item" key={image.src}>
+            {dayImages.map((image: GalleryImageItem, index: number) => (
+              <div 
+                className="image-item" 
+                key={image.src || index}
+                onClick={() => context.openLightbox(image.src, image.alt)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && context.openLightbox(image.src, image.alt)}
+              >
                 <Image 
                   src={image.src} 
                   alt={image.alt} 
                   width={600} 
                   height={400} 
                   className="gallery-image"
-                  data-ai-hint={image.hint}
-                  priority={currentDayData.images.indexOf(image) < 6}
+                  data-ai-hint={image.hint || "camp activity"}
+                  priority={index < 6} // Prioritize loading first few images
                 />
               </div>
             ))}
@@ -64,7 +98,6 @@ export default function DayGalleryPage({ params }: DayPageParams) {
           <p>אין תמונות להצגה עבור יום זה.</p>
         )}
       </div>
-      {/* Removed back-link-container from here as Footer is now global */}
     </>
   );
 }

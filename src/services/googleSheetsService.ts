@@ -4,7 +4,7 @@
 
 import { env } from 'process';
 
-// Fallback data - These are used if fetching from Google Sheets fails or is not configured.
+// --- Fallback Data ---
 const fallbackSiteConfig: Record<string, string> = {
     siteTitle: "קעמפ גן ישראל - אלעד (ברירת מחדל)",
     siteDescription: "חוויה של פעם בחיים! מחנה הקיץ הכי שווה מחכה לכם עם פעילויות מגוונות, מדריכים תותחים, ואווירה חסידית מיוחדת. (ברירת מחדל)",
@@ -32,6 +32,8 @@ const fallbackSiteConfig: Record<string, string> = {
     aboutImageAlt: "קבוצת ילדים בפעילות קעמפ (ברירת מחדל)",
     aboutImageHint: "camp activity",
     mainSummaryVideoId: "gqgfz0h0om4",
+    galleryPageTitle: "גלריית תמונות (סטטי)",
+    summaryVideosPageTitle: "כל סרטוני הסיכום (סטטי)",
 };
 
 const fallbackFaqs: FaqItem[] = [
@@ -61,18 +63,40 @@ const fallbackVideos: VideoItem[] = [
     { id: "summary2_fallback", videoId: "dQw4w9WgXcQ", title: "סרטון סיכום נוסף (דוגמה מקומית)", category: "summaryVideo" },
 ];
 
+const fallbackGalleryYears: GalleryYearData[] = [
+  { yearSlug: "tashpad", yearName: 'ה\'תשפ"ד (סטטי)', yearImage: "https://placehold.co/300x300.png?text=Static-2024", yearImageHint: "camp collage" },
+  { yearSlug: "tashpah", yearName: 'ה\'תשפ"ה (סטטי)', yearImage: "https://placehold.co/300x300.png?text=Static-2025", yearImageHint: "kids group" },
+];
+
+const fallbackGalleryDays: GalleryDayData[] = [
+  { yearSlug: "tashpad", daySlug: "day1", dayName: "היום הראשון (סטטי)", thumbnail: "https://placehold.co/400x300.png?text=Static-D1", thumbnailHint: "camp activity" },
+  { yearSlug: "tashpad", daySlug: "day2", dayName: "היום השני (סטטי)", thumbnail: "https://placehold.co/400x300.png?text=Static-D2", thumbnailHint: "outdoor fun" },
+];
+
+const fallbackGalleryImages: GalleryImageItem[] = [
+  { yearSlug: "tashpad", daySlug: "day1", imageOrder: 1, src: "https://placehold.co/600x400.png?text=Static-Img1", alt: "תמונה 1 סטטית", hint: "children fun" },
+];
+
+
+// --- CSV URLs ---
+// החלף את הקישורים הבאים בקישורי ה-CSV הישירים שלך מה-Google Sheets
+// או ספק GID עבור כל גיליון
+const SPREADSHEET_ID_FROM_ENV = env.GOOGLE_SHEETS_SPREADSHEET_ID; // לדוגמה: "2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F"
+
+// --- החלף את ה-PLACEHOLDER_GID_XXX ב-GID הנכון עבור כל גיליון ---
+const FAQ_CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID_FROM_ENV}/pub?gid=837718949&single=true&output=csv`;
+const SWIPER_SLIDES_CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID_FROM_ENV}/pub?gid=421516172&single=true&output=csv`;
+const GALLERY_YEARS_CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID_FROM_ENV}/pub?gid=PLACEHOLDER_GID_GALLERY_YEARS&single=true&output=csv`;
+const GALLERY_DAYS_CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID_FROM_ENV}/pub?gid=PLACEHOLDER_GID_GALLERY_DAYS&single=true&output=csv`;
+const GALLERY_IMAGES_CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID_FROM_ENV}/pub?gid=PLACEHOLDER_GID_GALLERY_IMAGES&single=true&output=csv`;
+
+
 const API_KEY = env.GOOGLE_SHEETS_API_KEY;
-const SPREADSHEET_ID = env.GOOGLE_SHEETS_SPREADSHEET_ID;
 
-// Direct CSV URLs provided by the user
-const FAQ_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=837718949&single=true&output=csv";
-const SWIPER_SLIDES_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=421516172&single=true&output=csv";
-
-
-if (!API_KEY || !SPREADSHEET_ID) {
+if (!API_KEY && !SPREADSHEET_ID_FROM_ENV) {
   if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') {
     console.warn(
-      'GOOGLE_SHEETS_API_KEY or GOOGLE_SHEETS_SPREADSHEET_ID is missing. Site will use hardcoded fallback data for API-dependent features (excluding direct CSV links if provided).'
+      'GOOGLE_SHEETS_API_KEY or GOOGLE_SHEETS_SPREADSHEET_ID is missing. Site will use hardcoded fallback data.'
     );
   }
 }
@@ -82,18 +106,17 @@ interface FetchSheetDataOptions {
   range?: string;
 }
 
-// Fetches data using Google Sheets API (requires API_KEY and SPREADSHEET_ID)
 async function fetchSheetData<T extends string[]>(
   options: FetchSheetDataOptions
 ): Promise<T[] | null> {
-  if (!API_KEY || !SPREADSHEET_ID) {
+  if (!API_KEY || !SPREADSHEET_ID_FROM_ENV) {
     console.warn(`Skipping API fetch for ${options.sheetName} due to missing API_KEY or SPREADSHEET_ID.`);
     return null;
   }
 
   const { sheetName, range } = options;
   const sheetRange = range ? `${sheetName}!${range}` : sheetName;
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(sheetRange)}?key=${API_KEY}&valueRenderOption=UNFORMATTED_VALUE&majorDimension=ROWS`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID_FROM_ENV}/values/${encodeURIComponent(sheetRange)}?key=${API_KEY}&valueRenderOption=UNFORMATTED_VALUE&majorDimension=ROWS`;
 
   console.log(`Attempting to fetch data from Google Sheet API: ${sheetName}, Range: ${sheetRange}`);
   try {
@@ -114,15 +137,20 @@ async function fetchSheetData<T extends string[]>(
   }
 }
 
-// Fetches and parses CSV data from a direct URL
-async function fetchCsvDataFromUrl(csvUrl: string, sheetTypeForLogging: string): Promise<string[][] | null> {
-  if (!csvUrl) {
-    console.warn(`fetchCsvDataFromUrl: No CSV URL provided for ${sheetTypeForLogging}. Skipping fetch.`);
+
+async function fetchCsvDataFromUrl(csvUrl: string, sheetTypeForLogging: string, expectedHeaders: string[]): Promise<string[][] | null> {
+  if (!csvUrl || csvUrl.includes("PLACEHOLDER_GID")) {
+    console.warn(`fetchCsvDataFromUrl: Invalid or placeholder CSV URL for ${sheetTypeForLogging}. URL: ${csvUrl}. Skipping fetch.`);
     return null;
   }
+  if (!SPREADSHEET_ID_FROM_ENV) {
+    console.warn(`fetchCsvDataFromUrl: SPREADSHEET_ID_FROM_ENV is not defined. Cannot construct CSV URL for ${sheetTypeForLogging}. Skipping fetch.`);
+    return null;
+  }
+
   console.log(`Attempting to fetch CSV from URL for ${sheetTypeForLogging}: ${csvUrl}`);
   try {
-    const response = await fetch(csvUrl, { next: { revalidate: 3600 } }); // Revalidate every hour
+    const response = await fetch(csvUrl, { next: { revalidate: 3600 } });
     if (!response.ok) {
       console.error(`Error fetching CSV data from URL ${csvUrl} for ${sheetTypeForLogging}: ${response.status} ${response.statusText}`);
       return null;
@@ -165,102 +193,14 @@ async function fetchCsvDataFromUrl(csvUrl: string, sheetTypeForLogging: string):
   }
 }
 
+
+// --- Data Type Interfaces ---
 export interface FaqItem {
   id: string;
   question: string;
   answer: string;
   delay?: string;
 }
-
-export async function getFaqData(): Promise<FaqItem[]> {
-  if (FAQ_CSV_URL) {
-    console.log(`getFaqData: Attempting to fetch from direct CSV URL: ${FAQ_CSV_URL}`);
-    try {
-      const rows = await fetchCsvDataFromUrl(FAQ_CSV_URL, 'FAQ');
-      if (rows && rows.length > 0) {
-        let dataRows = rows;
-        const headerRow = rows[0].map(h => h.toLowerCase().trim());
-        const expectedHeaders = ['id', 'question', 'answer'];
-        const isHeaderPresent = expectedHeaders.every(expHeader => headerRow.includes(expHeader));
-        let columnMap: Record<string, number> = {};
-
-        if (isHeaderPresent) {
-          console.log("getFaqData: CSV Header row (id,question,answer) detected.");
-          dataRows = rows.slice(1);
-          headerRow.forEach((header, index) => {
-            columnMap[header] = index;
-          });
-          console.log("getFaqData: Column map based on headers:", columnMap);
-        } else {
-          console.log("getFaqData: No specific CSV Header (id,question,answer) detected, assuming fixed order: [id/question], [question/answer].");
-          // If only two columns and no 'id' header, assume [question, answer]
-          if (headerRow.length === 2 && !headerRow.includes('id')) {
-             columnMap = { question: 0, answer: 1 };
-          } else { // Assume [id, question, answer] or just [question, answer] if first column is not 'id' like
-             columnMap = { id: 0, question: 1, answer: 2 };
-          }
-        }
-
-        if (dataRows.length > 0) {
-          const faqs = dataRows.map((row, index) => {
-            const question = row[columnMap.question] || '';
-            const answer = row[columnMap.answer] || '';
-            // If 'id' is not in columnMap (e.g. 2-column CSV), generate it. Otherwise, use it or generate.
-            const id = columnMap.id !== undefined ? (row[columnMap.id] || `faq_csv_${index}`) : `faq_csv_${index}`;
-            
-            if (!question && !answer) return null; // Skip empty rows
-
-            return {
-              id: id.trim(),
-              question: question.trim(),
-              answer: answer.trim(),
-              delay: String(index * 50),
-            };
-          }).filter(faq => faq !== null) as FaqItem[];
-          console.log(`getFaqData: Processed ${faqs.length} FAQ items from CSV URL. First item:`, faqs[0]);
-          return faqs.length > 0 ? faqs : fallbackFaqs;
-        } else {
-          console.log('getFaqData: No data rows found in CSV from URL after potential header skip.');
-        }
-      } else {
-        console.log('getFaqData: No data returned from CSV URL fetch.');
-      }
-    } catch (e) {
-      console.error('getFaqData: Error processing CSV data from URL, will try API or fallback.', e);
-    }
-  } else {
-    console.log('getFaqData: FAQ_CSV_URL not defined. Will try API or fallback.');
-  }
-
-  // Fallback to API if CSV fails or URL not provided
-  if (API_KEY && SPREADSHEET_ID) {
-    const sheetName = 'FAQ';
-    console.log(`getFaqData: Attempting to fetch from Google Sheets API, Sheet: ${sheetName}`);
-    try {
-      const rowsFromApi = await fetchSheetData<[string, string, string]>({ sheetName, range: 'A:C' }); // Assuming ID, Question, Answer
-      if (rowsFromApi && rowsFromApi.length > 1) { // Assuming first row is header
-        const faqs = rowsFromApi.slice(1).map((row, index) => ({
-          id: row[0]?.trim() || `faq_api_${index}`,
-          question: row[1]?.trim() || '',
-          answer: row[2]?.trim() || '',
-          delay: String(index * 50),
-        })).filter(faq => faq.question || faq.answer);
-        console.log(`getFaqData: Processed ${faqs.length} FAQ items from Google Sheets API.`);
-        return faqs.length > 0 ? faqs : fallbackFaqs;
-      } else {
-        console.log(`getFaqData: No data rows (or only header) in ${sheetName} sheet via API. Using fallbackFaqs.`);
-      }
-    } catch (error) {
-      console.error('getFaqData: Error processing FAQ data from Google Sheets API, using fallbackFaqs:', error);
-    }
-  } else {
-    console.log('getFaqData: API_KEY or SPREADSHEET_ID missing for API call. Using fallbackFaqs.');
-  }
-  
-  console.log('getFaqData: Using hardcoded fallbackFaqs data.');
-  return fallbackFaqs;
-}
-
 
 export interface ContactDetails {
   officeAddress?: string;
@@ -269,21 +209,10 @@ export interface ContactDetails {
   contactHours?: string;
 }
 
-// SiteConfig will be hardcoded as per user request
-export async function getSiteConfig(): Promise<Record<string, string>> {
-    console.log("getSiteConfig: Using hardcoded fallbackSiteConfig data as requested.");
-    return fallbackSiteConfig;
-}
-
 export interface Testimonial {
   id: string;
   quote: string;
   author: string;
-}
-
-export async function getTestimonials(): Promise<Testimonial[]> {
-    console.log("getTestimonials: Returning hardcoded fallbackTestimonials.");
-    return fallbackTestimonials;
 }
 
 export interface SwiperSlideItem {
@@ -295,66 +224,177 @@ export interface SwiperSlideItem {
   captionText: string;
 }
 
-export async function getSwiperSlides(): Promise<SwiperSlideItem[]> {
-  if (SWIPER_SLIDES_CSV_URL) {
-    console.log(`getSwiperSlides: Attempting to fetch from direct CSV URL: ${SWIPER_SLIDES_CSV_URL}`);
-    try {
-      const rows = await fetchCsvDataFromUrl(SWIPER_SLIDES_CSV_URL, 'SwiperSlides');
-      if (rows && rows.length > 0) {
-        let dataRows = rows;
-        const headerRow = rows[0].map(h => h.toLowerCase().trim());
-        const expectedHeaders = ['id', 'imagesrc', 'imagealt', 'imagehint', 'captiontitle', 'captiontext'];
-        const isHeaderPresent = expectedHeaders.every(expHeader => headerRow.includes(expHeader));
-        let columnMap: Record<string, number> = {};
+export interface VideoItem {
+  id: string;
+  videoId: string;
+  title: string;
+  category: 'campSong' | 'summaryVideo' | string;
+}
 
-        if (isHeaderPresent) {
-          console.log("getSwiperSlides: CSV Header row detected for SwiperSlides.");
-          dataRows = rows.slice(1);
-          headerRow.forEach((header, index) => {
-             // Normalize header names for mapping (e.g., imagesrc to imageSrc)
-            if (header === 'imagesrc') columnMap['imageSrc'] = index;
-            else if (header === 'imagealt') columnMap['imageAlt'] = index;
-            else if (header === 'imagehint') columnMap['imageHint'] = index;
-            else if (header === 'captiontitle') columnMap['captionTitle'] = index;
-            else if (header === 'captiontext') columnMap['captionText'] = index;
-            else columnMap[header] = index; // For 'id' and any other exact matches
-          });
-           console.log("getSwiperSlides: Column map based on headers:", columnMap);
-        } else {
-          console.log("getSwiperSlides: No specific CSV Header for SwiperSlides detected, assuming fixed order: id,imageSrc,imageAlt,imageHint,captionTitle,captionText.");
-          columnMap = { id: 0, imageSrc: 1, imageAlt: 2, imageHint: 3, captionTitle: 4, captionText: 5 };
-        }
+export interface GalleryYearData {
+  yearSlug: string;
+  yearName: string;
+  yearImage: string;
+  yearImageHint?: string;
+}
 
-        if (dataRows.length > 0) {
-          const slides = dataRows.map((row, index) => {
-            const id = row[columnMap.id]?.trim() || `swiper_csv_${index}`;
-            const imageSrc = row[columnMap.imageSrc]?.trim() || '';
-            const imageAlt = row[columnMap.imageAlt]?.trim() || '';
-            const imageHint = row[columnMap.imageHint]?.trim() || undefined;
-            const captionTitle = row[columnMap.captionTitle]?.trim() || '';
-            const captionText = row[columnMap.captionText]?.trim() || '';
+export interface GalleryDayData {
+  yearSlug: string; // To link back to the year
+  daySlug: string;
+  dayName: string;
+  thumbnail: string;
+  thumbnailHint?: string;
+}
 
-            if (!imageSrc && !captionTitle) return null; // Skip effectively empty rows
+export interface GalleryImageItem {
+  yearSlug: string; // To link back to the year
+  daySlug: string;  // To link back to the day
+  imageOrder?: number; // Optional for sorting
+  src: string;
+  alt: string;
+  hint?: string;
+}
 
-            return { id, imageSrc, imageAlt, imageHint, captionTitle, captionText };
-          }).filter(slide => slide !== null) as SwiperSlideItem[];
-          console.log(`getSwiperSlides: Processed ${slides.length} SwiperSlide items from CSV URL. First item:`, slides[0]);
-          return slides.length > 0 ? slides : fallbackSwiperSlides;
-        } else {
-          console.log('getSwiperSlides: No data rows found in CSV from URL after potential header skip.');
-        }
+
+// --- Data Fetching Functions ---
+
+export async function getSiteConfig(): Promise<Record<string, string>> {
+    // SiteConfig will remain hardcoded as per previous user request.
+    console.log("getSiteConfig: Using hardcoded fallbackSiteConfig data.");
+    return fallbackSiteConfig;
+}
+
+export async function getFaqData(): Promise<FaqItem[]> {
+  const expectedHeaders = ['id', 'question', 'answer'];
+  console.log(`getFaqData: Attempting to fetch from direct CSV URL: ${FAQ_CSV_URL}`);
+  const rows = await fetchCsvDataFromUrl(FAQ_CSV_URL, 'FAQ', expectedHeaders);
+
+  if (rows && rows.length > 0) {
+    let dataRows = rows;
+    const headerRow = rows[0].map(h => h.toLowerCase().trim().replace(/\s+/g, '')); // Normalize headers
+    let columnMap: Record<string, number> = {};
+
+    const isHeaderPresent = expectedHeaders.every(expHeader => headerRow.includes(expHeader));
+
+    if (isHeaderPresent) {
+      console.log("getFaqData: CSV Header row (id,question,answer) detected.");
+      dataRows = rows.slice(1);
+      headerRow.forEach((header, index) => {
+        columnMap[header] = index;
+      });
+      console.log("getFaqData: Column map based on headers:", columnMap);
+    } else {
+      console.log("getFaqData: No specific CSV Header (id,question,answer) detected, assuming fixed order: [id (optional)], [question], [answer].");
+      // Try to infer based on number of columns
+      if (rows[0].length === 2) { // question, answer
+        columnMap = { question: 0, answer: 1 };
+      } else if (rows[0].length >= 3) { // id, question, answer
+        columnMap = { id: 0, question: 1, answer: 2 };
       } else {
-        console.log('getSwiperSlides: No data returned from CSV URL fetch.');
+        console.warn("getFaqData: CSV does not have enough columns for question and answer. Using fallback.");
+        return fallbackFaqs;
       }
-    } catch (e) {
-      console.error('getSwiperSlides: Error processing CSV data from URL, will try API or fallback.', e);
+    }
+
+    if (dataRows.length > 0) {
+      const faqs = dataRows.map((row, index) => {
+        const question = row[columnMap.question]?.trim() || '';
+        const answer = row[columnMap.answer]?.trim() || '';
+        const id = columnMap.id !== undefined ? (row[columnMap.id]?.trim() || `faq_csv_${index}`) : `faq_csv_${index}`;
+        
+        if (!question && !answer) return null;
+
+        return {
+          id: id,
+          question: question,
+          answer: answer,
+          delay: String(index * 50),
+        };
+      }).filter(faq => faq !== null) as FaqItem[];
+      console.log(`getFaqData: Processed ${faqs.length} FAQ items from CSV URL. First item:`, faqs[0]);
+      if (faqs.length > 0) return faqs;
+    } else {
+      console.log('getFaqData: No data rows found in CSV from URL after potential header skip.');
     }
   } else {
-    console.log('getSwiperSlides: SWIPER_SLIDES_CSV_URL not defined. Will try API or fallback.');
+    console.log('getFaqData: No data returned from CSV URL fetch.');
   }
   
-  // Fallback to API if CSV fails or URL not provided
-  if (API_KEY && SPREADSHEET_ID) {
+  // Fallback to API if CSV fails
+  if (API_KEY && SPREADSHEET_ID_FROM_ENV) {
+    const sheetName = 'FAQ';
+    console.log(`getFaqData: Attempting to fetch from Google Sheets API, Sheet: ${sheetName}`);
+    try {
+      const rowsFromApi = await fetchSheetData<[string, string, string]>({ sheetName, range: 'A:C' });
+      if (rowsFromApi && rowsFromApi.length > 1) {
+        const faqs = rowsFromApi.slice(1).map((row, index) => ({
+          id: row[0]?.trim() || `faq_api_${index}`,
+          question: row[1]?.trim() || '',
+          answer: row[2]?.trim() || '',
+          delay: String(index * 50),
+        })).filter(faq => faq.question || faq.answer);
+        console.log(`getFaqData: Processed ${faqs.length} FAQ items from Google Sheets API.`);
+        if (faqs.length > 0) return faqs;
+      } else {
+        console.log(`getFaqData: No data rows (or only header) in ${sheetName} sheet via API. Using fallbackFaqs.`);
+      }
+    } catch (error) {
+      console.error('getFaqData: Error processing FAQ data from Google Sheets API, using fallbackFaqs:', error);
+    }
+  }
+  
+  console.log('getFaqData: Using hardcoded fallbackFaqs data.');
+  return fallbackFaqs;
+}
+
+
+export async function getTestimonials(): Promise<Testimonial[]> {
+    console.log("getTestimonials: Returning hardcoded fallbackTestimonials.");
+    return fallbackTestimonials;
+}
+
+export async function getSwiperSlides(): Promise<SwiperSlideItem[]> {
+  const expectedHeaders = ['id', 'imagesrc', 'imagealt', 'imagehint', 'captiontitle', 'captiontext'];
+  console.log(`getSwiperSlides: Attempting to fetch from direct CSV URL: ${SWIPER_SLIDES_CSV_URL}`);
+  const rows = await fetchCsvDataFromUrl(SWIPER_SLIDES_CSV_URL, 'SwiperSlides', expectedHeaders);
+
+  if (rows && rows.length > 0) {
+    let dataRows = rows;
+    const headerRow = rows[0].map(h => h.toLowerCase().trim().replace(/\s+/g, ''));
+    let columnMap: Record<string, number> = {};
+    const isHeaderPresent = expectedHeaders.every(expHeader => headerRow.includes(expHeader));
+
+    if (isHeaderPresent) {
+      console.log("getSwiperSlides: CSV Header row detected.");
+      dataRows = rows.slice(1);
+      headerRow.forEach((header, index) => { columnMap[header] = index; });
+      console.log("getSwiperSlides: Column map based on headers:", columnMap);
+    } else {
+      console.log("getSwiperSlides: No specific CSV Header detected, assuming fixed order: id,imageSrc,imageAlt,imageHint,captionTitle,captionText.");
+      columnMap = { id: 0, imagesrc: 1, imagealt: 2, imagehint: 3, captiontitle: 4, captiontext: 5 };
+    }
+
+    if (dataRows.length > 0) {
+      const slides = dataRows.map((row, index) => {
+        const id = row[columnMap.id]?.trim() || `swiper_csv_${index}`;
+        const imageSrc = row[columnMap.imagesrc]?.trim() || '';
+        const imageAlt = row[columnMap.imagealt]?.trim() || '';
+        const imageHint = row[columnMap.imagehint]?.trim() || undefined;
+        const captionTitle = row[columnMap.captiontitle]?.trim() || '';
+        const captionText = row[columnMap.captiontext]?.trim() || '';
+        if (!imageSrc && !captionTitle) return null;
+        return { id, imageSrc, imageAlt, imageHint, captionTitle, captionText };
+      }).filter(slide => slide !== null) as SwiperSlideItem[];
+      console.log(`getSwiperSlides: Processed ${slides.length} SwiperSlide items from CSV URL. First item:`, slides[0]);
+      if (slides.length > 0) return slides;
+    } else {
+      console.log('getSwiperSlides: No data rows found in CSV from URL after potential header skip.');
+    }
+  } else {
+    console.log('getSwiperSlides: No data returned from CSV URL fetch.');
+  }
+
+  if (API_KEY && SPREADSHEET_ID_FROM_ENV) {
     const sheetName = 'SwiperSlides';
     console.log(`getSwiperSlides: Attempting to fetch from Google Sheets API, Sheet: ${sheetName}`);
     try {
@@ -369,31 +409,144 @@ export async function getSwiperSlides(): Promise<SwiperSlideItem[]> {
           captionText: row[5]?.trim() || '',
         })).filter(slide => slide.imageSrc || slide.captionTitle);
         console.log(`getSwiperSlides: Processed ${slides.length} items from Google Sheets API.`);
-        return slides.length > 0 ? slides : fallbackSwiperSlides;
+        if (slides.length > 0) return slides;
       } else {
         console.log(`getSwiperSlides: Sheet ${sheetName} is empty or has only header via API. Using fallback.`);
       }
     } catch (error) {
       console.error(`getSwiperSlides: Error processing data from Google Sheets API for ${sheetName}, using fallback:`, error);
     }
-  } else {
-    console.log(`getSwiperSlides: API_KEY or SPREADSHEET_ID missing for API call. Using fallbackSwiperSlides.`);
   }
-
+  
   console.log("getSwiperSlides: Using hardcoded fallbackSwiperSlides.");
   return fallbackSwiperSlides;
-}
-
-export interface VideoItem {
-  id: string;
-  videoId: string;
-  title: string;
-  category: 'campSong' | 'summaryVideo' | string;
 }
 
 export async function getVideos(): Promise<VideoItem[]> {
     console.log("getVideos: Returning hardcoded fallbackVideos.");
     return fallbackVideos;
 }
+
+// --- Gallery Data Functions ---
+export async function getGalleryYears(): Promise<GalleryYearData[]> {
+  const expectedHeaders = ['yearslug', 'yearname', 'yearimage', 'yearimagehint'];
+  console.log(`getGalleryYears: Attempting to fetch from direct CSV URL: ${GALLERY_YEARS_CSV_URL}`);
+  const rows = await fetchCsvDataFromUrl(GALLERY_YEARS_CSV_URL, 'GalleryYears', expectedHeaders);
+
+  if (rows && rows.length > 0) {
+    let dataRows = rows;
+    const headerRow = rows[0].map(h => h.toLowerCase().trim().replace(/\s+/g, ''));
+    let columnMap: Record<string, number> = {};
+    const isHeaderPresent = expectedHeaders.every(expHeader => headerRow.includes(expHeader));
+
+    if (isHeaderPresent) {
+      console.log("getGalleryYears: CSV Header row detected.");
+      dataRows = rows.slice(1);
+      headerRow.forEach((header, index) => { columnMap[header] = index; });
+    } else {
+      console.log("getGalleryYears: No specific CSV Header detected, assuming fixed order: yearSlug, yearName, yearImage, yearImageHint.");
+      columnMap = { yearslug: 0, yearname: 1, yearimage: 2, yearimagehint: 3 };
+    }
+
+    if (dataRows.length > 0) {
+      const years = dataRows.map((row, index) => {
+        const yearSlug = row[columnMap.yearslug]?.trim();
+        if (!yearSlug) return null;
+        return {
+          yearSlug: yearSlug,
+          yearName: row[columnMap.yearname]?.trim() || yearSlug,
+          yearImage: row[columnMap.yearimage]?.trim() || `https://placehold.co/300x300.png?text=${yearSlug}`,
+          yearImageHint: row[columnMap.yearimagehint]?.trim() || "camp collage",
+        };
+      }).filter(year => year !== null) as GalleryYearData[];
+      console.log(`getGalleryYears: Processed ${years.length} items. First:`, years[0]);
+      if (years.length > 0) return years;
+    }
+  }
+  console.log("getGalleryYears: Using fallback data.");
+  return fallbackGalleryYears;
+}
+
+export async function getGalleryDays(): Promise<GalleryDayData[]> {
+  const expectedHeaders = ['yearslug', 'dayslug', 'dayname', 'thumbnail', 'thumbnailhint'];
+  console.log(`getGalleryDays: Attempting to fetch from direct CSV URL: ${GALLERY_DAYS_CSV_URL}`);
+  const rows = await fetchCsvDataFromUrl(GALLERY_DAYS_CSV_URL, 'GalleryDays', expectedHeaders);
+
+  if (rows && rows.length > 0) {
+    let dataRows = rows;
+    const headerRow = rows[0].map(h => h.toLowerCase().trim().replace(/\s+/g, ''));
+    let columnMap: Record<string, number> = {};
+    const isHeaderPresent = expectedHeaders.every(expHeader => headerRow.includes(expHeader));
+
+    if (isHeaderPresent) {
+      console.log("getGalleryDays: CSV Header row detected.");
+      dataRows = rows.slice(1);
+      headerRow.forEach((header, index) => { columnMap[header] = index; });
+    } else {
+      console.log("getGalleryDays: No specific CSV Header, assuming fixed order: yearSlug, daySlug, dayName, thumbnail, thumbnailHint.");
+      columnMap = { yearslug: 0, dayslug: 1, dayname: 2, thumbnail: 3, thumbnailhint: 4 };
+    }
+
+    if (dataRows.length > 0) {
+      const days = dataRows.map((row, index) => {
+        const yearSlug = row[columnMap.yearslug]?.trim();
+        const daySlug = row[columnMap.dayslug]?.trim();
+        if (!yearSlug || !daySlug) return null;
+        return {
+          yearSlug: yearSlug,
+          daySlug: daySlug,
+          dayName: row[columnMap.dayname]?.trim() || daySlug,
+          thumbnail: row[columnMap.thumbnail]?.trim() || `https://placehold.co/400x300.png?text=${daySlug}`,
+          thumbnailHint: row[columnMap.thumbnailhint]?.trim() || "camp activity",
+        };
+      }).filter(day => day !== null) as GalleryDayData[];
+       console.log(`getGalleryDays: Processed ${days.length} items. First:`, days[0]);
+      if (days.length > 0) return days;
+    }
+  }
+  console.log("getGalleryDays: Using fallback data.");
+  return fallbackGalleryDays;
+}
+
+export async function getGalleryImages(): Promise<GalleryImageItem[]> {
+  const expectedHeaders = ['yearslug', 'dayslug', 'imageorder', 'src', 'alt', 'hint'];
+   console.log(`getGalleryImages: Attempting to fetch from direct CSV URL: ${GALLERY_IMAGES_CSV_URL}`);
+  const rows = await fetchCsvDataFromUrl(GALLERY_IMAGES_CSV_URL, 'GalleryImages', expectedHeaders);
+
+  if (rows && rows.length > 0) {
+    let dataRows = rows;
+    const headerRow = rows[0].map(h => h.toLowerCase().trim().replace(/\s+/g, ''));
+    let columnMap: Record<string, number> = {};
+    const isHeaderPresent = expectedHeaders.every(expHeader => headerRow.includes(expHeader));
+
+    if (isHeaderPresent) {
+      console.log("getGalleryImages: CSV Header row detected.");
+      dataRows = rows.slice(1);
+      headerRow.forEach((header, index) => { columnMap[header] = index; });
+    } else {
+      console.log("getGalleryImages: No specific CSV Header, assuming fixed order: yearSlug, daySlug, imageOrder, src, alt, hint.");
+      columnMap = { yearslug: 0, dayslug: 1, imageorder: 2, src: 3, alt: 4, hint: 5 };
+    }
     
-    
+    if (dataRows.length > 0) {
+      const images = dataRows.map((row, index) => {
+        const yearSlug = row[columnMap.yearslug]?.trim();
+        const daySlug = row[columnMap.dayslug]?.trim();
+        const src = row[columnMap.src]?.trim();
+        if (!yearSlug || !daySlug || !src) return null;
+        return {
+          yearSlug: yearSlug,
+          daySlug: daySlug,
+          imageOrder: columnMap.imageorder !== undefined ? parseInt(row[columnMap.imageorder]?.trim()) || index : index,
+          src: src,
+          alt: row[columnMap.alt]?.trim() || `Image ${index + 1} for ${daySlug} ${yearSlug}`,
+          hint: row[columnMap.hint]?.trim() || "camp picture",
+        };
+      }).filter(img => img !== null) as GalleryImageItem[];
+      console.log(`getGalleryImages: Processed ${images.length} items. First:`, images[0]);
+      if (images.length > 0) return images;
+    }
+  }
+  console.log("getGalleryImages: Using fallback data.");
+  return fallbackGalleryImages;
+}

@@ -1,13 +1,36 @@
 
+"use client";
+import { useContext, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { galleryData, type YearData, type DayData } from '@/lib/gallery-data';
+import { GlobalContext } from '@/components/AppInitializer';
+import type { GalleryYearData, GalleryDayData } from '@/services/googleSheetsService';
 
 export default function GalleryPage() {
+  const context = useContext(GlobalContext);
+
+  const years = context?.galleryYears || [];
+  const days = context?.galleryDays || [];
+
+  const galleryStructure = useMemo(() => {
+    return years.map(year => ({
+      ...year,
+      days: days.filter(day => day.yearSlug === year.yearSlug)
+    }));
+  }, [years, days]);
+
+  if (!context) {
+    return <div className="gallery-container"><p>טוען נתוני גלריה...</p></div>;
+  }
+
+  if (galleryStructure.length === 0) {
+    return <div className="gallery-container"><p>לא נמצאו אלבומים להצגה.</p></div>;
+  }
+
   return (
     <>
       <div className="gallery-container">
-        {galleryData.map((year: YearData) => (
+        {galleryStructure.map((year: GalleryYearData & { days: GalleryDayData[] }) => (
           <section className="year-section" key={year.yearSlug}>
             <div className="year-header">
               <Image 
@@ -16,29 +39,32 @@ export default function GalleryPage() {
                 width={150} 
                 height={150} 
                 className="year-main-image"
-                data-ai-hint={year.yearImageHint}
+                data-ai-hint={year.yearImageHint || "camp collage"}
               />
               <h2>{`קעמפ גן ישראל ${year.yearName}`}</h2>
             </div>
-            <div className="folders-grid">
-              {year.days.map((day: DayData) => (
-                <Link href={`/gallery/${year.yearSlug}/${day.slug}`} className="folder-item" key={day.slug}>
-                  <Image 
-                    src={day.thumbnail} 
-                    alt={day.name} 
-                    width={400} 
-                    height={300} 
-                    className="folder-thumbnail"
-                    data-ai-hint={day.thumbnailHint}
-                  />
-                  <p>{day.name}</p>
-                </Link>
-              ))}
-            </div>
+            {year.days && year.days.length > 0 ? (
+              <div className="folders-grid">
+                {year.days.map((day: GalleryDayData) => (
+                  <Link href={`/gallery/${year.yearSlug}/${day.daySlug}`} className="folder-item" key={day.daySlug}>
+                    <Image 
+                      src={day.thumbnail} 
+                      alt={day.dayName} 
+                      width={400} 
+                      height={300} 
+                      className="folder-thumbnail"
+                      data-ai-hint={day.thumbnailHint || "camp activity"}
+                    />
+                    <p>{day.dayName}</p>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p>לא נמצאו ימים להצגה עבור שנה זו.</p>
+            )}
           </section>
         ))}
       </div>
-      {/* Removed back-link-container from here as Footer is now global */}
     </>
   );
 }

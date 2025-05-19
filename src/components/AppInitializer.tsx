@@ -5,15 +5,18 @@ import { useEffect, useState, useCallback, useRef, createContext } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import type SwiperCore from 'swiper';
-import type { FaqItem, ContactDetails, Testimonial, SwiperSlideItem, VideoItem } from '@/services/googleSheetsService';
+import type { FaqItem, ContactDetails, Testimonial, SwiperSlideItem, VideoItem, GalleryYearData, GalleryDayData, GalleryImageItem } from '@/services/googleSheetsService';
 
 export interface InitialSiteData {
+  siteConfig: Record<string, string>;
   faqItems: FaqItem[];
   contactDetails: ContactDetails;
-  siteConfig: Record<string, string>;
   testimonials: Testimonial[];
   swiperSlides: SwiperSlideItem[];
   videos: VideoItem[];
+  galleryYears: GalleryYearData[];
+  galleryDays: GalleryDayData[];
+  galleryImages: GalleryImageItem[];
 }
 
 export interface GlobalContextProps extends InitialSiteData {
@@ -31,7 +34,7 @@ export interface GlobalContextProps extends InitialSiteData {
   isVideoLightboxOpen: boolean;
   openVideoLightbox: (videoId: string) => void;
   closeVideoLightbox: () => void;
-  videoLightboxVideoId: string | null; // Added this to store current video ID for lightbox
+  videoLightboxVideoId: string | null; 
   swiperInstances: React.MutableRefObject<{ [key: string]: SwiperCore | null }>;
   YOUTUBE_VIDEO_ID_HERO: string;
   galleryImageUrls: string[]; 
@@ -138,7 +141,7 @@ export default function AppInitializer({ children, initialData }: AppInitializer
   }, []);
   const closeVideoLightbox = useCallback(() => {
     setIsVideoLightboxOpen(false);
-    setVideoLightboxVideoId(null); // Clear the video ID
+    setVideoLightboxVideoId(null); 
   }, []);
 
 
