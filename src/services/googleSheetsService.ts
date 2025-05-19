@@ -1,4 +1,3 @@
-
 // src/services/googleSheetsService.ts
 'use server';
 
@@ -64,9 +63,8 @@ const fallbackVideos: VideoItem[] = [
     { id: "summary2_fallback", videoId: "dQw4w9WgXcQ", title: "סרטון סיכום נוסף (דוגמה מקומית)", category: "summaryVideo" },
 ];
 
-
 if (!API_KEY || !SPREADSHEET_ID) {
-  if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') { // Log in both dev and prod if keys are missing
+  if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') {
     console.warn(
       'GOOGLE_SHEETS_API_KEY or GOOGLE_SHEETS_SPREADSHEET_ID is missing. Site will use hardcoded fallback data for API-dependent features. Please check your environment variables.'
     );
@@ -75,7 +73,7 @@ if (!API_KEY || !SPREADSHEET_ID) {
 
 interface FetchSheetDataOptions {
   sheetName: string;
-  range?: string; // e.g., "A1:C10"
+  range?: string; 
 }
 
 async function fetchSheetData<T extends string[]>(
@@ -92,7 +90,7 @@ async function fetchSheetData<T extends string[]>(
 
   console.log(`Attempting to fetch data from Google Sheet API: ${sheetName}, Range: ${sheetRange}`);
   try {
-    const response = await fetch(url, { next: { revalidate: 3600 } }); // Revalidate every hour
+    const response = await fetch(url, { next: { revalidate: 3600 } }); 
     if (!response.ok) {
       const errorBody = await response.text();
       console.error(
@@ -112,7 +110,7 @@ async function fetchSheetData<T extends string[]>(
 async function fetchCsvDataFromUrl(csvUrl: string): Promise<string[][] | null> {
   console.log(`Attempting to fetch CSV from URL: ${csvUrl}`);
   try {
-    const response = await fetch(csvUrl, { next: { revalidate: 3600 } }); // Revalidate every hour
+    const response = await fetch(csvUrl, { next: { revalidate: 3600 } }); 
     if (!response.ok) {
       console.error(`Error fetching CSV data from URL ${csvUrl}: ${response.status} ${response.statusText}`);
       return null;
@@ -129,10 +127,9 @@ async function fetchCsvDataFromUrl(csvUrl: string): Promise<string[][] | null> {
         for (let i = 0; i < line.length; i++) {
           const char = line[i];
           if (char === '"') {
-            // Check for escaped quote ""
             if (inQuotes && i + 1 < line.length && line[i+1] === '"') {
               currentField += '"';
-              i++; // Skip next quote
+              i++; 
             } else {
               inQuotes = !inQuotes;
             }
@@ -156,7 +153,6 @@ async function fetchCsvDataFromUrl(csvUrl: string): Promise<string[][] | null> {
   }
 }
 
-
 export interface FaqItem {
   id: string;
   question: string;
@@ -165,68 +161,69 @@ export interface FaqItem {
 }
 
 export async function getFaqData(): Promise<FaqItem[]> {
-  const directCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=837718949&single=true&output=csv";
+  const directCsvUrl = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=837718949&single=true&output=csv`;
   
-  console.log(`getFaqData: Attempting to fetch from direct CSV URL: ${directCsvUrl}`);
-  try {
-    const rows = await fetchCsvDataFromUrl(directCsvUrl);
-    if (rows && rows.length > 0) {
-      let dataRows = rows;
-      let hasHeader = false;
-      // Check if the first row is a header row (id,question,answer)
-      if (rows[0].length >=3 && rows[0][0]?.trim().toLowerCase() === 'id' && rows[0][1]?.trim().toLowerCase() === 'question' && rows[0][2]?.trim().toLowerCase() === 'answer') {
-        dataRows = rows.slice(1); // Skip header row
-        hasHeader = true;
-        console.log("getFaqData: CSV Header row (id,question,answer) detected and skipped.");
-      } else if (rows[0].length >=2 && rows[0][0]?.trim().toLowerCase() === 'question' && rows[0][1]?.trim().toLowerCase() === 'answer') {
-        // CSV has only question and answer headers
-        dataRows = rows.slice(1);
-        hasHeader = true; // Still a header, just different format
-        console.log("getFaqData: CSV Header row (question,answer) detected and skipped.");
-      } else {
-        console.log("getFaqData: No specific CSV Header row detected, assuming direct data.");
-      }
+  if (SPREADSHEET_ID) { // Only try CSV if SPREADSHEET_ID is defined
+    console.log(`getFaqData: Attempting to fetch from direct CSV URL: ${directCsvUrl}`);
+    try {
+      const rows = await fetchCsvDataFromUrl(directCsvUrl);
+      if (rows && rows.length > 0) {
+        let dataRows = rows;
+        let hasIdColumn = false;
+        
+        // Check for header row
+        if (rows[0].length >= 2 && rows[0][0]?.trim().toLowerCase() === 'question' && rows[0][1]?.trim().toLowerCase() === 'answer') {
+          console.log("getFaqData: CSV Header row (question,answer) detected and skipped.");
+          dataRows = rows.slice(1);
+        } else if (rows[0].length >=3 && rows[0][0]?.trim().toLowerCase() === 'id' && rows[0][1]?.trim().toLowerCase() === 'question' && rows[0][2]?.trim().toLowerCase() === 'answer') {
+          console.log("getFaqData: CSV Header row (id,question,answer) detected and skipped.");
+          dataRows = rows.slice(1);
+          hasIdColumn = true;
+        } else {
+          console.log("getFaqData: No specific CSV Header row detected, assuming direct data. Expecting question, answer.");
+        }
 
-      if (dataRows.length > 0) {
-        const faqs = dataRows.map((row, index) => {
-          if (hasHeader && rows[0].length >= 3 && rows[0][0]?.trim().toLowerCase() === 'id') { // CSV with id, question, answer
-            console.log(`Processing CSV row (id,q,a): ${row[0]}, ${row[1]}, ${row[2]}`);
-            return {
-              id: row[0]?.trim() || `faq_csv_${index}`,
-              question: row[1]?.trim() || '',
-              answer: row[2]?.trim() || '',
-              delay: String(index * 50),
-            };
-          } else { // CSV with only question, answer (or no header assumed)
-            console.log(`Processing CSV row (q,a or direct): ${row[0]}, ${row[1]}`);
-            return {
-              id: `faq_csv_${index}`, // Generate ID if not present
-              question: row[0]?.trim() || '',
-              answer: row[1]?.trim() || '',
-              delay: String(index * 50),
-            };
-          }
-        });
-        console.log(`getFaqData: Processed ${faqs.length} FAQ items from CSV URL.`);
-        return faqs;
+        if (dataRows.length > 0) {
+          const faqs = dataRows.map((row, index) => {
+            if (hasIdColumn) {
+              return {
+                id: row[0]?.trim() || `faq_csv_${index}`,
+                question: row[1]?.trim() || '',
+                answer: row[2]?.trim() || '',
+                delay: String(index * 50),
+              };
+            } else { // Assumes question is row[0], answer is row[1]
+               return {
+                id: `faq_csv_${index}`, 
+                question: row[0]?.trim() || '',
+                answer: row[1]?.trim() || '',
+                delay: String(index * 50),
+              };
+            }
+          });
+          console.log(`getFaqData: Processed ${faqs.length} FAQ items from CSV URL.`);
+          return faqs;
+        } else {
+          console.log('getFaqData: No data rows found in CSV from URL after potential header skip.');
+        }
       } else {
-        console.log('getFaqData: No data rows found in CSV from URL after potential header skip.');
+        console.log('getFaqData: No data returned from CSV URL fetch.');
       }
-    } else {
-      console.log('getFaqData: No data returned from CSV URL fetch.');
+    } catch (e) {
+      console.error('getFaqData: Error processing CSV data from URL, will try API or fallback.', e);
     }
-  } catch (e) {
-    console.error('getFaqData: Error processing CSV data from URL, falling back.', e);
+  } else {
+    console.log('getFaqData: SPREADSHEET_ID not defined, cannot fetch CSV. Will try API or fallback.');
   }
 
-  // Fallback 1: Try Google Sheets API if CSV fails
   if (API_KEY && SPREADSHEET_ID) {
     const sheetName = 'FAQ';
-    console.log(`getFaqData: CSV fetch failed or returned no data. Attempting to fetch from Google Sheets API, Sheet: ${sheetName}`);
+    console.log(`getFaqData: CSV fetch failed or skipped. Attempting to fetch from Google Sheets API, Sheet: ${sheetName}`);
     try {
-      const rows = await fetchSheetData<[string, string, string]>({ sheetName }); // Expects 3 columns: id, question, answer
-      if (rows && rows.length > 1) { // Assuming first row is header
-        const faqs = rows.slice(1).map((row, index) => ({
+      // Expects 3 columns from API: id, question, answer
+      const rowsFromApi = await fetchSheetData<[string, string, string]>({ sheetName }); 
+      if (rowsFromApi && rowsFromApi.length > 1) { // Assuming first row is header
+        const faqs = rowsFromApi.slice(1).map((row, index) => ({
           id: row[0] || `faq_api_${index}`,
           question: row[1] || '',
           answer: row[2] || '',
@@ -234,7 +231,7 @@ export async function getFaqData(): Promise<FaqItem[]> {
         }));
         console.log(`getFaqData: Processed ${faqs.length} FAQ items from Google Sheets API.`);
         return faqs;
-      } else if (rows && rows.length <= 1) {
+      } else if (rowsFromApi && rowsFromApi.length <= 1) {
         console.log(`getFaqData: No data rows found in ${sheetName} sheet (or only header) via API. Using fallbackFaqs.`);
       }
     } catch (error) {
@@ -248,7 +245,6 @@ export async function getFaqData(): Promise<FaqItem[]> {
   return fallbackFaqs;
 }
 
-
 export interface ContactDetails {
   officeAddress?: string;
   phoneNumber?: string;
@@ -257,22 +253,57 @@ export interface ContactDetails {
 }
 
 export async function getSiteConfig(): Promise<Record<string, string>> {
-  const config: Record<string, string> = { ...fallbackSiteConfig };
-  
-  // No CSV fetching for SiteConfig for now, revert to API or fallback
-  const sheetName = 'SiteConfig';
+  const config: Record<string, string> = { ...fallbackSiteConfig }; 
+  const directCsvUrl = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=0&single=true&output=csv`; // Assuming SiteConfig is the first sheet (gid=0)
 
-  if (API_KEY && SPREADSHEET_ID) {
-    console.log(`getSiteConfig: Attempting to fetch from Google Sheets API, Sheet: ${sheetName}`);
+  if (SPREADSHEET_ID) { // Try CSV first if SPREADSHEET_ID is available
+    console.log(`getSiteConfig: Attempting to fetch from direct CSV URL: ${directCsvUrl}`);
     try {
-      const rows = await fetchSheetData<[string, string]>({ sheetName });
-      if (rows && rows.length > 1) { // Assuming first row is header
-        rows.slice(1).forEach(row => {
+      const rows = await fetchCsvDataFromUrl(directCsvUrl);
+      if (rows && rows.length > 0) {
+        let dataRows = rows;
+        // Check if the first row is a header (key,value)
+        if (rows[0].length >= 2 && rows[0][0]?.trim().toLowerCase() === 'key' && rows[0][1]?.trim().toLowerCase() === 'value') {
+          dataRows = rows.slice(1); // Skip header row
+          console.log("getSiteConfig: CSV Header row (key,value) detected and skipped.");
+        } else {
+           console.log("getSiteConfig: No CSV Header row (key,value) detected, assuming direct key-value pairs.");
+        }
+        
+        if (dataRows.length > 0) {
+          dataRows.forEach(row => {
+            if (row[0] && typeof row[0] === 'string' && row[0].trim() !== '') {
+              config[row[0].trim()] = row[1]?.trim() || '';
+            }
+          });
+          console.log(`getSiteConfig: Successfully loaded and merged ${dataRows.length} config items from CSV URL.`);
+          return config; // Return merged config from CSV
+        } else {
+           console.log('getSiteConfig: No data rows found in CSV from URL after potential header skip.');
+        }
+      } else {
+         console.log('getSiteConfig: No data returned from CSV URL fetch.');
+      }
+    } catch (e) {
+      console.error('getSiteConfig: Error processing CSV data from URL, will try API or fallback.', e);
+    }
+  } else {
+     console.log('getSiteConfig: SPREADSHEET_ID not defined, cannot fetch CSV. Will try API or fallback.');
+  }
+  
+  // Fallback to API if CSV fails or SPREADSHEET_ID was missing
+  if (API_KEY && SPREADSHEET_ID) {
+    const sheetName = 'SiteConfig';
+    console.log(`getSiteConfig: CSV fetch failed or skipped. Attempting to fetch from Google Sheets API, Sheet: ${sheetName}`);
+    try {
+      const rowsFromApi = await fetchSheetData<[string, string]>({ sheetName });
+      if (rowsFromApi && rowsFromApi.length > 1) { // Assuming first row is header
+        rowsFromApi.slice(1).forEach(row => {
           if (row[0] && typeof row[0] === 'string' && row[0].trim() !== '') {
             config[row[0].trim()] = row[1] || '';
           }
         });
-        console.log(`getSiteConfig: Successfully loaded and merged ${rows.length -1} config items from API.`);
+        console.log(`getSiteConfig: Successfully loaded and merged ${rowsFromApi.length -1} config items from API.`);
         return config; 
       } else {
         console.log(`getSiteConfig: No data or only header in ${sheetName} sheet via API. Using fallbackSiteConfig.`);
@@ -281,13 +312,12 @@ export async function getSiteConfig(): Promise<Record<string, string>> {
       console.error('getSiteConfig: Error processing SiteConfig from API, using fallbackSiteConfig:', error);
     }
   } else {
-     console.log('getSiteConfig: API_KEY or SPREADSHEET_ID missing. Skipping API call for SiteConfig.');
+     console.log('getSiteConfig: API_KEY or SPREADSHEET_ID missing for API call. Using fallbackSiteConfig if CSV also failed.');
   }
   
   console.log('getSiteConfig: Using hardcoded fallbackSiteConfig data only.');
   return fallbackSiteConfig; 
 }
-
 
 export interface Testimonial {
   id: string;
@@ -310,8 +340,39 @@ export interface SwiperSlideItem {
 }
 
 export async function getSwiperSlides(): Promise<SwiperSlideItem[]> {
-  console.log("getSwiperSlides: Returning hardcoded fallbackSwiperSlides."); // Corrected variable name
-  return fallbackSwiperSlides;
+  const sheetName = 'SwiperSlides';
+  if (API_KEY && SPREADSHEET_ID) {
+    console.log(`getSwiperSlides: Attempting to fetch from Google Sheets API, Sheet: ${sheetName}`);
+    try {
+      // Columns: id, imageSrc, imageAlt, imageHint, captionTitle, captionText
+      const rows = await fetchSheetData<[string, string, string, string, string, string]>({ sheetName });
+      if (rows && rows.length > 1) { // Assuming first row is header
+        const slides = rows.slice(1).map((row, index) => ({
+          id: row[0]?.trim() || `slide_api_${index}`,
+          imageSrc: row[1]?.trim() || '',
+          imageAlt: row[2]?.trim() || '',
+          imageHint: row[3]?.trim() || undefined,
+          captionTitle: row[4]?.trim() || '',
+          captionText: row[5]?.trim() || '',
+        }));
+        if (slides.length > 0) {
+          console.log(`getSwiperSlides: Processed ${slides.length} items from Google Sheets API.`);
+          return slides;
+        } else {
+          console.log(`getSwiperSlides: No data rows (after header) found in ${sheetName} sheet via API. Using fallback.`);
+        }
+      } else {
+        console.log(`getSwiperSlides: Sheet ${sheetName} is empty or has only header via API. Using fallback.`);
+      }
+    } catch (error) {
+      console.error(`getSwiperSlides: Error processing data from Google Sheets API for ${sheetName}, using fallback:`, error);
+    }
+  } else {
+    console.log(`getSwiperSlides: API_KEY or SPREADSHEET_ID missing. Skipping API call for ${sheetName}. Using fallback.`);
+  }
+  
+  console.log("getSwiperSlides: Using hardcoded fallbackSwiperSlides.");
+  return fallbackSwiperSlides; // Corrected variable name
 }
 
 export interface VideoItem {
@@ -325,6 +386,3 @@ export async function getVideos(): Promise<VideoItem[]> {
   console.log("getVideos: Returning hardcoded fallbackVideos.");
   return fallbackVideos;
 }
-    
-
-    
