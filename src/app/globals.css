@@ -481,7 +481,7 @@ ul { list-style: none; }
 .faq-item details[open] summary { border-bottom: 1px solid var(--faq-border); background-color: var(--secondary-color); }
 .faq-item details[open] summary::after { transform: rotate(180deg); }
 .faq-answer { padding: 0px 40px; color: var(--faq-answer-color); line-height: 1.9; max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.4s ease-out, opacity 0.3s ease-in, padding 0.4s ease-out; }
-.faq-item details[open] .faq-answer { max-height: 600px; opacity: 1; padding: 30px 40px; }
+.faq-item details[open] .faq-answer { max-height: 600px; opacity: 1; padding: 30px 40px 55px; }
 .faq-answer p:last-child { margin-bottom: 0; }
 
 /* --- Testimonials Section --- */
@@ -807,4 +807,6 @@ ul { list-style: none; }
     .registration-modal-content { height: 90vh; max-height: 600px; }
 }
 /* End of User's Custom CSS */
+
+
 
