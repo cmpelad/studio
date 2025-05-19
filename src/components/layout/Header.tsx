@@ -25,13 +25,13 @@ export default function Header() {
       return;
     }
     
-    const isGalleryLink = href === '/gallery';
+    const isInternalPageLink = href === '/gallery' || href === '/all-summary-videos';
 
-    if (href && (href.startsWith('#') || isGalleryLink) && target !== '_blank') {
+    if (href && (href.startsWith('#') || isInternalPageLink) && target !== '_blank') {
       if (isMobileNavActive) {
         setTimeout(closeMobileNav, 50);
       }
-      // If it's not a hash link and not a gallery link that should open in new tab, NextLink handles it
+      // If it's not a hash link and not an internal page link that should open in new tab, NextLink handles it
       // Smooth scroll handled by CSS scroll-behavior: smooth for hash links
     } else if (target === '_blank' && isMobileNavActive) {
       setTimeout(closeMobileNav, 50);
@@ -62,9 +62,9 @@ export default function Header() {
     <header className="main-header">
       <div className="container">
         <div className="logo-area">
-          <Image id="logo-img" src="https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0" alt="לוגו קעמפ גן ישראל אלעד" data-aos="zoom-in" data-aos-duration="600" data-aos-once="true" width={200} height={55} style={{height: '55px', width: 'auto'}} />
+          <Image id="logo-img" src={context.siteConfig.logoImageSrc || "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0"} alt="לוגו קעמפ גן ישראל אלעד" data-aos="zoom-in" data-aos-duration="600" data-aos-once="true" width={200} height={55} style={{height: '55px', width: 'auto'}} />
           <div className="logo-text" data-aos="fade-right" data-aos-delay="100" data-aos-duration="600" data-aos-once="true">
-            <Link href="#hero" onClick={handleNavLinkClick}>קעמפ גן ישראל אלעד</Link>
+            <Link href="/#hero" onClick={handleNavLinkClick}>קעמפ גן ישראל אלעד</Link>
           </div>
         </div>
         <nav className="main-nav" id="main-nav" ref={mainNavRef} onClick={(e) => e.stopPropagation()}>
@@ -73,7 +73,7 @@ export default function Header() {
             <li><a href="#" className="registration-trigger" onClick={handleNavLinkClick}>להרשמה</a></li>
             <li><Link href="/#about" onClick={handleNavLinkClick}>אודותינו</Link></li>
             <li><Link href="/gallery" onClick={handleNavLinkClick}>גלריה</Link></li>
-            <li><a href="all-summary-videos.html" target="_blank" rel="noopener noreferrer" onClick={handleNavLinkClick}>סרטוני סיכום</a></li>
+            <li><Link href="/all-summary-videos" onClick={handleNavLinkClick}>סרטוני סיכום</Link></li>
             <li><Link href="/#camp-songs-section" onClick={handleNavLinkClick}>שירי גן ישראל</Link></li>
             <li><Link href="/#contact" onClick={handleNavLinkClick}>צור קשר</Link></li>
           </ul>

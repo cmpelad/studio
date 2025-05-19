@@ -1,0 +1,102 @@
+
+/* Ensuring Rubik font is loaded if not globally available, though it should be from RootLayout */
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap');
+
+.videos-page-layout {
+    font-family: 'Rubik', sans-serif;
+    direction: rtl;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* רקע אפור בהיר */
+    color: #333; /* צבע טקסט ראשי */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.videos-page-layout > main {
+    flex-grow: 1;
+}
+
+.header {
+    background-color: #1E3A8A; /* צבע כחול כהה מהאתר המקורי */
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+.header h1 {
+    margin: 0;
+    font-size: 2.5rem; /* גודל כותרת ראשית */
+}
+.container {
+    max-width: 1200px; /* רוחב מקסימלי של התוכן */
+    margin: 30px auto; /* מרכוז התוכן */
+    padding: 20px;
+    background-color: white; /* רקע לבן לאזור התוכן */
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); /* הצללה עדינה */
+    border-radius: 8px; /* פינות מעוגלות */
+}
+.video-grid {
+    display: grid;
+    /* יצירת עמודות גמישות, כל אחת ברוחב מינימלי של 300 פיקסלים */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px; /* רווח בין הסרטונים */
+}
+.video-item {
+    background-color: #fff; /* רקע לבן לכל פריט וידאו */
+    border-radius: 8px; /* פינות מעוגלות לפריט */
+    overflow: hidden; /* מונע מה-iframe לגלוש מחוץ לגבולות הפריט */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* הצללה לפריט */
+    transition: transform 0.3s ease; /* אנימציה עדינה בהעברת עכבר */
+    display: flex;
+    flex-direction: column;
+}
+.video-item:hover {
+    transform: translateY(-5px); /* הרמה קלה של הפריט בהעברת עכבר */
+}
+.video-item iframe {
+    width: 100%; /* רוחב מלא של ה-iframe בתוך הפריט */
+    height: auto;
+    aspect-ratio: 16 / 9; /* שמירה על יחס גובה-רוחב של 16:9 לסרטון */
+    border: none; /* הסרת גבול ה-iframe */
+    display: block; /* מונע רווחים מיותרים מתחת ל-iframe */
+}
+.video-item h3 {
+    font-size: 1.2rem; /* גודל כותרת הסרטון */
+    color: #1E3A8A; /* צבע כותרת הסרטון */
+    padding: 10px 15px 0; /* ריווח פנימי */
+    margin-bottom: 5px;
+    margin-top: 5px; /* Added margin top */
+}
+ .video-item p { /* Currently not used in page.tsx, but kept for future use */
+    font-size: 0.9rem; /* גודל טקסט התיאור */
+    color: #555; /* צבע טקסט התיאור */
+    padding: 0 15px 15px; /* ריווח פנימי */
+    margin-bottom: 0;
+    flex-grow: 1;
+}
+.back-link {
+    display: inline-block;
+    /* margin-top: 30px; Moved to layout */
+    padding: 12px 25px; /* ריווח פנימי מוגדל לכפתור */
+    background-color: #FFC107; /* צבע צהוב מהאתר המקורי */
+    color: #1E3A8A; /* צבע טקסט כחול */
+    text-decoration: none;
+    border-radius: 5px; /* פינות מעוגלות לכפתור */
+    font-weight: bold; /* טקסט מודגש */
+    transition: background-color 0.3s, color 0.3s; /* אנימציית מעבר צבע */
+}
+.back-link:hover {
+    background-color: #e0a800; /* צבע רקע בהיר יותר בהעברת עכבר */
+    color: white; /* צבע טקסט לבן בהעברת עכבר */
+}
+
+/* התאמות למסכים קטנים (מובייל) */
+@media (max-width: 768px) {
+    .header h1 { font-size: 2rem; } /* הקטנת כותרת ראשית */
+    .video-grid {
+        grid-template-columns: 1fr; /* הצגת סרטון אחד בכל שורה */
+    }
+    .video-item h3 { font-size: 1.1rem; } /* הקטנת כותרת סרטון */
+    .video-item p { font-size: 0.85rem; } /* הקטנת טקסט תיאור */
+}

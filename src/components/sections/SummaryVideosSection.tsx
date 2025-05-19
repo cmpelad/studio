@@ -3,6 +3,7 @@
 import { useContext } from 'react';
 import { GlobalContext } from '@/components/AppInitializer';
 import type { VideoItem } from '@/services/googleSheetsService';
+import Link from 'next/link'; // Import Link
 
 export default function SummaryVideosSection() {
   const context = useContext(GlobalContext);
@@ -41,8 +42,7 @@ export default function SummaryVideosSection() {
           </iframe>
         </div>
         <div className="all-videos-button-container" data-aos="fade-up" data-aos-delay="300">
-          {/* This link still points to a static HTML page as per original structure */}
-          <a href="all-summary-videos.html" target="_blank" rel="noopener noreferrer" className="all-videos-button">לכל סרטוני הסיכום</a>
+          <Link href="/all-summary-videos" className="all-videos-button">לכל סרטוני הסיכום</Link>
         </div>
       </div>
     </section>

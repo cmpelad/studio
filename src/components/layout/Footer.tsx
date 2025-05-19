@@ -23,7 +23,7 @@ export default function Footer() {
         <div className="footer-nav" data-aos="fade-up" data-aos-delay="250">
           <Link href="/#about">אודותינו</Link>
           <Link href="/gallery">גלריה</Link>
-          <a href="all-summary-videos.html" target="_blank" rel="noopener noreferrer">סרטוני סיכום</a>
+          <Link href="/all-summary-videos">סרטוני סיכום</Link>
           <Link href="/#camp-songs-section">שירי גן ישראל</Link>
           <Link href="/#testimonials">המלצות</Link>
           <Link href="/#principal-message">דבר המנהל</Link>
