@@ -6,7 +6,7 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import type SwiperCore from 'swiper';
 import type { SiteConfig, FaqItem, ContactDetails, Testimonial, SwiperSlideItem, VideoItem, GalleryYearData, GalleryDayData, GalleryImageItem } from '@/services/googleSheetsService';
-import Image from 'next/image'; // Import next/image
+import Image from 'next/image';
 
 export interface InitialSiteData {
   siteConfig: SiteConfig;
@@ -38,7 +38,7 @@ export interface GlobalContextProps extends InitialSiteData {
   videoLightboxVideoId: string | null; 
   swiperInstances: React.MutableRefObject<{ [key: string]: SwiperCore | null }>;
   YOUTUBE_VIDEO_ID_HERO: string;
-  galleryImageUrls: string[]; 
+  galleryImageUrls: string[]; // For homepage gallery swiper
   googleFormBaseUrl: string;
   paymentRedirectUrl: string;
 }
@@ -68,17 +68,22 @@ export default function AppInitializer({ children, initialData }: AppInitializer
   const googleFormBaseUrl = initialData.siteConfig.registrationFormUrl || "https://docs.google.com/forms/d/e/1FAIpQLSc4BOspqh2ohsp6W0OGHqGtuXWrMb3e6C1c0bhw4bbYwnCmWA/viewform?embedded=true";
   const paymentRedirectUrl = initialData.siteConfig.paymentRedirectUrl || "https://icredit.rivhit.co.il/payment/PaymentFullPage.aspx?GroupId=5375c290-a52c-487d-ab47-14c0b0ef5365";
   
+  // For homepage image gallery swiper - these remain hardcoded as per current setup
   const galleryImageUrls = [ 
       "https://lh3.googleusercontent.com/pw/AP1GczNBtFaOAbpOMFUXx9DL4emQxGdSzYm1vjivTyDnUzlHQDWgHtaEy5K3G1OZGyAbhSIkCMkReGJOOnI2OCe_ZpjXz02f3RC4_rjHO2Sslf_pvdSJC-pbboOhWYvYjeCjXtFe9G8spEwvIYlWLorXm4Diik0haX2EUPWslXKEbwguIv80gXqwp2WLP9oOgyr7RwQQbtDMV-iDAQltUoLtg6l=w1379-h919-s-no-gm?authuser=0",
       "https://lh3.googleusercontent.com/pw/AP1GczPgSy83OmgsgZDuZoPBGqd3nFunosjH2KCqQ3OhDlKeK-MkSzR4Nn70TAtyICq2UjeiCY3ic_ln5uYf0rY5SSNqC_7IkhZ0idDT5kf3wUvkecjvivzQbrwiEizm_61rjRXLVuYgnkfWcBFd1CuS4pFc=w1379-h919-s-no-gm?authuser=0",
       "https://lh3.googleusercontent.com/pw/AP1GczMsQ7kLfOlgRiMTNIGPg2y65mr-4ySFISouO0yBvZNufdxGztE9HoBwzJ2xNpwu-dNNd1eapdEwvIYlWLorXm4Diik0haX2EUPWslXKEbwguIv80gXqwp2WLP9oOgyr7RwQQbtDMV-iDAQltUoLtg6l=w1225-h919-s-no-gm?authuser=0",
-      "https://picsum.photos/seed/img4/400/300?random=4", "https://picsum.photos/seed/img5/400/300?random=5",
-      "https://picsum.photos/seed/img6/400/300?random=6", "https://picsum.photos/seed/img7/400/300?random=7", "https://picsum.photos/seed/img8/400/300?random=8",
-      "https://picsum.photos/seed/img9/400/300?random=9", "https://picsum.photos/seed/img10/400/300?random=10",
-      "https://picsum.photos/seed/img11/400/300?random=11", "https://picsum.photos/seed/img12/400/300?random=12"
+      "https://picsum.photos/seed/img4/400/300", 
+      "https://picsum.photos/seed/img5/400/300",
+      "https://picsum.photos/seed/img6/400/300", 
+      "https://picsum.photos/seed/img7/400/300", 
+      "https://picsum.photos/seed/img8/400/300",
+      "https://picsum.photos/seed/img9/400/300", 
+      "https://picsum.photos/seed/img10/400/300",
+      "https://picsum.photos/seed/img11/400/300", 
+      "https://picsum.photos/seed/img12/400/300"
   ];
 
-  // Use the confirmed working Google Drive link for the splash screen logo
   const splashScreenLogoSrc = initialData.siteConfig.logoImageSrc || "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0";
 
 
@@ -165,14 +170,13 @@ export default function AppInitializer({ children, initialData }: AppInitializer
         <div className="splash-screen" id="splashScreen">
           <div className="splash-content">
             <div className="splash-image-container">
-              {/* Using next/image for the splash screen logo */}
               <Image 
                 src={splashScreenLogoSrc} 
                 alt="קעמפ גן ישראל אלעד" 
-                width={250} // You can adjust these dimensions
-                height={250} // You can adjust these dimensions
+                width={250} 
+                height={250}
                 style={{objectFit: 'contain', borderRadius: '20px', boxShadow: '0 5px 20px rgba(0,0,0,0.1)'}}
-                priority // Prioritize loading this image
+                priority
               />
             </div>
             <div className="splash-box yellow"></div>

@@ -2,10 +2,7 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  output: 'export', // Add this line for static HTML export
   images: {
-    unoptimized: true, // Disable Image Optimization API for static export
     remotePatterns: [
       {
         protocol: 'https',
@@ -15,7 +12,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'drive.google.com',
+        hostname: 'drive.google.com', 
         port: '',
         pathname: '/**',
       },
@@ -27,7 +24,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'lh3.googleusercontent.com',
+        hostname: 'lh3.googleusercontent.com', 
         port: '',
         pathname: '/**',
       },
@@ -37,15 +34,15 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-      {
+       {
         protocol: 'https',
-        hostname: 'drive.usercontent.google.com', // For direct download links
+        hostname: 'drive.usercontent.google.com', 
         port: '',
         pathname: '/**',
       },
       {
         protocol: 'https',
-        hostname: 'photos.fife.usercontent.google.com', // For some Google Photos direct links
+        hostname: 'photos.fife.usercontent.google.com',
         port: '',
         pathname: '/**',
       }
