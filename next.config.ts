@@ -2,7 +2,9 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
+  output: 'export', // הוספת/הבטחת הגדרת ייצוא סטטי
   images: {
+    unoptimized: true, // הבטחת כיבוי אופטימיזציית תמונות
     remotePatterns: [
       {
         protocol: 'https',
@@ -40,12 +42,6 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'photos.fife.usercontent.google.com',
-        port: '',
-        pathname: '/**',
-      }
     ],
   },
   typescript: {

@@ -4,13 +4,27 @@ import { useContext, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { GlobalContext } from '@/components/AppInitializer';
-import type { GalleryImageItem } from '@/services/googleSheetsService';
-import { useParams } from 'next/navigation';
+import type { GalleryImageItem, GalleryDayData } from '@/services/googleSheetsService';
+import { getGalleryDays } from '@/services/googleSheetsService'; // ייבוא הפונקציה
 
-export default function DayGalleryPage() {
+// הפונקציה generateStaticParams
+export async function generateStaticParams() {
+  const days: GalleryDayData[] = await getGalleryDays(); // שימוש בנתוני fallback
+  
+  if (!days || days.length === 0) {
+    console.warn("generateStaticParams: No gallery days found to generate params for /gallery/[year]/[day].");
+    return [];
+  }
+
+  return days.map(day => ({
+    year: day.yearSlug,
+    day: day.daySlug,
+  }));
+}
+
+export default function DayGalleryPage({ params }: { params: { year: string; day: string } }) {
   const context = useContext(GlobalContext);
-  const params = useParams<{ year: string; day: string }>();
-  const { year: yearSlug, day: daySlug } = params;
+  const { year: yearSlug, day: daySlug } = params; // שימוש ב-params מה-props
 
   const currentYearData = useMemo(() => {
     if (!context?.galleryYears) return null;
@@ -47,7 +61,7 @@ export default function DayGalleryPage() {
         </div>
         <div className="gallery-container">
             <p>מצטערים, לא מצאנו את הגלריה שחיפשת.</p>
-            <div className="back-link-container" style={{ textAlign: 'center', marginTop: '30px', paddingBottom: '20px' }}>
+             <div className="back-link-container" style={{ textAlign: 'center', marginTop: '30px', paddingBottom: '20px' }}>
                 <Link href="/" className="back-link">חזרה לאתר הראשי</Link>
             </div>
         </div>
