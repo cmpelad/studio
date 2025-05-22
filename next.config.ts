@@ -2,9 +2,7 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-  output: 'export', // הוספת/הבטחת הגדרת ייצוא סטטי
   images: {
-    unoptimized: true, // הבטחת כיבוי אופטימיזציית תמונות
     remotePatterns: [
       {
         protocol: 'https',

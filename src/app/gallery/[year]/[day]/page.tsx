@@ -4,27 +4,12 @@ import { useContext, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { GlobalContext } from '@/components/AppInitializer';
-import type { GalleryImageItem, GalleryDayData } from '@/services/googleSheetsService';
-import { getGalleryDays } from '@/services/googleSheetsService'; // ייבוא הפונקציה
-
-// הפונקציה generateStaticParams
-export async function generateStaticParams() {
-  const days: GalleryDayData[] = await getGalleryDays(); // שימוש בנתוני fallback
-  
-  if (!days || days.length === 0) {
-    console.warn("generateStaticParams: No gallery days found to generate params for /gallery/[year]/[day].");
-    return [];
-  }
-
-  return days.map(day => ({
-    year: day.yearSlug,
-    day: day.daySlug,
-  }));
-}
+import type { GalleryImageItem, GalleryDayData, GalleryYearData } from '@/services/googleSheetsService';
+// Removed getGalleryDays and getGalleryYears as generateStaticParams is removed
 
 export default function DayGalleryPage({ params }: { params: { year: string; day: string } }) {
   const context = useContext(GlobalContext);
-  const { year: yearSlug, day: daySlug } = params; // שימוש ב-params מה-props
+  const { year: yearSlug, day: daySlug } = params; 
 
   const currentYearData = useMemo(() => {
     if (!context?.galleryYears) return null;
