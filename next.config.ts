@@ -2,7 +2,9 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
+  // output: 'export', // Removed for Firebase Hosting with SSR
   images: {
+    // unoptimized: true, // Removed to allow Next.js image optimization
     remotePatterns: [
       {
         protocol: 'https',
