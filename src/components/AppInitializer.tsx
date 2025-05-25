@@ -11,16 +11,16 @@ import Image from 'next/image';
 export interface InitialSiteData {
   siteConfig: SiteConfig;
   faqItems: FaqItem[];
-  contactDetails: ContactDetails; // This will now be populated by heroConfigData equivalent if we make it separate
+  contactDetails: ContactDetails;
   testimonials: Testimonial[];
   swiperSlides: SwiperSlideItem[];
   videos: VideoItem[];
   galleryYears: GalleryYearData[];
   galleryDays: GalleryDayData[];
   galleryImages: GalleryImageItem[];
-  heroConfigData: HeroConfigData;
-  principalMessageData: PrincipalMessageData;
-  aboutSectionContentData: AboutSectionContentData;
+  heroConfigData?: HeroConfigData; // Made optional
+  principalMessageData?: PrincipalMessageData; // Made optional
+  aboutSectionContentData?: AboutSectionContentData; // Made optional
 }
 
 export interface GlobalContextProps extends InitialSiteData {
@@ -41,7 +41,7 @@ export interface GlobalContextProps extends InitialSiteData {
   videoLightboxVideoId: string | null; 
   swiperInstances: React.MutableRefObject<{ [key: string]: SwiperCore | null }>;
   YOUTUBE_VIDEO_ID_HERO: string;
-  galleryImageUrls: string[]; // For homepage gallery swiper
+  galleryImageUrls: string[]; 
   googleFormBaseUrl: string;
   paymentRedirectUrl: string;
 }
@@ -66,10 +66,12 @@ export default function AppInitializer({ children, initialData }: AppInitializer
   const [videoLightboxVideoId, setVideoLightboxVideoId] = useState<string | null>(null);
 
   const swiperInstances = useRef<{ [key: string]: SwiperCore | null }>({});
+  
+  const splashScreenLogoSrc = initialData?.siteConfig?.logoImageSrc || "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0";
 
-  const YOUTUBE_VIDEO_ID_HERO = initialData.heroConfigData.videoId || initialData.siteConfig.heroVideoId || 'b2SaA1dYwl0';
-  const googleFormBaseUrl = initialData.siteConfig.registrationFormUrl || "https://docs.google.com/forms/d/e/1FAIpQLSc4BOspqh2ohsp6W0OGHqGtuXWrMb3e6C1c0bhw4bbYwnCmWA/viewform?embedded=true";
-  const paymentRedirectUrl = initialData.siteConfig.paymentRedirectUrl || "https://icredit.rivhit.co.il/payment/PaymentFullPage.aspx?GroupId=5375c290-a52c-487d-ab47-14c0b0ef5365";
+  const YOUTUBE_VIDEO_ID_HERO = initialData?.heroConfigData?.videoId || initialData?.siteConfig?.heroVideoId || 'b2SaA1dYwl0';
+  const googleFormBaseUrl = initialData?.siteConfig?.registrationFormUrl || "https://docs.google.com/forms/d/e/1FAIpQLSc4BOspqh2ohsp6W0OGHqGtuXWrMb3e6C1c0bhw4bbYwnCmWA/viewform?embedded=true";
+  const paymentRedirectUrl = initialData?.siteConfig?.paymentRedirectUrl || "https://icredit.rivhit.co.il/payment/PaymentFullPage.aspx?GroupId=5375c290-a52c-487d-ab47-14c0b0ef5365";
   
   const galleryImageUrls = [ 
       "https://lh3.googleusercontent.com/pw/AP1GczNBtFaOAbpOMFUXx9DL4emQxGdSzYm1vjivTyDnUzlHQDWgHtaEy5K3G1OZGyAbhSIkCMkReGJOOnI2OCe_ZpjXz02f3RC4_rjHO2Sslf_pvdSJC-pbboOhWYvYjeCjXtFe9G8spEwvIYlWLorXm4Diik0haX2EUPWslXKEbwguIv80gXqwp2WLP9oOgyr7RwQQbtDMV-iDAQltUoLtg6l=w1379-h919-s-no-gm?authuser=0",
@@ -85,10 +87,6 @@ export default function AppInitializer({ children, initialData }: AppInitializer
       "https://picsum.photos/seed/img11/400/300?random=11", 
       "https://picsum.photos/seed/img12/400/300?random=12"
   ];
-
-  // Using the specific Google Drive user content link for the splash screen
-  const splashScreenLogoSrc = "https://drive.usercontent.google.com/download?id=1wh8OEZj3be-MIMVj8UyzktIRdyUosqlJ&authuser=0";
-
 
   useEffect(() => {
     const splashTimer = setTimeout(() => {
@@ -156,9 +154,12 @@ export default function AppInitializer({ children, initialData }: AppInitializer
     setVideoLightboxVideoId(null); 
   }, []);
 
-
   const contextValue: GlobalContextProps = {
-    ...initialData, 
+    ...initialData,
+    siteConfig: initialData.siteConfig, // Ensure siteConfig is always passed
+    heroConfigData: initialData.heroConfigData || fallbackHeroConfigData, // Ensure heroConfigData is passed or use fallback
+    principalMessageData: initialData.principalMessageData || fallbackPrincipalMessageData,
+    aboutSectionContentData: initialData.aboutSectionContentData || fallbackAboutSectionContentData,
     isMobileNavActive, toggleMobileNav, closeMobileNav,
     isRegistrationModalOpen, openRegistrationModal, closeRegistrationModal,
     isLightboxOpen, openLightbox, closeLightbox, lightboxImgSrc, lightboxImgAlt,
@@ -193,3 +194,31 @@ export default function AppInitializer({ children, initialData }: AppInitializer
     </GlobalContext.Provider>
   );
 }
+
+// Define fallbacks for potentially undefined structured data within AppInitializer
+// to ensure GlobalContext always has a valid structure.
+const fallbackHeroConfigData: HeroConfigData = {
+  imageSrc: "https://images.unsplash.com/photo-1560707303-11e40c4110c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHw1fHxjaGlsZHJlbiUyMHN1bW1lciUyMGNhbXB8ZW58MHx8fHwxNzIwMDk5NzI4fDA&ixlib=rb-4.0.3&q=80&w=1080",
+  imageAlt: "קדימון קעמפ גן ישראל אלעד (סטטי)",
+  imageHint: "children summer camp",
+  videoId: "b2SaA1dYwl0",
+};
+
+const fallbackPrincipalMessageData: PrincipalMessageData = {
+  principalName: "שם המנהל (טעינה...)",
+  messageParagraph1: "טוען תוכן...",
+  messageParagraph2: "טוען תוכן...",
+  imageSrc: "https://placehold.co/400x500.png?text=Principal-Static",
+  imageAlt: "מנהל הקעמפ",
+  imageHint: "rabbi portrait",
+};
+
+const fallbackAboutSectionContentData: AboutSectionContentData = {
+  sectionTitle: "אודותינו (טעינה...)",
+  cardTitle: "אודות הקעמפ (טעינה...)",
+  paragraph1: "טוען תוכן...",
+  paragraph2: "טוען תוכן...",
+  imageSrc: "https://images.unsplash.com/photo-1504829857107-4acf85189b73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwyfHxzdW1tZXIlMjBjYW1wJTIwZnVufGVufDB8fHx8MTcyMDA5OTgwMHww&ixlib=rb-4.0.3&q=80&w=1080",
+  imageAlt: "קבוצת ילדים בפעילות קעמפ (סטטי)",
+  imageHint: "camp activity",
+};
