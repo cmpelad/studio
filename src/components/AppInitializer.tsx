@@ -5,19 +5,22 @@ import { useEffect, useState, useCallback, useRef, createContext } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import type SwiperCore from 'swiper';
-import type { SiteConfig, FaqItem, ContactDetails, Testimonial, SwiperSlideItem, VideoItem, GalleryYearData, GalleryDayData, GalleryImageItem } from '@/services/googleSheetsService';
+import type { SiteConfig, FaqItem, ContactDetails, Testimonial, SwiperSlideItem, VideoItem, GalleryYearData, GalleryDayData, GalleryImageItem, HeroConfigData, PrincipalMessageData, AboutSectionContentData } from '@/services/googleSheetsService';
 import Image from 'next/image';
 
 export interface InitialSiteData {
   siteConfig: SiteConfig;
   faqItems: FaqItem[];
-  contactDetails: ContactDetails;
+  contactDetails: ContactDetails; // This will now be populated by heroConfigData equivalent if we make it separate
   testimonials: Testimonial[];
   swiperSlides: SwiperSlideItem[];
   videos: VideoItem[];
   galleryYears: GalleryYearData[];
   galleryDays: GalleryDayData[];
   galleryImages: GalleryImageItem[];
+  heroConfigData: HeroConfigData;
+  principalMessageData: PrincipalMessageData;
+  aboutSectionContentData: AboutSectionContentData;
 }
 
 export interface GlobalContextProps extends InitialSiteData {
@@ -64,7 +67,7 @@ export default function AppInitializer({ children, initialData }: AppInitializer
 
   const swiperInstances = useRef<{ [key: string]: SwiperCore | null }>({});
 
-  const YOUTUBE_VIDEO_ID_HERO = initialData.siteConfig.heroVideoId || 'b2SaA1dYwl0';
+  const YOUTUBE_VIDEO_ID_HERO = initialData.heroConfigData.videoId || initialData.siteConfig.heroVideoId || 'b2SaA1dYwl0';
   const googleFormBaseUrl = initialData.siteConfig.registrationFormUrl || "https://docs.google.com/forms/d/e/1FAIpQLSc4BOspqh2ohsp6W0OGHqGtuXWrMb3e6C1c0bhw4bbYwnCmWA/viewform?embedded=true";
   const paymentRedirectUrl = initialData.siteConfig.paymentRedirectUrl || "https://icredit.rivhit.co.il/payment/PaymentFullPage.aspx?GroupId=5375c290-a52c-487d-ab47-14c0b0ef5365";
   
@@ -72,20 +75,19 @@ export default function AppInitializer({ children, initialData }: AppInitializer
       "https://lh3.googleusercontent.com/pw/AP1GczNBtFaOAbpOMFUXx9DL4emQxGdSzYm1vjivTyDnUzlHQDWgHtaEy5K3G1OZGyAbhSIkCMkReGJOOnI2OCe_ZpjXz02f3RC4_rjHO2Sslf_pvdSJC-pbboOhWYvYjeCjXtFe9G8spEwvIYlWLorXm4Diik0haX2EUPWslXKEbwguIv80gXqwp2WLP9oOgyr7RwQQbtDMV-iDAQltUoLtg6l=w1379-h919-s-no-gm?authuser=0",
       "https://lh3.googleusercontent.com/pw/AP1GczPgSy83OmgsgZDuZoPBGqd3nFunosjH2KCqQ3OhDlKeK-MkSzR4Nn70TAtyICq2UjeiCY3ic_ln5uYf0rY5SSNqC_7IkhZ0idDT5kf3wUvkecjvivzQbrwiEizm_61rjRXLVuYgnkfWcBFd1CuS4pFc=w1379-h919-s-no-gm?authuser=0",
       "https://lh3.googleusercontent.com/pw/AP1GczMsQ7kLfOlgRiMTNIGPg2y65mr-4ySFISouO0yBvZNufdxGztE9HoBwzJ2xNpwu-dNNd1eapdEwvIYlWLorXm4Diik0haX2EUPWslXKEbwguIv80gXqwp2WLP9oOgyr7RwQQbtDMV-iDAQltUoLtg6l=w1225-h919-s-no-gm?authuser=0",
-      "https://picsum.photos/seed/img4/400/300", 
-      "https://picsum.photos/seed/img5/400/300",
-      "https://picsum.photos/seed/img6/400/300", 
-      "https://picsum.photos/seed/img7/400/300", 
-      "https://picsum.photos/seed/img8/400/300",
-      "https://picsum.photos/seed/img9/400/300", 
-      "https://picsum.photos/seed/img10/400/300",
-      "https://picsum.photos/seed/img11/400/300", 
-      "https://picsum.photos/seed/img12/400/300"
+      "https://picsum.photos/seed/img4/400/300?random=4", 
+      "https://picsum.photos/seed/img5/400/300?random=5",
+      "https://picsum.photos/seed/img6/400/300?random=6", 
+      "https://picsum.photos/seed/img7/400/300?random=7", 
+      "https://picsum.photos/seed/img8/400/300?random=8",
+      "https://picsum.photos/seed/img9/400/300?random=9", 
+      "https://picsum.photos/seed/img10/400/300?random=10",
+      "https://picsum.photos/seed/img11/400/300?random=11", 
+      "https://picsum.photos/seed/img12/400/300?random=12"
   ];
 
-  // Using the logoImageSrc from siteConfig (which is now from fallbackSiteConfig)
-  // or a default if it's somehow not defined.
-  const splashScreenLogoSrc = initialData.siteConfig.logoImageSrc || "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0";
+  // Using the specific Google Drive user content link for the splash screen
+  const splashScreenLogoSrc = "https://drive.usercontent.google.com/download?id=1wh8OEZj3be-MIMVj8UyzktIRdyUosqlJ&authuser=0";
 
 
   useEffect(() => {
