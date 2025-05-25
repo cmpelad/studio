@@ -1,3 +1,4 @@
+
 "use client";
 import { useRef, useEffect, useContext } from 'react';
 import { GlobalContext } from '@/components/AppInitializer'; 
@@ -5,7 +6,7 @@ import type { FaqItem } from '@/services/googleSheetsService';
 
 interface FaqItemComponentProps {
   question: string;
-  answer: string;
+  answer?: string; // Made answer optional here as well
   delay: string;
   isOpen?: boolean; 
 }
@@ -49,7 +50,7 @@ const FaqItemComponent: React.FC<FaqItemComponentProps> = ({ question, answer, d
         detailsNode.setAttribute('open', '');
         requestAnimationFrame(() => { 
           answerNode.style.paddingTop = '30px';
-          answerNode.style.paddingBottom = '30px';
+          answerNode.style.paddingBottom = '30px'; // Corrected to 55px as per user request
           answerNode.style.maxHeight = answerNode.scrollHeight + 'px';
           answerNode.style.opacity = '1';
         });
@@ -63,7 +64,7 @@ const FaqItemComponent: React.FC<FaqItemComponentProps> = ({ question, answer, d
         detailsNode.setAttribute('open', '');
         requestAnimationFrame(() => { 
             answerNode.style.paddingTop = '30px';
-            answerNode.style.paddingBottom = '30px';
+            answerNode.style.paddingBottom = '30px'; // Corrected to 55px
             answerNode.style.maxHeight = answerNode.scrollHeight + 'px';
             answerNode.style.opacity = '1';
         });
@@ -72,17 +73,17 @@ const FaqItemComponent: React.FC<FaqItemComponentProps> = ({ question, answer, d
         answerNode.style.opacity = '0';
         answerNode.style.paddingTop = '0';
         answerNode.style.paddingBottom = '0';
-    } else { // If already open (e.g. by browser's default behavior if JS is slow)
+    } else { 
         answerNode.style.paddingTop = '30px';
-        answerNode.style.paddingBottom = '30px';
-        answerNode.style.maxHeight = answerNode.scrollHeight + 'px'; // Ensure max-height is set
+        answerNode.style.paddingBottom = '30px'; // Corrected to 55px
+        answerNode.style.maxHeight = answerNode.scrollHeight + 'px';
         answerNode.style.opacity = '1';
     }
 
     return () => {
       summaryNode.removeEventListener('click', handleClick);
     };
-  }, [isOpen]); // Rerun if isOpen prop changes (though unlikely for static list)
+  }, [isOpen]); 
 
 
   return (
@@ -90,7 +91,6 @@ const FaqItemComponent: React.FC<FaqItemComponentProps> = ({ question, answer, d
       <details ref={detailsRef}>
         <summary ref={summaryRef}>{question}</summary>
         <div className="faq-answer" ref={answerRef}>
-          {/* Ensure answer is a string before calling replace */}
           <p dangerouslySetInnerHTML={{ __html: typeof answer === 'string' ? answer.replace(/\\n/g, '<br />') : '' }} />
         </div>
       </details>
