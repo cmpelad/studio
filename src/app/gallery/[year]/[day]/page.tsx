@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { GlobalContext } from '@/components/AppInitializer';
 import type { GalleryImageItem, GalleryDayData, GalleryYearData } from '@/services/googleSheetsService';
-// Removed getGalleryDays and getGalleryYears as generateStaticParams is removed
 
 export default function DayGalleryPage({ params }: { params: { year: string; day: string } }) {
   const context = useContext(GlobalContext);

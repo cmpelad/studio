@@ -65,6 +65,9 @@ export default function GalleryPage() {
           </section>
         ))}
       </div>
+      <div className="back-link-container" style={{ textAlign: 'center', marginTop: '40px', paddingBottom: '20px' }}>
+         <Link href="/" className="back-link">חזרה לאתר הראשי</Link>
+      </div>
     </>
   );
 }

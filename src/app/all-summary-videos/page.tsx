@@ -44,6 +44,9 @@ export default function AllSummaryVideosPage() {
           ))}
         </div>
       </div>
+      <div className="back-link-container" style={{ textAlign: 'center', marginTop: '30px', paddingBottom: '20px' }}>
+         <Link href="/" className="back-link">חזרה לאתר הראשי</Link>
+      </div>
     </>
   );
 }
