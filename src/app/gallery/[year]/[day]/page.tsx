@@ -1,99 +1,66 @@
+// src/app/gallery/[year]/[day]/page.tsx
+// This is a Server Component
 
-"use client";
-import { useContext, useMemo } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { GlobalContext } from '@/components/AppInitializer';
-import type { GalleryImageItem, GalleryDayData, GalleryYearData } from '@/services/googleSheetsService';
+// No "use client" here
 
-export default function DayGalleryPage({ params }: { params: { year: string; day: string } }) {
-  const context = useContext(GlobalContext);
-  const { year: yearSlug, day: daySlug } = params; 
+// Import the specific fetching functions and fallback data from the service
+import { getGalleryYears, getGalleryDays, getGalleryImages } from '@/services/googleSheetsService';
+// Import types
+import type { GalleryYearData, GalleryDayData, GalleryImageItem } from '@/services/googleSheetsService';
 
-  const currentYearData = useMemo(() => {
-    if (!context?.galleryYears) return null;
-    return context.galleryYears.find(y => y.yearSlug === yearSlug);
-  },[context?.galleryYears, yearSlug]);
-  
-  const currentDayData = useMemo(() => {
-    if (!context?.galleryDays) return null;
-    return context.galleryDays.find(d => d.yearSlug === yearSlug && d.daySlug === daySlug);
-  },[context?.galleryDays, yearSlug, daySlug]);
+// Import the new client component
+import DayGalleryClient from './DayGalleryClient';
 
-  const dayImages = useMemo(() => {
-    if (!context?.galleryImages) return [];
-    return context.galleryImages.filter(img => img.yearSlug === yearSlug && img.daySlug === daySlug)
-      .sort((a, b) => (a.imageOrder || 0) - (b.imageOrder || 0));
-  },[context?.galleryImages, yearSlug, daySlug]);
+// This function runs at build time on the server
+export async function generateStaticParams() {
+  // Use the fetching function to get data for static params generation
+  // We should ideally fetch the actual data source here to get all possible year/day combinations
+  // For now, using fallback data as a temporary fix for build error
 
-  if (!context) {
-    return (
-      <div className="gallery-container">
-        <p>טוען גלריה...</p>
-      </div>
-    );
+  // Assuming getGalleryDays fetches the data (which includes the fallback logic)
+  const galleryDays = await getGalleryDays(); 
+
+  const params = galleryDays.map(day => ({
+    year: day.yearSlug,
+    day: day.daySlug,
+  }));
+
+  return params;
+}
+
+// This is the Server Component Page
+export default async function DayGalleryPage({ params }: { params: { year: string; day: string } }) {
+  const { year: yearSlug, day: daySlug } = params;
+
+  // Fetch data on the server side using the specific functions
+  // This data fetching will happen during the build process for static pages
+  // For dynamic rendering, it would happen on each request
+  let galleryYears: GalleryYearData[] = [];
+  let galleryDays: GalleryDayData[] = [];
+  let galleryImages: GalleryImageItem[] = [];
+
+  try {
+    // Fetching data from Google Sheets service
+    galleryYears = await getGalleryYears();
+    galleryDays = await getGalleryDays();
+    galleryImages = await getGalleryImages();
+  } catch (error) {
+    console.error("Failed to fetch gallery data:", error);
+    // If fetching fails (e.g., no internet during build), 
+    // the service should ideally return fallback data. 
+    // If not, galleryYears, galleryDays, galleryImages will be empty arrays,
+    // which will be handled by the client component showing the "not found" message.
   }
-  
-  if (!currentYearData || !currentDayData) {
-     return (
-      <>
-        <div className="day-gallery-header">
-          <h1>הגלריה לא נמצאה</h1>
-            <p className="breadcrumb">
-                <Link href="/gallery">בחזרה לגלריה הראשית</Link>
-            </p>
-        </div>
-        <div className="gallery-container">
-            <p>מצטערים, לא מצאנו את הגלריה שחיפשת.</p>
-             <div className="back-link-container" style={{ textAlign: 'center', marginTop: '30px', paddingBottom: '20px' }}>
-                <Link href="/" className="back-link">חזרה לאתר הראשי</Link>
-            </div>
-        </div>
-      </>
-    );
-  }
 
+
+  // Pass the fetched (or empty) data to the client component
   return (
-    <>
-      <div className="day-gallery-header">
-        <h1>{`${currentDayData.dayName} - ${currentYearData.yearName}`}</h1>
-        <p className="breadcrumb">
-            <Link href="/gallery">גלריה</Link> &gt; 
-            <Link href={`/gallery`}> {currentYearData.yearName}</Link>
-        </p>
-      </div>
-      
-      <div className="gallery-container">
-        {dayImages && dayImages.length > 0 ? (
-          <div className="images-grid">
-            {dayImages.map((image: GalleryImageItem, index: number) => (
-              <div 
-                className="image-item" 
-                key={image.src || `gallery-img-${index}`}
-                onClick={() => context.openLightbox(image.src, image.alt)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && context.openLightbox(image.src, image.alt)}
-              >
-                <Image 
-                  src={image.src} 
-                  alt={image.alt} 
-                  width={600} 
-                  height={400} 
-                  className="gallery-image"
-                  data-ai-hint={image.hint || "camp activity"}
-                  priority={index < 6} 
-                />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>אין תמונות להצגה עבור יום זה.</p>
-        )}
-      </div>
-      <div className="back-link-container" style={{ textAlign: 'center', marginTop: '30px', paddingBottom: '20px' }}>
-         <Link href="/" className="back-link">חזרה לאתר הראשי</Link>
-      </div>
-    </>
+    <DayGalleryClient
+      yearSlug={yearSlug}
+      daySlug={daySlug}
+      galleryYears={galleryYears}
+      galleryDays={galleryDays}
+      galleryImages={galleryImages}
+    />
   );
 }
