@@ -2,9 +2,9 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-  output: 'export', // Restored for static export
+  // output: 'export', // Put in comment for local development
   images: {
-    unoptimized: true, // Restored for static export
+    // unoptimized: true, // Put in comment for local development, allow Next.js image optimization
     remotePatterns: [
       {
         protocol: 'https',
@@ -42,6 +42,7 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      // Removed photos.fife.usercontent.google.com as it's not currently used
     ],
   },
   typescript: {
