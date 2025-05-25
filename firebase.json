@@ -1,7 +1,7 @@
 
 {
   "hosting": {
-    "source": ".", // Firebase will look for next.config.js and public dir here
+    "source": "./out", // Firebase will look for the static export here
     "ignore": [
       "firebase.json",
       "**/.*",
