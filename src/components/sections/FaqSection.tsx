@@ -1,14 +1,13 @@
-
 "use client";
 import { useRef, useEffect, useContext } from 'react';
-import { GlobalContext, type InitialSiteData } from '@/components/AppInitializer'; // Import FaqItem type
+import { GlobalContext } from '@/components/AppInitializer'; 
 import type { FaqItem } from '@/services/googleSheetsService';
 
 interface FaqItemComponentProps {
   question: string;
   answer: string;
   delay: string;
-  isOpen?: boolean; // Optional: for potentially opening the first item
+  isOpen?: boolean; 
 }
 
 const FaqItemComponent: React.FC<FaqItemComponentProps> = ({ question, answer, delay, isOpen }) => {
@@ -73,17 +72,17 @@ const FaqItemComponent: React.FC<FaqItemComponentProps> = ({ question, answer, d
         answerNode.style.opacity = '0';
         answerNode.style.paddingTop = '0';
         answerNode.style.paddingBottom = '0';
-    } else {
+    } else { // If already open (e.g. by browser's default behavior if JS is slow)
         answerNode.style.paddingTop = '30px';
         answerNode.style.paddingBottom = '30px';
-        answerNode.style.maxHeight = answerNode.scrollHeight + 'px';
+        answerNode.style.maxHeight = answerNode.scrollHeight + 'px'; // Ensure max-height is set
         answerNode.style.opacity = '1';
     }
 
     return () => {
       summaryNode.removeEventListener('click', handleClick);
     };
-  }, [isOpen]);
+  }, [isOpen]); // Rerun if isOpen prop changes (though unlikely for static list)
 
 
   return (
@@ -91,7 +90,8 @@ const FaqItemComponent: React.FC<FaqItemComponentProps> = ({ question, answer, d
       <details ref={detailsRef}>
         <summary ref={summaryRef}>{question}</summary>
         <div className="faq-answer" ref={answerRef}>
-          <p dangerouslySetInnerHTML={{ __html: answer.replace(/\\n/g, '<br />') }} />
+          {/* Ensure answer is a string before calling replace */}
+          <p dangerouslySetInnerHTML={{ __html: typeof answer === 'string' ? answer.replace(/\\n/g, '<br />') : '' }} />
         </div>
       </details>
     </div>
@@ -102,9 +102,8 @@ const FaqItemComponent: React.FC<FaqItemComponentProps> = ({ question, answer, d
 export default function FaqSection() {
   const context = useContext(GlobalContext);
   
-  // Use FAQ data from context, or provide a fallback if context is not yet available or data is missing
   const faqs: FaqItem[] = context?.faqItems || [
-    { id: "loading1", question: "טוען שאלות ותשובות...", answer: "אנא המתן.", delay: "0" }
+    { id: "loading1", question: "טוען שאלות ותשובות...", answer: "אנא המתן." }
   ];
 
   if (!context) {
