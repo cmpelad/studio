@@ -1,128 +1,116 @@
 
 // src/services/googleSheetsService.ts
 
-// --- Fallback Data ---
-// Make sure these are EXPORTED if AppInitializer or other modules import them directly
+// --- Fallback Data (Hardcoded) ---
 export const fallbackSiteConfig: SiteConfig = {
     siteTitle: "קעמפ גן ישראל - אלעד",
     siteDescription: "חוויה של פעם בחיים! מחנה הקיץ הכי שווה מחכה לכם עם פעילויות מגוונות, מדריכים תותחים, ואווירה חסידית מיוחדת.",
     logoImageSrc: "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0",
-    heroVideoId: "b2SaA1dYwl0", 
-    heroImageSrc: "https://images.unsplash.com/photo-1560707303-11e40c4110c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHw1fHxjaGlsZHJlbiUyMHN1bW1lciUyMGNhbXB8ZW58MHx8fHwxNzIwMDk5NzI4fDA&ixlib=rb-4.0.3&q=80&w=1080",
-    heroImageAlt: "קדימון קעמפ גן ישראל אלעד",
-    heroImageHint: "children summer camp",
-    registrationFormUrl: "https://docs.google.com/forms/d/e/1FAIpQLSc4BOspqh2ohsp6W0OGHqGtuXWrMb3e6C1c0bhw4bbWwnCmWA/viewform?embedded=true",
+    // heroVideoId is now managed by HeroConfig
+    // heroImageSrc, heroImageAlt, heroImageHint are now managed by HeroConfig
+    registrationFormUrl: "https://docs.google.com/forms/d/e/1FAIpQLSc4BOspqh2ohsp6W0OGHqGtuXWrMb3e6C1c0bhw4bbYwnCmWA/viewform?embedded=true",
     paymentRedirectUrl: "https://icredit.rivhit.co.il/payment/PaymentFullPage.aspx?GroupId=5375c290-a52c-487d-ab47-14c0b0ef5365",
-    contactOfficeAddress: "המשרד הראשי: רחוב רבי יהודה הנשיא 22, אלעד",
-    contactPhoneNumber: "050-1234567",
-    contactEmail: "office@camp-elad.org.il",
-    contactHours: "ימים א'-ה': 9:00-17:00, יום ו': 9:00-12:00",
-    principalName: "הרב מנחם מענדל גרינפלד",
-    principalMessageParagraph1: "הורים וחניכים יקרים, אנו נרגשים לפתוח את שעריו של קעמפ גן ישראל אלעד לשנה נוספת של חוויות בלתי נשכחות. הקעמפ שלנו הוא לא רק מקום של כיף והנאה, אלא גם בית חם שמחנך לאורם של ערכי היהדות והחסידות.",
-    principalMessageParagraph2: "הצוות המסור שלנו, המורכב ממדריכים מנוסים וחדורי שליחות, עמל ימים כלילות כדי להכין תוכנית עשירה ומגוונת שתשלב פעילויות אתגריות, סדנאות יצירה, טיולים מרתקים, וכמובן – לימוד והעמקה בתכנים חסידיים בצורה חווייתית ומהנה. אנו מזמינים אתכם להצטרף למשפחת קעמפ גן ישראל אלעד!",
-    principalImageSrc: "https://placehold.co/400x500.png?text=Principal",
-    principalImageAlt: "מנהל הקעמפ הרב מנחם מענדל גרינפלד",
-    principalImageHint: "rabbi portrait",
-    aboutTitle: "קעמפ גן ישראל אלעד: חוויה יהודית, חסידית ומהנה!",
-    aboutParagraph1: "קעמפ גן ישראל אלעד מציע לילדיכם חווית קיץ ייחודית המשלבת הנאה, תוכן ערכי ואווירה חסידית תוססת. אנו מאמינים שכל ילד הוא עולם ומלואו, ושואפים להעניק לכל חניך יחס אישי וחם, תוך פיתוח כישרונותיו וחיזוק הקשר שלו למורשת ישראל.",
-    aboutParagraph2: "הצוות המסור שלנו, המורכב ממדריכים בוגרים, אחראיים ובעלי ניסיון, מלווה את החניכים לאורך כל היום בפעילויות מגוונות, טיולים, סדנאות, התוועדויות ושיעורים מרתקים. אנו מקפידים על סטנדרטים גבוהים של בטיחות, כשרות ותנאים נאותים, כדי להבטיח לילדיכם קיץ בטוח, מהנה ובלתי נשכח.",
-    aboutImageSrc: "https://images.unsplash.com/photo-1504829857107-4acf85189b73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwyfHxzdW1tZXIlMjBjYW1wJTIwZnVufGVufDB8fHx8MTcyMDA5OTgwMHww&ixlib=rb-4.0.3&q=80&w=1080",
-    aboutImageAlt: "קבוצת ילדים בפעילות קעמפ",
-    aboutImageHint: "camp activity",
-    galleryPageTitle: "גלריית תמונות",
-    summaryVideosPageTitle: "כל סרטוני הסיכום",
-    galleryTashpadYearImage: "https://placehold.co/300x300.png?text=תשפד-שנה",
+    // contactOfficeAddress, contactPhoneNumber, contactEmail, contactHours are now managed by ContactInfo
+    // principalName, principalMessageParagraph1, etc. are now managed by PrincipalMessage
+    // aboutTitle, aboutParagraph1, etc. are now managed by AboutSectionContent
+    galleryPageTitle: "גלריית תמונות", // Fallback title
+    summaryVideosPageTitle: "כל סרטוני הסיכום", // Fallback title
+    galleryTashpadYearImage: "https://placehold.co/300x300.png?text=תשפד-שנה-סטטי", // Fallback image for the year in gallery
 };
 
 export const fallbackHeroConfigData: HeroConfigData = {
-  imageSrc: fallbackSiteConfig.heroImageSrc || "https://images.unsplash.com/photo-1560707303-11e40c4110c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHw1fHxjaGlsZHJlbiUyMHN1bW1lciUyMGNhbXB8ZW58MHx8fHwxNzIwMDk5NzI4fDA&ixlib=rb-4.0.3&q=80&w=1080",
-  imageAlt: fallbackSiteConfig.heroImageAlt || "קדימון קעמפ גן ישראל אלעד",
-  imageHint: fallbackSiteConfig.heroImageHint || "children summer camp",
-  videoId: fallbackSiteConfig.heroVideoId || "b2SaA1dYwl0",
-  ctaButtonText: "להרשמה לקעמפ - לחצו כאן!"
+  imageSrc: "https://images.unsplash.com/photo-1560707303-11e40c4110c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHw1fHxjaGlsZHJlbiUyMHN1bW1lciUyMGNhbXB8ZW58MHx8fHwxNzIwMDk5NzI4fDA&ixlib=rb-4.0.3&q=80&w=1080",
+  imageAlt: "קדימון קעמפ גן ישראל אלעד (סטטי)",
+  imageHint: "children summer camp",
+  videoId: "b2SaA1dYwl0",
 };
 
 export const fallbackPrincipalMessageData: PrincipalMessageData = {
-  pageTitle: "דבר מנהל הקעמפ",
-  principalName: fallbackSiteConfig.principalName || "הרב מנחם מענדל גרינפלד",
-  messageParagraph1: fallbackSiteConfig.principalMessageParagraph1 || "הורים וחניכים יקרים...",
-  messageParagraph2: fallbackSiteConfig.principalMessageParagraph2 || "הצוות המסור שלנו...",
-  imageSrc: fallbackSiteConfig.principalImageSrc || "https://placehold.co/400x500.png?text=Principal",
-  imageAlt: fallbackSiteConfig.principalImageAlt || "מנהל הקעמפ",
-  imageHint: fallbackSiteConfig.principalImageHint || "rabbi portrait",
+  pageTitle: "דבר מנהל הקעמפ (סטטי)",
+  principalName: "הרב מנחם מענדל גרינפלד (סטטי)",
+  messageParagraph1: "הורים וחניכים יקרים, אנו נרגשים לפתוח את שעריו של קעמפ גן ישראל אלעד לשנה נוספת של חוויות בלתי נשכחות. הקעמפ שלנו הוא לא רק מקום של כיף והנאה, אלא גם בית חם שמחנך לאורם של ערכי היהדות והחסידות. (סטטי)",
+  messageParagraph2: "הצוות המסור שלנו, המורכב ממדריכים מנוסים וחדורי שליחות, עמל ימים כלילות כדי להכין תוכנית עשירה ומגוונת שתשלב פעילויות אתגריות, סדנאות יצירה, טיולים מרתקים, וכמובן – לימוד והעמקה בתכנים חסידיים בצורה חווייתית ומהנה. אנו מזמינים אתכם להצטרף למשפחת קעמפ גן ישראל אלעד! (סטטי)",
+  imageSrc: "https://placehold.co/400x500.png?text=Principal-Static",
+  imageAlt: "מנהל הקעמפ (סטטי)",
+  imageHint: "rabbi portrait",
 };
 
 export const fallbackAboutSectionContentData: AboutSectionContentData = {
-  sectionTitle: fallbackSiteConfig.aboutTitle || "אודות הקעמפ",
-  cardTitle: fallbackSiteConfig.aboutTitle || "אודות הקעמפ",
-  paragraph1: fallbackSiteConfig.aboutParagraph1 || "קעמפ גן ישראל אלעד מציע...",
-  paragraph2: fallbackSiteConfig.aboutParagraph2 || "הצוות המסור שלנו...",
-  imageSrc: fallbackSiteConfig.aboutImageSrc || "https://images.unsplash.com/photo-1504829857107-4acf85189b73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwyfHxzdW1tZXIlMjBjYW1wJTIwZnVufGVufDB8fHx8MTcyMDA5OTgwMHww&ixlib=rb-4.0.3&q=80&w=1080",
-  imageAlt: fallbackSiteConfig.aboutImageAlt || "קבוצת ילדים בפעילות",
-  imageHint: fallbackSiteConfig.aboutImageHint || "camp activity",
+  sectionTitle: "אודות הקעמפ (סטטי)",
+  cardTitle: "קעמפ גן ישראל אלעד (סטטי)",
+  paragraph1: "קעמפ גן ישראל אלעד מציע לילדיכם חווית קיץ ייחודית המשלבת הנאה, תוכן ערכי ואווירה חסידית תוססת. אנו מאמינים שכל ילד הוא עולם ומלואו, ושואפים להעניק לכל חניך יחס אישי וחם, תוך פיתוח כישרונותיו וחיזוק הקשר שלו למורשת ישראל. (סטטי)",
+  paragraph2: "הצוות המסור שלנו, המורכב ממדריכים בוגרים, אחראיים ובעלי ניסיון, מלווה את החניכים לאורך כל היום בפעילויות מגוונות, טיולים, סדנאות, התוועדויות ושיעורים מרתקים. אנו מקפידים על סטנדרטים גבוהים של בטיחות, כשרות ותנאים נאותים, כדי להבטיח לילדיכם קיץ בטוח, מהנה ובלתי נשכח. (סטטי)",
+  imageSrc: "https://images.unsplash.com/photo-1504829857107-4acf85189b73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwyfHxzdW1tZXIlMjBjYW1wJTIwZnVufGVufDB8fHx8MTcyMDA5OTgwMHww&ixlib=rb-4.0.3&q=80&w=1080",
+  imageAlt: "קבוצת ילדים בפעילות קעמפ (סטטי)",
+  imageHint: "camp activity",
 };
 
 export const fallbackContactInfoData: ContactInfoData = {
-  pageTitle: "צור קשר",
-  detailsTitle: "פרטי התקשרות",
-  officeAddress: "המשרד הראשי: רחוב רבי יהודה הנשיא 22, אלעד",
-  phoneNumber: "050-1234567",
-  email: "office@camp-elad.org.il",
-  hoursTitle: "שעות מענה טלפוני:",
-  hoursDetails: "ימים א'-ה': 9:00-17:00, יום ו': 9:00-12:00",
-  additionalInfo: "ניתן להשאיר הודעה ונחזור אליכם בהקדם.",
+  pageTitle: "צור קשר (סטטי)",
+  detailsTitle: "פרטי התקשרות (סטטי)",
+  officeAddress: "המשרד הראשי: רחוב רבי יהודה הנשיא 22, אלעד (סטטי)",
+  phoneNumber: "050-1234567 (סטטי)",
+  email: "office@camp-elad.org.il (סטטי)",
+  hoursTitle: "שעות מענה טלפוני: (סטטי)",
+  hoursDetails: "ימים א'-ה': 9:00-17:00, יום ו': 9:00-12:00 (סטטי)",
+  additionalInfo: "ניתן להשאיר הודעה ונחזור אליכם בהקדם. (סטטי)",
 };
 
 const fallbackFaqs: FaqItem[] = [
-    { id: "faq1_fallback", question: "לאילו גילאים מיועד הקעמפ?", answer: "הקעמפ מיועד לבנים בגילאי ז'-ט' (בוגרי כיתות ו'-ח'). אנו שמים דגש על התאמת הפעילויות והאווירה לגילאים אלו." },
-    { id: "faq2_fallback", question: "מהן שעות הפעילות בקעמפ?", answer: "שעות הפעילויות הן בדרך כלל מ-09:00 בבוקר ועד 17:00 אחר הצהריים. ייתכנו ימים עם פעילויות ערב מיוחדות, עליהן תימסר הודעה מראש." },
-    { id: "faq3_fallback", question: "האם יש צורך להביא אוכל?", answer: "לא, הקעמפ מספק ארוחות בוקר, צהריים וערב כשרות למהדרין, וכן כיבוד קל בין הארוחות. במקרה של רגישויות מזון, יש לעדכן אותנו מראש." },
-    { id: "faq4_fallback", question: "איזה ציוד יש להביא לקעמפ?", answer: "רשימת ציוד מפורטת תישלח לנרשמים. באופן כללי, יש להצטייד בבגדים נוחים, כובע, בקבוק מים, קרם הגנה, ופריטים אישיים. לטיולים יש להצטייד בנעלי הליכה נוחות." },
-    { id: "faq5_fallback", question: "מהי מדיניות הביטולים?", answer: "מדיניות הביטולים מפורטת בתקנון ההרשמה. באופן כללי, ניתן לבטל עד תאריך מסוים ולקבל החזר חלקי או מלא, בהתאם לתנאים." },
+    { id: "faq1_fallback", question: "לאילו גילאים מיועד הקעמפ? (סטטי)", answer: "הקעמפ מיועד לבנים בגילאי ז'-ט' (בוגרי כיתות ו'-ח'). אנו שמים דגש על התאמת הפעילויות והאווירה לגילאים אלו." },
+    { id: "faq2_fallback", question: "מהן שעות הפעילות בקעמפ? (סטטי)", answer: "שעות הפעילויות הן בדרך כלל מ-09:00 בבוקר ועד 17:00 אחר הצהריים. ייתכנו ימים עם פעילויות ערב מיוחדות, עליהן תימסר הודעה מראש." },
+    { id: "faq3_fallback", question: "האם יש צורך להביא אוכל? (סטטי)", answer: "לא, הקעמפ מספק ארוחות בוקר, צהריים וערב כשרות למהדרין, וכן כיבוד קל בין הארוחות. במקרה של רגישויות מזון, יש לעדכן אותנו מראש." },
+    { id: "faq4_fallback", question: "איזה ציוד יש להביא לקעמפ? (סטטי)", answer: "רשימת ציוד מפורטת תישלח לנרשמים. באופן כללי, יש להצטייד בבגדים נוחים, כובע, בקבוק מים, קרם הגנה, ופריטים אישיים. לטיולים יש להצטייד בנעלי הליכה נוחות." },
+    { id: "faq5_fallback", question: "מהי מדיניות הביטולים? (סטטי)", answer: "מדיניות הביטולים מפורטת בתקנון ההרשמה. באופן כללי, ניתן לבטל עד תאריך מסוים ולקבל החזר חלקי או מלא, בהתאם לתנאים." },
 ];
 
 const fallbackTestimonials: Testimonial[] = [
-    { id: "testimonial1_fallback", quote: "הבן שלי חזר מאושר מהקעמפ! הוא לא הפסיק לספר חוויות ונהנה מכל רגע. הצוות היה מדהים והפעילויות מגוונות. ממליצים בחום!", author: "משפחת כהן, אלעד" },
-    { id: "testimonial2_fallback", quote: "זו השנה השנייה שאנחנו שולחים את הילד לקעמפ גן ישראל אלעד, וכל פעם מחדש אנחנו מתרשמים מהמקצועיות, מהאווירה החסידית ומההשקעה בכל פרט. יישר כח!", author: "משפחת לוי, פתח תקווה" },
-    { id: "testimonial3_fallback", quote: "המדריכים בקעמפ פשוט אלופים! הם יצרו קשר אישי וחם עם הילדים, והיוו עבורם דוגמה אישית. הילד שלנו מחכה כבר לשנה הבאה. תודה רבה!", author: "משפחת אברמוביץ, בני ברק" },
+    { id: "testimonial1_fallback", quote: "הבן שלי חזר מאושר מהקעמפ! הוא לא הפסיק לספר חוויות ונהנה מכל רגע. הצוות היה מדהים והפעילויות מגוונות. ממליצים בחום! (סטטי)", author: "משפחת כהן, אלעד" },
+    { id: "testimonial2_fallback", quote: "זו השנה השנייה שאנחנו שולחים את הילד לקעמפ גן ישראל אלעד, וכל פעם מחדש אנחנו מתרשמים מהמקצועיות, מהאווירה החסידית ומההשקעה בכל פרט. יישר כח! (סטטי)", author: "משפחת לוי, פתח תקווה" },
+    { id: "testimonial3_fallback", quote: "המדריכים בקעמפ פשוט אלופים! הם יצרו קשר אישי וחם עם הילדים, והיוו עבורם דוגמה אישית. הילד שלנו מחכה כבר לשנה הבאה. תודה רבה! (סטטי)", author: "משפחת אברמוביץ, בני ברק" },
 ];
 
 const fallbackSwiperSlides: SwiperSlideItem[] = [
-    { id: "slide1_fallback", imageSrc: "https://images.unsplash.com/photo-1542868187-c40917f680a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwzfHxzdW1tZXIlMjBjYW1wJTIwY2hpbGRyZW58ZW58MHx8fHwxNzIwMDk5NjUxfDA&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "תמונת אווירה 1", imageHint: "camp activities", captionTitle: "חוויה של פעם בחיים!", captionText: "מחנה הקיץ הכי שווה מחכה לכם עם מגוון פעילויות." },
-    { id: "slide2_fallback", imageSrc: "https://images.unsplash.com/photo-1504829857107-4acf85189b73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwyfHxzdW1tZXIlMjBjYW1wJTIwZnVufGVufDB8fHx8MTcyMDA5OTgwMHww&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "תמונת אווירה 2", imageHint: "children outdoors", captionTitle: "מדריכים תותחים ואווירה מיוחדת!", captionText: "הצטרפו אלינו לקיץ של כיף, חברות וערכים." },
-    { id: "slide3_fallback", imageSrc: "https://images.unsplash.com/photo-1600904332802-915c1a0600a2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwxMHx8c3VtbWVyJTIwY2FtcCUyMGZ1bnxlbnwwfHx8fDE3MjAwOTk4MDB8MA&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "תמונת אווירה 3", imageHint: "camp games", captionTitle: "פעילויות מגוונות ומרתקות!", captionText: "טיולים, סדנאות, התוועדויות ועוד המון הפתעות." },
+    { id: "slide1_fallback", imageSrc: "https://images.unsplash.com/photo-1542868187-c40917f680a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwzfHxzdW1tZXIlMjBjYW1wJTIwY2hpbGRyZW58ZW58MHx8fHwxNzIwMDk5NjUxfDA&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "תמונת אווירה 1 (סטטי)", imageHint: "camp activities", captionTitle: "חוויה של פעם בחיים! (סטטי)", captionText: "מחנה הקיץ הכי שווה מחכה לכם עם מגוון פעילויות." },
+    { id: "slide2_fallback", imageSrc: "https://images.unsplash.com/photo-1504829857107-4acf85189b73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwyfHxzdW1tZXIlMjBjYW1wJTIwZnVufGVufDB8fHx8MTcyMDA5OTgwMHww&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "תמונת אווירה 2 (סטטי)", imageHint: "children outdoors", captionTitle: "מדריכים תותחים ואווירה מיוחדת! (סטטי)", captionText: "הצטרפו אלינו לקיץ של כיף, חברות וערכים." },
+    { id: "slide3_fallback", imageSrc: "https://images.unsplash.com/photo-1600904332802-915c1a0600a2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwxMHx8c3VtbWVyJTIwY2FtcCUyMGZ1bnxlbnwwfHx8fDE3MjAwOTk4MDB8MA&ixlib=rb-4.0.3&q=80&w=1080", imageAlt: "תמונת אווירה 3 (סטטי)", imageHint: "camp games", captionTitle: "פעילויות מגוונות ומרתקות! (סטטי)", captionText: "טיולים, סדנאות, התוועדויות ועוד המון הפתעות." },
 ];
 
 const fallbackVideos: VideoItem[] = [
-    { id: 'song1_fallback', videoId: '6aRI-emxQlU', title: "שיר הנושא - קעמפ גן ישראל", category: 'campSong' },
-    { id: 'song2_fallback', videoId: 'jNQXAC9IVRw', title: "המנון הקעמפ", category: 'campSong' },
-    { id: 'summary1_fallback', videoId: 'gqgfz0h0om4', title: "סרטון סיכום קעמפ תשפ\"ג", category: 'summaryVideo' },
-    { id: 'main_summary_fallback', videoId: 'gqgfz0h0om4', title: "סרטון סיכום ראשי", category: 'mainSummaryVideo' },
+    { id: 'song1_fallback', videoId: '6aRI-emxQlU', title: "שיר הנושא - קעמפ גן ישראל (סטטי)", category: 'campSong' },
+    { id: 'song2_fallback', videoId: 'jNQXAC9IVRw', title: "המנון הקעמפ (דוגמה סטטית)", category: 'campSong' },
+    { id: 'summary1_fallback', videoId: 'gqgfz0h0om4', title: "סרטון סיכום קעמפ תשפ\"ג (סטטי)", category: 'summaryVideo' },
+    { id: 'main_summary_fallback', videoId: 'gqgfz0h0om4', title: "סרטון סיכום ראשי (סטטי)", category: 'mainSummaryVideo' },
 ];
 
 const fallbackGalleryYears: GalleryYearData[] = [
-  { yearSlug: "tashpad", yearName: "ה'תשפ\"ד", yearImage: fallbackSiteConfig.galleryTashpadYearImage || "https://placehold.co/300x300.png?text=תשפד-שנה", yearImageHint: "camp collage" },
+  { yearSlug: "tashpad", yearName: `ה'תשפ"ד`, yearImage: fallbackSiteConfig.galleryTashpadYearImage || "https://placehold.co/300x300.png?text=תשפד-שנה", yearImageHint: "camp collage" },
 ];
 
 const fallbackGalleryDays: GalleryDayData[] = Array.from({ length: 10 }, (_, i) => ({
   yearSlug: "tashpad",
   daySlug: `day${i + 1}`,
-  dayName: `היום ה-${i + 1}`,
-  thumbnail: `https://placehold.co/400x300.png?text=תשפד-יום${i + 1}`,
+  dayName: `היום ה-${i + 1} (סטטי)`,
+  thumbnail: `https://placehold.co/400x300.png?text=Static-D${i+1}-24`,
   thumbnailHint: "camp activity"
 }));
 
-const fallbackGalleryImages: GalleryImageItem[] = Array.from({ length: 10 }).flatMap((_, dayIndex) => 
+const fallbackGalleryImages: GalleryImageItem[] = Array.from({ length: 10 }).flatMap((_, dayIndex) =>
   Array.from({ length: 5 }, (__, imgIndex) => ({
     yearSlug: "tashpad",
     daySlug: `day${dayIndex + 1}`,
     imageOrder: imgIndex + 1,
-    src: `https://placehold.co/600x400.png?text=תשפד-יום${dayIndex+1}-תמונה${imgIndex+1}`,
-    alt: `תשפ"ד - יום ${dayIndex+1} - תמונה ${imgIndex+1}`,
+    src: `https://placehold.co/600x400.png?text=Static-Img${imgIndex+1}-D${dayIndex+1}-24`,
+    alt: `תשפ"ד - יום ${dayIndex+1} - תמונה ${imgIndex+1} (סטטי)`,
     hint: "placeholder image"
   }))
 );
 
+const fallbackHomePageGallerySwiper: HomePageGallerySwiperItem[] = [
+  { imageSrc: "https://lh3.googleusercontent.com/pw/AP1GczNBtFaOAbpOMFUXx9DL4emQxGdSzYm1vjivTyDnUzlHQDWgHtaEy5K3G1OZGyAbhSIkCMkReGJOOnI2OCe_ZpjXz02f3RC4_rjHO2Sslf_pvdSJC-pbboOhWYvYjeCjXtFe9G8spEwvIYlWLorXm4Diik0haX2EUPWslXKEbwguIv80gXqwp2WLP9oOgyr7RwQQbtDMV-iDAQltUoLtg6l=w1379-h919-s-no-gm?authuser=0", imageAlt: "תמונה מהקעמפ - פעילות מים (סטטי)", imageHint: "camp activity" },
+  { imageSrc: "https://lh3.googleusercontent.com/pw/AP1GczPgSy83OmgsgZDuZoPBGqd3nFunosjH2KCqQ3OhDlKeK-MkSzR4Nn70TAtyICq2UjeiCY3ic_ln5uYf0rY5SSNqC_7IkhZ0idDT5kf3wUvkecjvivzQbrwiEizm_61rjRXLVuYgnkfWcBFd1CuS4pFc=w1379-h919-s-no-gm?authuser=0", imageAlt: "תמונה מהקעמפ - מדורה (סטטי)", imageHint: "children outdoors" },
+  { imageSrc: "https://picsum.photos/seed/img4/600/400", imageAlt: "תמונה אקראית 4 (סטטי)", imageHint: "placeholder" },
+];
 
 // --- Types ---
 export interface SiteConfig {
@@ -130,31 +118,18 @@ export interface SiteConfig {
   siteTitle?: string;
   siteDescription?: string;
   logoImageSrc?: string;
-  heroVideoId?: string;
-  heroImageSrc?: string;
-  heroImageAlt?: string;
-  heroImageHint?: string;
+  heroVideoId?: string; // Kept for fallback if HeroConfig fails
+  heroImageSrc?: string; // Kept for fallback
+  heroImageAlt?: string; // Kept for fallback
+  heroImageHint?: string; // Kept for fallback
   registrationFormUrl?: string;
   paymentRedirectUrl?: string;
-  contactOfficeAddress?: string;
-  contactPhoneNumber?: string;
-  contactEmail?: string;
-  contactHours?: string;
-  principalName?: string;
-  principalMessageParagraph1?: string;
-  principalMessageParagraph2?: string;
-  principalImageSrc?: string;
-  principalImageAlt?: string;
-  principalImageHint?: string;
-  aboutTitle?: string;
-  aboutParagraph1?: string;
-  aboutParagraph2?: string;
-  aboutImageSrc?: string;
-  aboutImageAlt?: string;
-  aboutImageHint?: string;
+  // contactOfficeAddress, etc. are now in ContactInfoData
+  // principalName, etc. are now in PrincipalMessageData
+  // aboutTitle, etc. are now in AboutSectionContentData
   galleryPageTitle?: string;
   summaryVideosPageTitle?: string;
-  galleryTashpadYearImage?: string;
+  galleryTashpadYearImage?: string; // Specific for the static year
 }
 
 export interface HeroConfigData {
@@ -163,7 +138,7 @@ export interface HeroConfigData {
   imageAlt?: string;
   imageHint?: string;
   videoId?: string;
-  ctaButtonText?: string;
+  // ctaButtonText is hardcoded in HeroSection.tsx
 }
 
 export interface PrincipalMessageData {
@@ -206,22 +181,22 @@ export interface SwiperSlideItem { id: string; imageSrc: string; imageAlt: strin
 export interface VideoItem { id: string; videoId: string; title: string; category: 'campSong' | 'summaryVideo' | 'mainSummaryVideo' | string; }
 
 export interface GalleryYearData {
-  yearSlug: "tashpad";
+  yearSlug: string; // "tashpad"
   yearName: string;
   yearImage: string;
   yearImageHint?: string;
 }
 
 export interface GalleryDayData {
-  yearSlug: "tashpad";
-  daySlug: string;
+  yearSlug: string; // "tashpad"
+  daySlug: string;  // e.g., "day1", "day2"
   dayName: string;
   thumbnail: string;
   thumbnailHint?: string;
 }
 
 export interface GalleryImageItem {
-  yearSlug: "tashpad";
+  yearSlug: string; // "tashpad"
   daySlug: string;
   imageOrder?: number;
   src: string;
@@ -229,43 +204,56 @@ export interface GalleryImageItem {
   hint?: string;
 }
 
+export interface HomePageGallerySwiperItem {
+    imageSrc: string;
+    imageAlt?: string;
+    imageHint?: string;
+}
+
 // --- CSV URLs & GIDs ---
 const SPREADSHEET_ID = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
-const API_KEY = process.env.GOOGLE_SHEETS_API_KEY;
+// const API_KEY = process.env.GOOGLE_SHEETS_API_KEY; // Not strictly needed for direct CSV links if sheet is public
 
-// Direct CSV URLs for specific sheets
-const FAQ_CSV_URL = SPREADSHEET_ID ? `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=837718949&single=true&output=csv` : null;
-const SWIPER_SLIDES_CSV_URL = SPREADSHEET_ID ? `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=421516172&single=true&output=csv` : null;
+// --- Direct CSV URLs for specific sheets (replace placeholders with actual GIDs or full URLs) ---
+const SITE_CONFIG_CSV_URL = null; // SiteConfig will use fallbackSiteConfig
+const HERO_CONFIG_CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=567131857&single=true&output=csv`;
+const SWIPER_SLIDES_CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=421516172&single=true&output=csv`;
+const ABOUT_SECTION_CONTENT_CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=1343173925&single=true&output=csv`;
+const PRINCIPAL_MESSAGE_CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=222684544&single=true&output=csv`;
+const HOMEPAGE_GALLERY_SWIPER_CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=949430402&single=true&output=csv`;
+const VIDEOS_CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=1597946854&single=true&output=csv`;
+const FAQ_CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=837718949&single=true&output=csv`;
+const TESTIMONIALS_CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=2115801643&single=true&output=csv`;
+const CONTACT_INFO_CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=1047527670&single=true&output=csv`;
 
-// Placeholders for other sheets - replace with actual GIDs if you create these sheets
-const HERO_CONFIG_CSV_URL = SPREADSHEET_ID ? `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=HERO_CONFIG_GID_PLACEHOLDER&single=true&output=csv` : null;
-const PRINCIPAL_MESSAGE_CSV_URL = SPREADSHEET_ID ? `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=PRINCIPAL_MESSAGE_GID_PLACEHOLDER&single=true&output=csv` : null;
-const ABOUT_SECTION_CONTENT_CSV_URL = SPREADSHEET_ID ? `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=ABOUT_SECTION_CONTENT_GID_PLACEHOLDER&single=true&output=csv` : null;
-const CONTACT_INFO_CSV_URL = SPREADSHEET_ID ? `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=CONTACT_INFO_GID_PLACEHOLDER&single=true&output=csv` : null;
-const TESTIMONIALS_CSV_URL = SPREADSHEET_ID ? `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=TESTIMONIALS_GID_PLACEHOLDER&single=true&output=csv` : null;
-const VIDEOS_CSV_URL = SPREADSHEET_ID ? `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=VIDEOS_GID_PLACEHOLDER&single=true&output=csv` : null;
-const GALLERY_IMAGES_TASHPAD_CSV_URL = SPREADSHEET_ID ? `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=GALLERY_IMAGES_TASHPAD_GID_PLACEHOLDER&single=true&output=csv` : null;
+// For the new gallery structure focusing only on "tashpad"
+const GALLERY_IMAGES_TASHPAD_CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?gid=1677460936&single=true&output=csv`; // This will be the main source for gallery images and day names/thumbnails
+const GALLERY_DAYS_META_CSV_URL = GALLERY_IMAGES_TASHPAD_CSV_URL; // We'll derive day meta from the images sheet
 
 // --- Helper: Fetch and Parse CSV Data ---
 async function fetchCsvDataFromUrl(
   csvUrl: string | null,
   sheetNameForLog: string
 ): Promise<string[][] | null> {
-  if (!csvUrl || csvUrl.includes("_PLACEHOLDER")) {
-    console.log(`${sheetNameForLog}: CSV URL is a placeholder or invalid. Skipping fetch for ${sheetNameForLog}.`);
+  if (!csvUrl || csvUrl.includes("GID_PLACEHOLDER") || !SPREADSHEET_ID) {
+    console.log(`${sheetNameForLog}: CSV URL is a placeholder, invalid, or SPREADSHEET_ID is missing. Skipping fetch for ${sheetNameForLog}.`);
     return null;
   }
   try {
     console.log(`${sheetNameForLog}: Attempting to fetch CSV from URL: ${csvUrl}`);
-    const response = await fetch(csvUrl, { next: { revalidate: 3600 } });
-    
+    const response = await fetch(csvUrl, { next: { revalidate: 3600 } }); // Revalidate every hour
+
     if (!response.ok) {
       console.error(`${sheetNameForLog}: Error fetching CSV from ${csvUrl}: ${response.status} ${response.statusText}`);
       return null;
     }
     const text = await response.text();
+    if (!text || text.trim() === "") {
+      console.log(`${sheetNameForLog}: CSV from ${csvUrl} is empty.`);
+      return null;
+    }
     console.log(`${sheetNameForLog}: Successfully fetched CSV data. Raw CSV Text length: ${text.length}`);
-    
+
     const rows = text.split(/\r?\n/).map(row => {
       const parsedRow: string[] = [];
       let currentCell = "";
@@ -275,7 +263,7 @@ async function fetchCsvDataFromUrl(
         if (char === '"') {
             if (inQuotes && i + 1 < row.length && row[i+1] === '"') {
                 currentCell += '"';
-                i++; 
+                i++;
                 continue;
             }
             inQuotes = !inQuotes;
@@ -288,14 +276,14 @@ async function fetchCsvDataFromUrl(
       }
       parsedRow.push(currentCell.trim());
       return parsedRow;
-    }).filter(row => row.some(cell => cell !== "" || cell === "0")); 
+    }).filter(row => row.some(cell => cell !== "" || cell === "0"));
 
     if (rows.length === 0) {
-        console.log(`${sheetNameForLog}: CSV is empty or contains only empty rows.`);
+        console.log(`${sheetNameForLog}: CSV is empty or contains only empty rows after basic parsing.`);
         return null;
     }
 
-    console.log(`${sheetNameForLog}: Parsed CSV Data (first 5 rows):`, rows.slice(0, 5));
+    console.log(`${sheetNameForLog}: Parsed CSV Data (first 5 rows if available):`, rows.slice(0, 5));
     return rows;
   } catch (error) {
     console.error(`${sheetNameForLog}: Exception fetching or parsing CSV data from ${csvUrl}:`, error);
@@ -303,14 +291,15 @@ async function fetchCsvDataFromUrl(
   }
 }
 
+
 function csvToKeyValueObject<T extends Record<string, any>>(
   parsedData: string[][] | null,
   fallbackData: T,
   sheetNameForLog: string
 ): T {
-  const result = { ...fallbackData };
-  if (!parsedData || parsedData.length < 2) { // Need at least header and one data row
-    console.log(`${sheetNameForLog} (csvToKeyValueObject): Not enough data (parsedData is null, or < 2 rows). Using fallback.`);
+  const result = { ...fallbackData }; // Start with fallback
+  if (!parsedData || parsedData.length < 2) {
+    console.log(`${sheetNameForLog} (csvToKeyValueObject): Not enough data or no data. Using fallback.`);
     return result;
   }
 
@@ -324,19 +313,25 @@ function csvToKeyValueObject<T extends Record<string, any>>(
   }
   console.log(`${sheetNameForLog} (csvToKeyValueObject): Headers found. Key column: ${keyHeaderIndex}, Value column: ${valueHeaderIndex}`);
 
+  let fetchedItems = 0;
   for (let i = 1; i < parsedData.length; i++) {
     const row = parsedData[i];
     if (row.length > Math.max(keyHeaderIndex, valueHeaderIndex)) {
       const key = row[keyHeaderIndex];
       const value = row[valueHeaderIndex];
-      if (key) {
+      if (key && key.trim() !== "") { // Ensure key is not empty
         (result as Record<string, any>)[key] = value !== undefined ? value : '';
+        fetchedItems++;
       }
     } else {
-       console.warn(`${sheetNameForLog} (csvToKeyValueObject): Row ${i} does not have enough columns for key/value. Skipping.`);
+       console.warn(`${sheetNameForLog} (csvToKeyValueObject): Row ${i} does not have enough columns. Skipping.`);
     }
   }
-  console.log(`${sheetNameForLog} (csvToKeyValueObject): Final Key-Value object:`, result);
+  if (fetchedItems > 0) {
+    console.log(`${sheetNameForLog} (csvToKeyValueObject): Successfully processed ${fetchedItems} key-value pairs from CSV. Result:`, result);
+  } else {
+    console.log(`${sheetNameForLog} (csvToKeyValueObject): No valid key-value pairs processed from CSV. Using fallback.`);
+  }
   return result;
 }
 
@@ -345,49 +340,43 @@ function csvToObjectsArray<T extends Record<string, any>>(
   parsedData: string[][] | null,
   fallbackData: T[],
   sheetNameForLog: string,
-  expectedHeaders: (keyof T)[]
+  expectedHeaders: (keyof T)[] // Expected headers as an array of keys from type T
 ): T[] {
   if (!parsedData || parsedData.length === 0) {
-    console.log(`${sheetNameForLog} (csvToObjectsArray): No parsed CSV data, returning fallback.`);
+    console.log(`${sheetNameForLog} (csvToObjectsArray): No parsed CSV data. Returning fallback.`);
     return fallbackData;
   }
 
-  let dataStartIndex = 0;
-  const columnMap: Record<string, number> = {};
   const headerRowOriginal = parsedData[0];
   const headerRowLowerCase = headerRowOriginal.map(h => h.toLowerCase().trim());
-  
   const expectedHeadersLowerCase = expectedHeaders.map(h => String(h).toLowerCase());
-  
-  // Check if the first row is a header row by seeing if it matches expected headers
-  let isHeaderRowPresent = expectedHeadersLowerCase.every(expectedHeader => 
-    headerRowLowerCase.includes(expectedHeader)
-  );
+  const columnMap: Record<string, number> = {};
+  let isHeaderRowPresent = false;
 
-  if (sheetNameForLog === "FAQ" && headerRowLowerCase.includes('question') && headerRowLowerCase.includes('answer') && !headerRowLowerCase.includes('id')) {
-    isHeaderRowPresent = true; // Special case for FAQ - consider it a header if question and answer exist
-    columnMap['id'] = -1; // Mark ID for auto-generation
-    columnMap['question'] = headerRowLowerCase.indexOf('question');
-    columnMap['answer'] = headerRowLowerCase.indexOf('answer');
-    console.log(`${sheetNameForLog} (csvToObjectsArray): Detected FAQ-specific headers (question, answer). ID will be auto-generated.`);
-  } else if (isHeaderRowPresent) {
-    expectedHeadersLowerCase.forEach(expectedHeader => {
-      columnMap[expectedHeader] = headerRowLowerCase.indexOf(expectedHeader);
-    });
-    console.log(`${sheetNameForLog} (csvToObjectsArray): CSV Header row detected and matches expected. Column map:`, columnMap);
-  } else {
-    console.log(`${sheetNameForLog} (csvToObjectsArray): CSV Header row does not fully match expected or is different. Expected one of: "${expectedHeadersLowerCase.join(', ')}", Got: "${headerRowLowerCase.join(', ')}". Assuming direct column order or specific parsing needed.`);
-    // Fallback to positional mapping if headers are not fully matched
-    expectedHeadersLowerCase.forEach((header, index) => {
-      if (!(header in columnMap) && headerRowLowerCase.length > index) {
-        columnMap[header] = index; // Map by position
-      }
-    });
-    console.log(`${sheetNameForLog} (csvToObjectsArray): Using assumed positional mapping:`, columnMap);
-    isHeaderRowPresent = false; // Treat the first row as data
-  }
+  // Try to map expected headers to actual column indices
+  expectedHeadersLowerCase.forEach(expectedHeader => {
+    const index = headerRowLowerCase.indexOf(expectedHeader);
+    if (index !== -1) {
+      columnMap[expectedHeader] = index;
+      isHeaderRowPresent = true; // If at least one expected header is found, assume it's a header row
+    }
+  });
   
-  dataStartIndex = isHeaderRowPresent ? 1 : 0;
+  if (isHeaderRowPresent) {
+      console.log(`${sheetNameForLog} (csvToObjectsArray): CSV Header row detected. Column map based on expected headers:`, columnMap);
+  } else {
+      console.log(`${sheetNameForLog} (csvToObjectsArray): CSV Header row does not match expected or is missing. Expected: "${expectedHeadersLowerCase.join(', ')}", Got: "${headerRowLowerCase.join(', ')}". Assuming direct column order for mapping.`);
+      // Fallback to positional mapping if headers are not fully matched or absent
+      expectedHeadersLowerCase.forEach((header, index) => {
+          // Only map positionally if not already mapped and if CSV has enough columns
+          if (!(header in columnMap) && headerRowOriginal.length > index) {
+              columnMap[header] = index;
+          }
+      });
+      console.log(`${sheetNameForLog} (csvToObjectsArray): Using assumed positional mapping:`, columnMap);
+  }
+
+  const dataStartIndex = isHeaderRowPresent ? 1 : 0;
   const objects: T[] = [];
   const dataRowsToParse = parsedData.slice(dataStartIndex);
 
@@ -398,35 +387,49 @@ function csvToObjectsArray<T extends Record<string, any>>(
 
   for (let i = 0; i < dataRowsToParse.length; i++) {
     const row = dataRowsToParse[i];
-    if (row.every(cell => cell === "")) continue; 
+    // Skip row if all cells are empty, or if it doesn't have enough columns for essential data
+    if (row.every(cell => cell === "") || row.length < Math.min(...Object.values(columnMap).filter(idx => idx !== -1))) {
+      console.warn(`${sheetNameForLog} (csvToObjectsArray): Skipping empty or malformed row ${i + dataStartIndex}. Row: ${row.join(',')}`);
+      continue;
+    }
 
     const obj: Partial<T> = {};
-    let hasData = false;
+    let hasEssentialData = false;
+
     for (const headerKey of expectedHeaders) {
       const headerString = String(headerKey).toLowerCase();
       let colIndex = columnMap[headerString];
 
-      if (headerString === 'id' && colIndex === -1) { // For auto-generated ID in FAQ
-        obj[headerKey] = `${sheetNameForLog.toLowerCase()}_csv_${i}` as any;
-        hasData = true; // Mark as having data even if only ID is auto-generated
+      // Special handling for FAQ ID generation if 'id' column is missing in CSV
+      if (sheetNameForLog === "FAQ" && headerString === 'id' && (colIndex === undefined || colIndex === -1)) {
+        obj[headerKey] = `faq_csv_${i}` as any; // Auto-generate ID
+        hasEssentialData = true; // Consider ID as essential
         continue;
       }
       
-      if (colIndex !== undefined && colIndex < row.length) {
+      if (colIndex !== undefined && colIndex !== -1 && colIndex < row.length) {
         obj[headerKey] = row[colIndex] as any;
-        if (row[colIndex] !== "" && row[colIndex] !== undefined) hasData = true;
+        // Consider it has data if a non-optional, non-ID key has content
+        if (row[colIndex] !== "" && row[colIndex] !== undefined && headerString !== 'id' && headerString !== 'imageorder' && headerString !== 'imagehint' && headerString !== 'thumbnailhint' && headerString !== 'daynameoverride' && headerString !== 'delay') {
+          hasEssentialData = true;
+        }
       } else {
-         console.warn(`${sheetNameForLog} (csvToObjectsArray): Missing data for header '${headerString}' in row ${i + dataStartIndex}. Row content: ${row.join(',')}.`);
-        obj[headerKey] = undefined; // or a default value like '' or null if appropriate
+        if (expectedHeadersLowerCase.includes(headerString)) { // Only warn for expected headers
+          console.warn(`${sheetNameForLog} (csvToObjectsArray): Missing data for expected header '${headerString}' in row ${i + dataStartIndex}. Row content: ${row.join(',')}.`);
+        }
+        obj[headerKey] = undefined;
       }
     }
-    if (hasData) {
+
+    if (hasEssentialData) {
         objects.push(obj as T);
+    } else {
+        console.log(`${sheetNameForLog} (csvToObjectsArray): Row ${i + dataStartIndex} skipped due to missing essential data. Row: ${row.join(',')}`);
     }
   }
 
   if (objects.length > 0) {
-    console.log(`${sheetNameForLog} (csvToObjectsArray): Processed ${objects.length} items from CSV. First item:`, objects[0]);
+    console.log(`${sheetNameForLog} (csvToObjectsArray): Processed ${objects.length} items. First item:`, objects[0]);
     return objects;
   } else {
     console.log(`${sheetNameForLog} (csvToObjectsArray): No valid objects created from CSV data. Returning fallback.`);
@@ -438,6 +441,7 @@ function csvToObjectsArray<T extends Record<string, any>>(
 // --- Data Fetching Functions ---
 
 export async function getSiteConfig(): Promise<SiteConfig> {
+  // SiteConfig is now always from fallback, as per previous request
   console.log("getSiteConfig: Returning hardcoded fallbackSiteConfig data only.");
   return fallbackSiteConfig;
 }
@@ -480,13 +484,12 @@ export async function getContactInfoData(): Promise<ContactInfoData> {
 
 
 export async function getFaqData(): Promise<FaqItem[]> {
-  const directCsvUrl = FAQ_CSV_URL; // Using the constant defined at the top
-  console.log(`FAQ: Attempting to fetch from direct CSV URL: ${directCsvUrl}`);
-  const parsedData = await fetchCsvDataFromUrl(directCsvUrl, "FAQ");
+  console.log(`FAQ: Attempting to fetch CSV from URL: ${FAQ_CSV_URL}`);
+  const parsedData = await fetchCsvDataFromUrl(FAQ_CSV_URL, "FAQ");
 
   if (parsedData && parsedData.length > 0) {
     const expectedHeaders: (keyof FaqItem)[] = ['id', 'question', 'answer'];
-    const faqs = csvToObjectsArray(parsedData, fallbackFaqs, "FAQ", expectedHeaders);
+    const faqs = csvToObjectsArray(parsedData, [], "FAQ", expectedHeaders);
     
     if (faqs.length > 0) {
         console.log(`FAQ: Processed ${faqs.length} FAQ items from CSV URL. First item:`, faqs[0]);
@@ -502,7 +505,7 @@ export async function getFaqData(): Promise<FaqItem[]> {
 export async function getTestimonials(): Promise<Testimonial[]> {
   const parsedData = await fetchCsvDataFromUrl(TESTIMONIALS_CSV_URL, "Testimonials");
   if (parsedData && parsedData.length > 0) {
-    const testimonials = csvToObjectsArray(parsedData, fallbackTestimonials, "Testimonials", ['id', 'quote', 'author']);
+    const testimonials = csvToObjectsArray(parsedData, [], "Testimonials", ['id', 'quote', 'author']);
     if (testimonials.length > 0) {
       console.log(`Testimonials: Processed ${testimonials.length} items. First item:`, testimonials[0]);
       return testimonials;
@@ -513,11 +516,10 @@ export async function getTestimonials(): Promise<Testimonial[]> {
 }
 
 export async function getSwiperSlides(): Promise<SwiperSlideItem[]> {
-  const directCsvUrl = SWIPER_SLIDES_CSV_URL; // Using the constant
-  console.log(`SwiperSlides: Attempting to fetch CSV from URL: ${directCsvUrl}`);
-  const parsedData = await fetchCsvDataFromUrl(directCsvUrl, "SwiperSlides");
+  console.log(`SwiperSlides: Attempting to fetch CSV from URL: ${SWIPER_SLIDES_CSV_URL}`);
+  const parsedData = await fetchCsvDataFromUrl(SWIPER_SLIDES_CSV_URL, "SwiperSlides");
   if (parsedData && parsedData.length > 0) {
-    const slides = csvToObjectsArray(parsedData, fallbackSwiperSlides, "SwiperSlides", ['id', 'imageSrc', 'imageAlt', 'imageHint', 'captionTitle', 'captionText']);
+    const slides = csvToObjectsArray(parsedData, [], "SwiperSlides", ['id', 'imageSrc', 'imageAlt', 'imageHint', 'captionTitle', 'captionText']);
      if (slides.length > 0) {
       console.log(`SwiperSlides: Processed ${slides.length} items. First item:`, slides[0]);
       return slides;
@@ -528,9 +530,9 @@ export async function getSwiperSlides(): Promise<SwiperSlideItem[]> {
 }
 
 export async function getVideos(): Promise<VideoItem[]> {
- const parsedData = await fetchCsvDataFromUrl(VIDEOS_CSV_URL, "Videos");
+  const parsedData = await fetchCsvDataFromUrl(VIDEOS_CSV_URL, "Videos");
   if (parsedData && parsedData.length > 0) {
-    const videos = csvToObjectsArray(parsedData, fallbackVideos, "Videos", ['id', 'videoId', 'title', 'category']);
+    const videos = csvToObjectsArray(parsedData, [], "Videos", ['id', 'videoId', 'title', 'category']);
      if (videos.length > 0) {
       console.log(`Videos: Processed ${videos.length} items. First item:`, videos[0]);
       return videos;
@@ -540,13 +542,27 @@ export async function getVideos(): Promise<VideoItem[]> {
   return fallbackVideos;
 }
 
-// --- Gallery Data Functions ---
+export async function getHomePageGallerySwiperData(): Promise<HomePageGallerySwiperItem[]> {
+    const parsedData = await fetchCsvDataFromUrl(HOMEPAGE_GALLERY_SWIPER_CSV_URL, "HomePageGallerySwiper");
+    if (parsedData && parsedData.length > 0) {
+        const items = csvToObjectsArray(parsedData, [], "HomePageGallerySwiper", ['imageSrc', 'imageAlt', 'imageHint']);
+        if (items.length > 0) {
+            console.log(`HomePageGallerySwiper: Processed ${items.length} items. First item:`, items[0]);
+            return items;
+        }
+    }
+    console.log("getHomePageGallerySwiperData: No CSV data, returning fallbackHomePageGallerySwiper.");
+    return fallbackHomePageGallerySwiper;
+}
+
+
+// --- Gallery Data Functions (External Gallery) ---
 export async function getGalleryYears(): Promise<GalleryYearData[]> {
-  // This will now be static as per your request
+  // Keep this static as requested, for "ה'תשפ"ד" only
   const yearData: GalleryYearData = {
     yearSlug: "tashpad",
-    yearName: fallbackSiteConfig.galleryTashpadYearImage ? fallbackSiteConfig.galleryTashpadYearImage.split('text=')[1] || `ה'תשפ"ד` : `ה'תשפ"ד`,
-    yearImage: fallbackSiteConfig.galleryTashpadYearImage || "https://placehold.co/300x300.png?text=תשפד",
+    yearName: `ה'תשפ"ד`, // Static name
+    yearImage: fallbackSiteConfig.galleryTashpadYearImage || "https://placehold.co/300x300.png?text=תשפד-שנה",
     yearImageHint: "camp collage"
   };
   console.log("getGalleryYears: Returning static data for Tashpad:", yearData);
@@ -554,107 +570,112 @@ export async function getGalleryYears(): Promise<GalleryYearData[]> {
 }
 
 export async function getGalleryDays(): Promise<GalleryDayData[]> {
-  console.log(`GalleryDays: Attempting to fetch from ${GALLERY_IMAGES_TASHPAD_CSV_URL}`);
-  const parsedImageData = await fetchCsvDataFromUrl(GALLERY_IMAGES_TASHPAD_CSV_URL, "GalleryImagesTashpad_ForDays");
+  console.log(`GalleryDays: Attempting to fetch from GALLERY_IMAGES_TASHPAD_CSV_URL (also used for days meta): ${GALLERY_IMAGES_TASHPAD_CSV_URL}`);
+  const parsedImageData = await fetchCsvDataFromUrl(GALLERY_IMAGES_TASHPAD_CSV_URL, "GalleryImagesTashpad_ForDaysMeta");
+
+  const days: GalleryDayData[] = [];
+  const daySlugsSeen = new Set<string>();
 
   if (parsedImageData) {
-    const dayMap = new Map<string, { name: string; thumbnail: string; thumbnailHint?: string }>();
     const headerRow = parsedImageData[0].map(h => h.toLowerCase().trim());
     const daySlugIndex = headerRow.indexOf('dayslug');
     const dayNameOverrideIndex = headerRow.indexOf('daynameoverride');
     const srcIndex = headerRow.indexOf('src');
-    const hintIndex = headerRow.indexOf('hint');
+    const hintIndex = headerRow.indexOf('thumbnailhint'); // Use thumbnailhint for day's thumbnail hint
     const imageOrderIndex = headerRow.indexOf('imageorder');
 
-    if (daySlugIndex === -1 || srcIndex === -1) {
-        console.error("GalleryDays: CSV is missing 'daySlug' or 'src' header. Using fallback days.");
-        return fallbackGalleryDays.filter(d => d.yearSlug === "tashpad");
-    }
+    if (daySlugIndex !== -1 && srcIndex !== -1) {
+      console.log("GalleryDays: Headers found in GalleryImagesTashpad CSV for deriving days meta.");
+      // Create a map to get the first image (or imageOrder=1) as thumbnail
+      const dayThumbnails = new Map<string, { src: string; hint?: string; nameOverride?: string }>();
 
-    for (let i = 1; i < parsedImageData.length; i++) {
-      const row = parsedImageData[i];
-      const daySlug = row[daySlugIndex];
-      const dayNameOverride = dayNameOverrideIndex !== -1 && row[dayNameOverrideIndex] ? row[dayNameOverrideIndex] : `היום ה-${daySlug.replace('day', '')}`;
-      const imageSrc = row[srcIndex];
-      const imageHint = hintIndex !== -1 ? row[hintIndex] : 'camp activity';
-      const imageOrder = imageOrderIndex !== -1 && row[imageOrderIndex] ? parseInt(row[imageOrderIndex], 10) : Infinity;
+      for (let i = 1; i < parsedImageData.length; i++) {
+        const row = parsedImageData[i];
+        const daySlug = row[daySlugIndex];
+        const imageSrc = row[srcIndex];
+        const imageOrder = imageOrderIndex !== -1 && row[imageOrderIndex] ? parseInt(row[imageOrderIndex], 10) : Infinity;
+        const nameOverride = dayNameOverrideIndex !== -1 ? row[dayNameOverrideIndex] : undefined;
+        const thumbHint = hintIndex !== -1 ? row[hintIndex] : 'camp activity';
 
-      if (daySlug && imageSrc) {
-        if (!dayMap.has(daySlug) || (imageOrder === 1 && dayMap.has(daySlug))) {
-          dayMap.set(daySlug, {
-            name: dayNameOverride,
-            thumbnail: imageSrc,
-            thumbnailHint: imageHint,
-          });
+        if (daySlug && imageSrc) {
+          if (!dayThumbnails.has(daySlug) || imageOrder === 1) {
+            dayThumbnails.set(daySlug, { src: imageSrc, hint: thumbHint, nameOverride });
+          }
         }
       }
-    }
-    
-    const daysFromSheet: GalleryDayData[] = [];
-    // Create entries for day1 to day10, using data from sheet if available, or placeholders
-    for (let i = 1; i <= 10; i++) {
-        const slug = `day${i}`;
-        const dayDataFromMap = dayMap.get(slug);
-        if (dayDataFromMap) {
-            daysFromSheet.push({
-                yearSlug: "tashpad",
-                daySlug: slug,
-                dayName: dayDataFromMap.name,
-                thumbnail: dayDataFromMap.thumbnail,
-                thumbnailHint: dayDataFromMap.thumbnailHint
-            });
-        } else {
-            daysFromSheet.push({
-                yearSlug: "tashpad",
-                daySlug: slug,
-                dayName: `היום ה-${i}`, // Fallback name
-                thumbnail: `https://placehold.co/400x300.png?text=יום+${i}`,
-                thumbnailHint: "placeholder"
-            });
+      
+      // Ensure 10 days, using data from sheet if available
+      for (let i = 1; i <= 10; i++) {
+        const currentDaySlug = `day${i}`;
+        const dayMeta = dayThumbnails.get(currentDaySlug);
+        
+        days.push({
+          yearSlug: "tashpad",
+          daySlug: currentDaySlug,
+          dayName: dayMeta?.nameOverride || `היום ה-${i}`,
+          thumbnail: dayMeta?.src || `https://placehold.co/400x300.png?text=יום-${i}`,
+          thumbnailHint: dayMeta?.hint || "activity"
+        });
+        daySlugsSeen.add(currentDaySlug);
+      }
+
+      // Add any extra days found in the sheet that were not in the 1-10 range
+      dayThumbnails.forEach((meta, slug) => {
+        if (!daySlugsSeen.has(slug)) {
+          days.push({
+            yearSlug: "tashpad",
+            daySlug: slug,
+            dayName: meta.nameOverride || `יום ${slug.replace('day','')}`,
+            thumbnail: meta.src,
+            thumbnailHint: meta.hint
+          });
         }
+      });
+
+
+    } else {
+      console.warn("GalleryDays: CSV for GalleryImagesTashpad_ForDaysMeta is missing 'daySlug' or 'src' header. Using fallback days structure.");
+      return fallbackGalleryDays.filter(d => d.yearSlug === "tashpad");
     }
-    if (daysFromSheet.length > 0) {
-      console.log(`GalleryDays: Processed ${daysFromSheet.length} days for Tashpad from CSV / fallbacks.`);
-      return daysFromSheet;
-    }
+  } else {
+    console.log(`GalleryDays: No data from CSV. Returning hardcoded fallback days for Tashpad.`);
+    return fallbackGalleryDays.filter(d => d.yearSlug === "tashpad");
   }
-  
-  console.log(`GalleryDays: No data from CSV for GalleryImagesTashpad_ForDays or CSV URL is null. Returning hardcoded fallback days for Tashpad.`);
+
+  if (days.length > 0) {
+    console.log(`GalleryDays: Processed ${days.length} days for Tashpad from CSV / fallbacks.`);
+    return days;
+  }
+  console.log("GalleryDays: No days processed, returning fallback.");
   return fallbackGalleryDays.filter(d => d.yearSlug === "tashpad");
 }
 
-export async function getGalleryImages(yearSlug: string, daySlug: string): Promise<GalleryImageItem[]> {
-  if (yearSlug !== "tashpad") {
-    console.log(`getGalleryImages: Requested year ${yearSlug} is not Tashpad. Returning empty array.`);
+
+export async function getGalleryImages(yearSlugParam: string, daySlugParam: string): Promise<GalleryImageItem[]> {
+  if (yearSlugParam !== "tashpad") {
+    console.log(`getGalleryImages: Requested year ${yearSlugParam} is not Tashpad. Returning empty array.`);
     return [];
   }
-  console.log(`GalleryImages: Attempting to fetch images for ${yearSlug}/${daySlug} from ${GALLERY_IMAGES_TASHPAD_CSV_URL}`);
+  console.log(`GalleryImages: Attempting to fetch images for ${yearSlugParam}/${daySlugParam} from ${GALLERY_IMAGES_TASHPAD_CSV_URL}`);
   const parsedData = await fetchCsvDataFromUrl(GALLERY_IMAGES_TASHPAD_CSV_URL, "GalleryImagesTashpad");
-  
+
   if (parsedData) {
     const images = csvToObjectsArray(parsedData, [], "GalleryImagesTashpad", ['daySlug', 'imageOrder', 'src', 'alt', 'hint'])
-      .filter(img => img.daySlug === daySlug)
+      .filter(img => img.daySlug === daySlugParam)
       .map(img => ({ ...img, yearSlug: "tashpad" as "tashpad", imageOrder: Number(img.imageOrder) || 0 }))
       .sort((a, b) => (a.imageOrder || 0) - (b.imageOrder || 0));
-    
+
     if (images.length > 0) {
-      console.log(`GalleryImages: Processed ${images.length} images for ${yearSlug}/${daySlug} from CSV.`);
+      console.log(`GalleryImages: Processed ${images.length} images for ${yearSlugParam}/${daySlugParam} from CSV.`);
       return images;
+    } else {
+      console.log(`GalleryImages: No images found in CSV for ${yearSlugParam}/${daySlugParam}. Returning empty array.`);
+      return [];
     }
   }
-  
-  console.log(`GalleryImages: No data from CSV for ${yearSlug}/${daySlug} or CSV URL is null. Returning empty array as fallback.`);
-  return []; // Return empty array if no images found in CSV for that day.
+
+  console.log(`GalleryImages: No data from CSV for ${yearSlugParam}/${daySlugParam}. Returning empty array as fallback.`);
+  return [];
 }
 
-// Explicitly export fallback data if they are directly imported by AppInitializer
-// (as per the error message, AppInitializer imports some of these)
-export {
-  fallbackFaqs,
-  fallbackTestimonials,
-  fallbackSwiperSlides,
-  fallbackVideos,
-  fallbackGalleryYears,
-  fallbackGalleryDays,
-  fallbackGalleryImages
-};
+    
