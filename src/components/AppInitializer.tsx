@@ -7,23 +7,27 @@ import 'aos/dist/aos.css';
 import type SwiperCore from 'swiper';
 import type { SiteConfig, FaqItem, ContactDetails, Testimonial, SwiperSlideItem, VideoItem, GalleryYearData, GalleryDayData, GalleryImageItem, HeroConfigData, PrincipalMessageData, AboutSectionContentData } from '@/services/googleSheetsService';
 import Image from 'next/image';
+import { fallbackSiteConfig, fallbackHeroConfigData, fallbackPrincipalMessageData, fallbackAboutSectionContentData, fallbackContactInfoData } from '@/services/googleSheetsService';
+
 
 export interface InitialSiteData {
   siteConfig: SiteConfig;
   faqItems: FaqItem[];
-  contactDetails: ContactDetails;
+  contactDetails: ContactDetails; // Will be populated from contactInfoData
   testimonials: Testimonial[];
   swiperSlides: SwiperSlideItem[];
   videos: VideoItem[];
   galleryYears: GalleryYearData[];
   galleryDays: GalleryDayData[];
   galleryImages: GalleryImageItem[];
-  heroConfigData?: HeroConfigData; // Made optional
-  principalMessageData?: PrincipalMessageData; // Made optional
-  aboutSectionContentData?: AboutSectionContentData; // Made optional
+  heroConfigData?: HeroConfigData; 
+  principalMessageData?: PrincipalMessageData; 
+  aboutSectionContentData?: AboutSectionContentData;
+  contactInfoData?: ContactInfoData; // For the separate Contact Info sheet
 }
 
-export interface GlobalContextProps extends InitialSiteData {
+export interface GlobalContextProps extends Omit<InitialSiteData, 'contactDetails'> { // Omit old contactDetails
+  contactDetails: ContactInfoData; // Use the new ContactInfoData type
   isMobileNavActive: boolean;
   toggleMobileNav: () => void;
   closeMobileNav: () => void;
@@ -67,11 +71,19 @@ export default function AppInitializer({ children, initialData }: AppInitializer
 
   const swiperInstances = useRef<{ [key: string]: SwiperCore | null }>({});
   
-  const splashScreenLogoSrc = initialData?.siteConfig?.logoImageSrc || "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0";
+  // Ensure critical config objects always have a value, falling back to predefined structures if initialData is incomplete
+  const siteConfig = initialData?.siteConfig || fallbackSiteConfig;
+  const heroConfigData = initialData?.heroConfigData || fallbackHeroConfigData;
+  const principalMessageData = initialData?.principalMessageData || fallbackPrincipalMessageData;
+  const aboutSectionContentData = initialData?.aboutSectionContentData || fallbackAboutSectionContentData;
+  const contactInfoData = initialData?.contactInfoData || fallbackContactInfoData;
 
-  const YOUTUBE_VIDEO_ID_HERO = initialData?.heroConfigData?.videoId || initialData?.siteConfig?.heroVideoId || 'b2SaA1dYwl0';
-  const googleFormBaseUrl = initialData?.siteConfig?.registrationFormUrl || "https://docs.google.com/forms/d/e/1FAIpQLSc4BOspqh2ohsp6W0OGHqGtuXWrMb3e6C1c0bhw4bbYwnCmWA/viewform?embedded=true";
-  const paymentRedirectUrl = initialData?.siteConfig?.paymentRedirectUrl || "https://icredit.rivhit.co.il/payment/PaymentFullPage.aspx?GroupId=5375c290-a52c-487d-ab47-14c0b0ef5365";
+
+  const splashScreenLogoSrc = siteConfig.logoImageSrc || "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0";
+
+  const YOUTUBE_VIDEO_ID_HERO = heroConfigData.videoId || siteConfig.heroVideoId || 'b2SaA1dYwl0';
+  const googleFormBaseUrl = siteConfig.registrationFormUrl || "https://docs.google.com/forms/d/e/1FAIpQLSc4BOspqh2ohsp6W0OGHqGtuXWrMb3e6C1c0bhw4bbYwnCmWA/viewform?embedded=true";
+  const paymentRedirectUrl = siteConfig.paymentRedirectUrl || "https://icredit.rivhit.co.il/payment/PaymentFullPage.aspx?GroupId=5375c290-a52c-487d-ab47-14c0b0ef5365";
   
   const galleryImageUrls = [ 
       "https://lh3.googleusercontent.com/pw/AP1GczNBtFaOAbpOMFUXx9DL4emQxGdSzYm1vjivTyDnUzlHQDWgHtaEy5K3G1OZGyAbhSIkCMkReGJOOnI2OCe_ZpjXz02f3RC4_rjHO2Sslf_pvdSJC-pbboOhWYvYjeCjXtFe9G8spEwvIYlWLorXm4Diik0haX2EUPWslXKEbwguIv80gXqwp2WLP9oOgyr7RwQQbtDMV-iDAQltUoLtg6l=w1379-h919-s-no-gm?authuser=0",
@@ -155,11 +167,12 @@ export default function AppInitializer({ children, initialData }: AppInitializer
   }, []);
 
   const contextValue: GlobalContextProps = {
-    ...initialData,
-    siteConfig: initialData.siteConfig, // Ensure siteConfig is always passed
-    heroConfigData: initialData.heroConfigData || fallbackHeroConfigData, // Ensure heroConfigData is passed or use fallback
-    principalMessageData: initialData.principalMessageData || fallbackPrincipalMessageData,
-    aboutSectionContentData: initialData.aboutSectionContentData || fallbackAboutSectionContentData,
+    ...initialData, // Spread all other properties from initialData
+    siteConfig, 
+    heroConfigData,
+    principalMessageData,
+    aboutSectionContentData,
+    contactDetails: contactInfoData, // Use the specifically structured contactInfoData
     isMobileNavActive, toggleMobileNav, closeMobileNav,
     isRegistrationModalOpen, openRegistrationModal, closeRegistrationModal,
     isLightboxOpen, openLightbox, closeLightbox, lightboxImgSrc, lightboxImgAlt,
@@ -194,31 +207,3 @@ export default function AppInitializer({ children, initialData }: AppInitializer
     </GlobalContext.Provider>
   );
 }
-
-// Define fallbacks for potentially undefined structured data within AppInitializer
-// to ensure GlobalContext always has a valid structure.
-const fallbackHeroConfigData: HeroConfigData = {
-  imageSrc: "https://images.unsplash.com/photo-1560707303-11e40c4110c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHw1fHxjaGlsZHJlbiUyMHN1bW1lciUyMGNhbXB8ZW58MHx8fHwxNzIwMDk5NzI4fDA&ixlib=rb-4.0.3&q=80&w=1080",
-  imageAlt: "קדימון קעמפ גן ישראל אלעד (סטטי)",
-  imageHint: "children summer camp",
-  videoId: "b2SaA1dYwl0",
-};
-
-const fallbackPrincipalMessageData: PrincipalMessageData = {
-  principalName: "שם המנהל (טעינה...)",
-  messageParagraph1: "טוען תוכן...",
-  messageParagraph2: "טוען תוכן...",
-  imageSrc: "https://placehold.co/400x500.png?text=Principal-Static",
-  imageAlt: "מנהל הקעמפ",
-  imageHint: "rabbi portrait",
-};
-
-const fallbackAboutSectionContentData: AboutSectionContentData = {
-  sectionTitle: "אודותינו (טעינה...)",
-  cardTitle: "אודות הקעמפ (טעינה...)",
-  paragraph1: "טוען תוכן...",
-  paragraph2: "טוען תוכן...",
-  imageSrc: "https://images.unsplash.com/photo-1504829857107-4acf85189b73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHwyfHxzdW1tZXIlMjBjYW1wJTIwZnVufGVufDB8fHx8MTcyMDA5OTgwMHww&ixlib=rb-4.0.3&q=80&w=1080",
-  imageAlt: "קבוצת ילדים בפעילות קעמפ (סטטי)",
-  imageHint: "camp activity",
-};
