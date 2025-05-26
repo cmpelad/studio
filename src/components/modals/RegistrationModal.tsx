@@ -15,8 +15,9 @@ export default function RegistrationModal() {
   if (!context) return null;
   const { isRegistrationModalOpen, closeRegistrationModal, paymentRedirectUrl } = context;
 
-  const youngDivisionFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSfqGL-LNTDFDWE-TS426KLYSYIZU4F68XQA2ZKF3X8MEIWMNQ/viewform?embedded=true";
-  const seniorDivisionFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSE54DWLERGEWDMM9I9JBXBK6WQYRFDAHAFG-OUHONFPAWZQLQ/viewform?embedded=true";
+  // Updated URLs using the embed format
+  const youngDivisionFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSfQgL-lntdfdWE-ts426KlYSyizu4F68Xqa2zkF3x8mEiwmNQ/viewform?embedded=true";
+  const seniorDivisionFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSe54dWLeRgEWdMM9I9JBXBk6wQYrfdAHaFg-OuHONfPawZQlQ/viewform?embedded=true";
 
   useEffect(() => {
     if (isRegistrationModalOpen) {
@@ -36,22 +37,21 @@ export default function RegistrationModal() {
 
   useEffect(() => {
     if (currentView === 'form' && selectedFormUrl && iframeRef.current) {
-      iframeLoadCount.current = 0; // Reset load count when new form URL is set
+      iframeLoadCount.current = 0; 
       iframeRef.current.src = `${selectedFormUrl}&t=${new Date().getTime()}`;
     } else if (currentView !== 'form' && iframeRef.current) {
-       iframeRef.current.src = 'about:blank'; // Clear src if not in form view
+       iframeRef.current.src = 'about:blank';
     }
   }, [currentView, selectedFormUrl]);
   
 
   const handleIframeLoad = () => {
-    if (currentView !== 'form') return; // Only process if in form view
+    if (currentView !== 'form') return;
 
     iframeLoadCount.current++;
-    // After the initial load of the selected form (count=1), subsequent loads (count>1) are considered submissions
     if (iframeLoadCount.current > 1 && isRegistrationModalOpen) { 
       setTimeout(() => {
-        if (isRegistrationModalOpen) { // Double check modal is still open
+        if (isRegistrationModalOpen) { 
            setCurrentView('payment');
         }
       }, 500); 
@@ -121,19 +121,18 @@ export default function RegistrationModal() {
         )}
         
         {currentView === 'form' && selectedFormUrl && (
-          <div id="registrationFormContainer" className={`form-container active`}>
+          <div id="registrationFormContainer" className={`form-container ${currentView === 'form' ? 'active' : ''}`}>
             <iframe 
               id="registrationFormIframe" 
               ref={iframeRef}
               onLoad={handleIframeLoad}
               title="טופס הרשמה"
-              // src is set in useEffect
             >טוען...</iframe>
           </div>
         )}
         
         {currentView === 'payment' && (
-          <div id="paymentRedirectMessage" className={`payment-redirect-message active`}>
+          <div id="paymentRedirectMessage" className={`payment-redirect-message ${currentView === 'payment' ? 'active' : ''}`}>
             <i className="fas fa-credit-card"></i>
             <p>הפרטים נקלטו בהצלחה! אנא לחצו על הכפתור למעבר לתשלום.</p>
             <a href="#" id="proceedToPaymentBtn" className="cta-button payment-button" onClick={handleProceedToPayment}>למעבר לתשלום - לחץ כאן</a>
