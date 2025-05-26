@@ -2,20 +2,18 @@
 // src/services/googleSheetsService.ts
 
 // --- CSV URL Constants ---
-// Ensure these are the direct CSV export links for each specific sheet (tab)
+const SITE_CONFIG_CSV_URL = null; // Using fallbackSiteConfig for now
 const HERO_CONFIG_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=567131857&single=true&output=csv";
 const SWIPER_SLIDES_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=421516172&single=true&output=csv";
 const ABOUT_SECTION_CONTENT_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=1343173925&single=true&output=csv";
-const PRINCIPAL_MESSAGE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=222684544&single=true&output=csv";
+const PRINCIPAL_MESSAGE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=222684544&single=true&output=csv"; // Updated
 const HOMEPAGE_GALLERY_SWIPER_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=949430402&single=true&output=csv";
 const VIDEOS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=1597946854&single=true&output=csv";
 const FAQ_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=837718949&single=true&output=csv";
 const TESTIMONIALS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=2115801643&single=true&output=csv";
 const CONTACT_INFO_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=1047527670&single=true&output=csv";
-const GALLERY_DAYS_META_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=1677460936&single=true&output=csv"; // Assuming GID for GalleryDaysMeta sheet
-const GALLERY_IMAGES_TASHPAD_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=1677460936&single=true&output=csv";
-
-const SITE_CONFIG_CSV_URL = null; // Per user request, site config is static for now
+const GALLERY_DAYS_META_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=1677460936&single=true&output=csv"; // Assuming this GID is for days meta
+const GALLERY_IMAGES_TASHPAD_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdu5OVnpJHTBZyDZLNCLqZWhztXbZoJL5jdeWUKU396N9E7yQkOvOd7iorxy_8xaIAp0aBI9IEsX_F/pub?gid=1677460936&single=true&output=csv"; // Using the same GID for images, adjust if different
 
 
 // --- Fallback Data (Hardcoded) ---
@@ -23,22 +21,24 @@ export const fallbackSiteConfig: SiteConfig = {
     siteTitle: "קעמפ גן ישראל - אלעד",
     siteDescription: "חוויה של פעם בחיים! מחנה הקיץ הכי שווה מחכה לכם עם פעילויות מגוונות, מדריכים תותחים, ואווירה חסידית מיוחדת.",
     logoImageSrc: "https://drive.google.com/uc?id=11tJUCTwrsDgGuwFMmRKYyUQ7pQWMErH0",
-    heroVideoId: "b2SaA1dYwl0", 
-    heroImageSrc: "https://images.unsplash.com/photo-1560707303-11e40c4110c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHw1fHxjaGlsZHJlbiUyMHN1bW1lciUyMGNhbXB8ZW58MHx8fHwxNzIwMDk5NzI4fDA&ixlib=rb-4.0.3&q=80&w=1080",
-    heroImageAlt: "קדימון קעמפ גן ישראל אלעד",
-    heroImageHint: "children summer camp",
+    heroVideoId: "b2SaA1dYwl0",
+    // heroImageSrc, heroImageAlt, heroImageHint are now in fallbackHeroConfigData
     registrationFormUrl: "https://docs.google.com/forms/d/e/1FAIpQLSc4BOspqh2ohsp6W0OGHqGtuXWrMb3e6C1c0bhw4bbYwnCmWA/viewform?embedded=true",
     paymentRedirectUrl: "https://icredit.rivhit.co.il/payment/PaymentFullPage.aspx?GroupId=5375c290-a52c-487d-ab47-14c0b0ef5365",
+    // contactOfficeAddress, contactPhoneNumber, contactEmail, contactHours are in fallbackContactInfoData
+    // principalName, principalMessageParagraph1 etc. are in fallbackPrincipalMessageData
+    // aboutTitle, aboutParagraph1 etc. are in fallbackAboutSectionContentData
+    mainSummaryVideoId: "gqgfz0h0om4", // Remains here as a general fallback if not found in Videos sheet
     galleryPageTitle: "גלריית תמונות",
     summaryVideosPageTitle: "כל סרטוני הסיכום",
-    galleryTashpadYearImage: "https://placehold.co/300x300.png?text=תשפד" 
+    galleryTashpadYearImage: "https://placehold.co/300x300.png?text=תשפד-שנה",
 };
 
 export const fallbackHeroConfigData: HeroConfigData = {
-  imageSrc: fallbackSiteConfig.heroImageSrc,
-  imageAlt: fallbackSiteConfig.heroImageAlt,
-  imageHint: fallbackSiteConfig.heroImageHint,
-  videoId: fallbackSiteConfig.heroVideoId,
+  imageSrc: "https://images.unsplash.com/photo-1560707303-11e40c4110c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAzNzV8MHwxfHNlYXJjaHw1fHxjaGlsZHJlbiUyMHN1bW1lciUyMGNhbXB8ZW58MHx8fHwxNzIwMDk5NzI4fDA&ixlib=rb-4.0.3&q=80&w=1080",
+  imageAlt: "קדימון קעמפ גן ישראל אלעד",
+  imageHint: "children summer camp",
+  videoId: "b2SaA1dYwl0",
 };
 
 export const fallbackPrincipalMessageData: PrincipalMessageData = {
@@ -73,11 +73,11 @@ export const fallbackContactInfoData: ContactInfoData = {
 };
 
 export const fallbackFaqs: FaqItem[] = [
-    { id: "faq1_fallback", question: "לאילו גילאים מיועד הקעמפ?", answer: "הקעמפ מיועד לבנים בגילאי ז'-ט' (בוגרי כיתות ו'-ח'). אנו שמים דגש על התאמת הפעילויות והאווירה לגילאים אלו." },
-    { id: "faq2_fallback", question: "מהן שעות הפעילות בקעמפ?", answer: "שעות הפעילויות הן בדרך כלל מ-09:00 בבוקר ועד 17:00 אחר הצהריים. ייתכנו ימים עם פעילויות ערב מיוחדות, עליהן תימסר הודעה מראש." },
-    { id: "faq3_fallback", question: "האם יש צורך להביא אוכל?", answer: "לא, הקעמפ מספק ארוחות בוקר, צהריים וערב כשרות למהדרין, וכן כיבוד קל בין הארוחות. במקרה של רגישויות מזון, יש לעדכן אותנו מראש." },
-    { id: "faq4_fallback", question: "איזה ציוד יש להביא לקעמפ?", answer: "רשימת ציוד מפורטת תישלח לנרשמים. באופן כללי, יש להצטייד בבגדים נוחים, כובע, בקבוק מים, קרם הגנה, ופריטים אישיים. לטיולים יש להצטייד בנעלי הליכה נוחות." },
-    { id: "faq5_fallback", question: "מהי מדיניות הביטולים?", answer: "מדיניות הביטולים מפורטת בתקנון ההרשמה. באופן כללי, ניתן לבטל עד תאריך מסוים ולקבל החזר חלקי או מלא, בהתאם לתנאים." },
+    { id: "faq1_fallback", question: "לאילו גילאים מיועד הקעמפ?", answer: "הקעמפ מיועד לבנים בגילאי ז'-ט' (בוגרי כיתות ו'-ח'). אנו שמים דגש על התאמת הפעילויות והאווירה לגילאים אלו.", delay: "0" },
+    { id: "faq2_fallback", question: "מהן שעות הפעילות בקעמפ?", answer: "שעות הפעילויות הן בדרך כלל מ-09:00 בבוקר ועד 17:00 אחר הצהריים. ייתכנו ימים עם פעילויות ערב מיוחדות, עליהן תימסר הודעה מראש.", delay: "50" },
+    { id: "faq3_fallback", question: "האם יש צורך להביא אוכל?", answer: "לא, הקעמפ מספק ארוחות בוקר, צהריים וערב כשרות למהדרין, וכן כיבוד קל בין הארוחות. במקרה של רגישויות מזון, יש לעדכן אותנו מראש.", delay: "100" },
+    { id: "faq4_fallback", question: "איזה ציוד יש להביא לקעמפ?", answer: "רשימת ציוד מפורטת תישלח לנרשמים. באופן כללי, יש להצטייד בבגדים נוחים, כובע, בקבוק מים, קרם הגנה, ופריטים אישיים. לטיולים יש להצטייד בנעלי הליכה נוחות.", delay: "150" },
+    { id: "faq5_fallback", question: "מהי מדיניות הביטולים?", answer: "מדיניות הביטולים מפורטת בתקנון ההרשמה. באופן כללי, ניתן לבטל עד תאריך מסוים ולקבל החזר חלקי או מלא, בהתאם לתנאים.", delay: "200" },
 ];
 
 export const fallbackTestimonials: Testimonial[] = [
@@ -97,7 +97,10 @@ export const fallbackHomePageGallerySwiper: HomePageGallerySwiperItem[] = [
   { imageSrc: "https://lh3.googleusercontent.com/pw/AP1GczNBtFaOAbpOMFUXx9DL4emQxGdSzYm1vjivTyDnUzlHQDWgHtaEy5K3G1OZGyAbhSIkCMkReGJOOnI2OCe_ZpjXz02f3RC4_rjHO2Sslf_pvdSJC-pbboOhWYvYjeCjXtFe9G8spEwvIYlWLorXm4Diik0haX2EUPWslXKEbwguIv80gXqwp2WLP9oOgyr7RwQQbtDMV-iDAQltUoLtg6l=w1379-h919-s-no-gm?authuser=0", imageAlt: "תמונה מהקעמפ - פעילות מים", imageHint: "camp activity" },
   { imageSrc: "https://lh3.googleusercontent.com/pw/AP1GczPgSy83OmgsgZDuZoPBGqd3nFunosjH2KCqQ3OhDlKeK-MkSzR4Nn70TAtyICq2UjeiCY3ic_ln5uYf0rY5SSNqC_7IkhZ0idDT5kf3wUvkecjvivzQbrwiEizm_61rjRXLVuYgnkfWcBFd1CuS4pFc=w1379-h919-s-no-gm?authuser=0", imageAlt: "תמונה מהקעמפ - מדורה", imageHint: "children outdoors" },
   { imageSrc: "https://picsum.photos/seed/img4/600/400", imageAlt: "תמונה אקראית 4", imageHint: "placeholder" },
+  { imageSrc: "https://lh3.googleusercontent.com/pw/AP1GczMsQ7kLfOlgRiMTNIGPg2y65mr-4ySFISouO0yBvZNufdxGztE9HoBwzJ2xNpwu-dNNd1eapdEwvIYlWLorXm4Diik0haX2EUPWslXKEbwguIv80gXqwp2WLP9oOgyr7RwQQbtDMV-iDAQltUoLtg6l=w1225-h919-s-no-gm?authuser=0", imageAlt: "תמונה מהקעמפ - משחקים", imageHint: "camp games" },
+  { imageSrc: "https://picsum.photos/seed/img5/600/400", imageAlt: "תמונה אקראית 5", imageHint: "placeholder" },
 ];
+
 
 export const fallbackVideos: VideoItem[] = [
     { id: 'song1_fallback', videoId: '6aRI-emxQlU', title: "שיר הנושא - קעמפ גן ישראל אלעד", category: 'campSong' },
@@ -144,9 +147,10 @@ export interface SiteConfig {
   heroImageHint?: string;
   registrationFormUrl?: string;
   paymentRedirectUrl?: string;
+  mainSummaryVideoId?: string;
   galleryPageTitle?: string;
   summaryVideosPageTitle?: string;
-  galleryTashpadYearImage?: string;
+  galleryTashpadYearImage?: string; // For the main gallery page
 }
 
 export interface HeroConfigData {
@@ -224,7 +228,7 @@ export interface GalleryImageItem {
 // --- Helper: Fetch and Parse CSV Data ---
 async function fetchCsvDataFromUrl(
   csvUrl: string | null,
-  sheetNameForLog: string // For logging purposes
+  sheetNameForLog: string
 ): Promise<string[][] | null> {
   if (!csvUrl || csvUrl.includes("YOUR_") || csvUrl.includes("GID_PLACEHOLDER") || csvUrl.includes("YOUR_SPREADSHEET_ID_HERE")) {
     console.log(`${sheetNameForLog}: CSV URL is a placeholder, invalid, or not configured. Skipping fetch for ${sheetNameForLog}.`);
@@ -232,7 +236,7 @@ async function fetchCsvDataFromUrl(
   }
   try {
     console.log(`${sheetNameForLog}: Attempting to fetch CSV from URL: ${csvUrl}`);
-    const response = await fetch(csvUrl, { next: { revalidate: 3600 } }); // Revalidate every hour
+    const response = await fetch(csvUrl, { next: { revalidate: 3600 } }); 
 
     if (!response.ok) {
       console.error(`${sheetNameForLog}: Error fetching CSV from ${csvUrl}: ${response.status} ${response.statusText}`);
@@ -243,7 +247,7 @@ async function fetchCsvDataFromUrl(
       console.log(`${sheetNameForLog}: CSV from ${csvUrl} is empty.`);
       return null;
     }
-    console.log(`${sheetNameForLog}: Successfully fetched CSV data from URL. Raw CSV Text length: ${text.length}`);
+    console.log(`${sheetNameForLog}: Successfully fetched CSV data. Raw CSV Text length: ${text.length}`);
     
     const rows = text.split(/\r?\n/).map(row => {
       const parsedRow: string[] = [];
@@ -281,16 +285,15 @@ async function fetchCsvDataFromUrl(
   }
 }
 
-
 function csvToKeyValueObject<T extends Record<string, any>>(
   parsedData: string[][] | null,
   fallbackData: T,
   sheetNameForLog: string
 ): T {
-  const result = { ...fallbackData } as T; // Start with fallback, override with fetched
-  if (!parsedData || parsedData.length < 1) { // Can be just a header row
-    console.log(`${sheetNameForLog} (csvToKeyValueObject): No parsed CSV data or insufficient rows. Using fallback.`);
-    return result;
+  const result = { ...fallbackData } as T;
+  if (!parsedData || parsedData.length < 1) {
+    console.log(`${sheetNameForLog} (csvToKeyValueObject): No parsed CSV data. Using fallback.`);
+    return result; // Return original fallback if no data
   }
 
   const headerRow = parsedData[0].map(h => h.toLowerCase().trim());
@@ -298,13 +301,12 @@ function csvToKeyValueObject<T extends Record<string, any>>(
   const valueHeaderIndex = headerRow.indexOf('value');
 
   if (keyHeaderIndex === -1 || valueHeaderIndex === -1) {
-    console.warn(`${sheetNameForLog} (csvToKeyValueObject): CSV missing 'key' or 'value' header. Using fallback. Headers found: ${headerRow.join(',')}`);
+    console.warn(`${sheetNameForLog} (csvToKeyValueObject): CSV missing 'key' or 'value' header. Using fallback. Headers: ${headerRow.join(',')}`);
     return result;
   }
-  console.log(`${sheetNameForLog} (csvToKeyValueObject): Header row detected for key-value. Key column: ${keyHeaderIndex}, Value column: ${valueHeaderIndex}`);
+  console.log(`${sheetNameForLog} (csvToKeyValueObject): Header row detected. Key column: ${keyHeaderIndex}, Value column: ${valueHeaderIndex}`);
   
   let fetchedItems = 0;
-  // Start from row 1 if headers are present
   for (let i = 1; i < parsedData.length; i++) {
     const row = parsedData[i];
     if (row.length > Math.max(keyHeaderIndex, valueHeaderIndex)) {
@@ -314,26 +316,23 @@ function csvToKeyValueObject<T extends Record<string, any>>(
         (result as Record<string, any>)[key] = value !== undefined ? value : '';
         fetchedItems++;
       }
-    } else {
-       console.warn(`${sheetNameForLog} (csvToKeyValueObject): Row ${i} does not have enough columns. Skipping.`);
     }
   }
 
   if (fetchedItems > 0) {
-    console.log(`${sheetNameForLog} (csvToKeyValueObject): Successfully processed ${fetchedItems} key-value pairs. Result:`, result);
+    console.log(`${sheetNameForLog} (csvToKeyValueObject): Successfully processed ${fetchedItems} key-value pairs.`);
   } else {
-    console.log(`${sheetNameForLog} (csvToKeyValueObject): No valid key-value pairs processed. Using fallback.`);
-    return fallbackData; // Return original fallback if nothing was fetched
+    console.log(`${sheetNameForLog} (csvToKeyValueObject): No valid key-value pairs processed. Fallback will be used.`);
+    return fallbackData; // Explicitly return fallback if no items were actually fetched/processed
   }
   return result;
 }
-
 
 function csvToObjectsArray<T extends Record<string, any>>(
   parsedData: string[][] | null,
   fallbackData: T[],
   sheetNameForLog: string,
-  expectedHeaders: (keyof T)[] // Expected headers as an array of strings
+  expectedHeaders: (keyof T)[]
 ): T[] {
   if (!parsedData || parsedData.length === 0) {
     console.log(`${sheetNameForLog} (csvToObjectsArray): No parsed CSV data. Returning fallback.`);
@@ -343,44 +342,44 @@ function csvToObjectsArray<T extends Record<string, any>>(
   const headerRowOriginal = parsedData[0];
   const headerRowLowerCase = headerRowOriginal.map(h => h.toLowerCase().trim());
   const expectedHeadersLowerCase = expectedHeaders.map(h => String(h).toLowerCase());
-  
   const columnMap: Record<string, number> = {};
   let headerRowDetected = false;
 
-  // Check if ALL expected headers are present in the first row of the CSV
   const allExpectedHeadersPresent = expectedHeadersLowerCase.every(expectedHeader => 
     headerRowLowerCase.includes(expectedHeader)
   );
 
   if (allExpectedHeadersPresent) {
       headerRowDetected = true;
-      // Map expected headers to their column indices
       expectedHeadersLowerCase.forEach(expectedHeader => {
           columnMap[expectedHeader] = headerRowLowerCase.indexOf(expectedHeader);
       });
-      console.log(`${sheetNameForLog} (csvToObjectsArray): CSV Header row detected and fully matches expected: ${headerRowOriginal.join(',')}. Column map:`, columnMap);
+      console.log(`${sheetNameForLog} (csvToObjectsArray): CSV Header row detected and matches expected: ${headerRowOriginal.join(',')}. Column map:`, columnMap);
   } else {
-      console.log(`${sheetNameForLog} (csvToObjectsArray): CSV Header row does not fully match expected or is different. Expected all of: "${expectedHeadersLowerCase.join(', ')}", Got: "${headerRowOriginal.join(', ')}". Assuming direct data or specific parsing needed.`);
-      // Special handling for FAQ if 'id' is missing but 'question' and 'answer' are present as the first two columns
-      if (sheetNameForLog === "FAQ" && headerRowOriginal.length >= 2 && !headerRowLowerCase.includes('id') && headerRowLowerCase.includes('question') && headerRowLowerCase.includes('answer')) {
-          console.log(`${sheetNameForLog} (csvToObjectsArray): FAQ specific - headers 'question' and 'answer' found. Assuming 'question' is col 0, 'answer' is col 1.`);
-          columnMap['question'] = 0; // Explicitly setting for FAQ if 'id' is missing
-          columnMap['answer'] = 1;
-          // 'id' will be auto-generated later if 'id' is in expectedHeaders but not columnMap
+      console.log(`${sheetNameForLog} (csvToObjectsArray): CSV Header row does not fully match expected or is different. Expected one of: "${expectedHeadersLowerCase.join(', ')}", Got: "${headerRowOriginal.join(', ')}". Assuming direct data or specific parsing needed.`);
+      if (sheetNameForLog === "FAQ") {
+          if (headerRowOriginal.length >= 2 && !headerRowLowerCase.includes('id')) {
+              console.log(`${sheetNameForLog} (csvToObjectsArray): FAQ specific - 'id' header missing. Assuming 'question' (col 0), 'answer' (col 1).`);
+              columnMap['question'] = 0;
+              columnMap['answer'] = 1;
+              headerRowDetected = false; // No proper header for 'id', will be auto-generated
+          } else {
+              console.log(`${sheetNameForLog} (csvToObjectsArray): FAQ CSV structure not recognized for 2-column format. Returning fallback.`);
+              return fallbackData;
+          }
       } else if (sheetNameForLog === "HomePageGallerySwiper" && headerRowOriginal.length >= 1 && headerRowLowerCase.includes('imagesrc')) {
           console.log(`${sheetNameForLog} (csvToObjectsArray): HomePageGallerySwiper specific - 'imagesrc' header found. Mapping columns.`);
           columnMap['imagesrc'] = headerRowLowerCase.indexOf('imagesrc');
           if (headerRowLowerCase.includes('imagealt')) columnMap['imagealt'] = headerRowLowerCase.indexOf('imagealt');
           if (headerRowLowerCase.includes('imagehint')) columnMap['imagehint'] = headerRowLowerCase.indexOf('imagehint');
-          headerRowDetected = true; // Treat as header detected for this specific case
-      }
-      else {
+          headerRowDetected = true;
+      } else {
           console.log(`${sheetNameForLog} (csvToObjectsArray): Cannot reliably map columns without all expected headers. Returning fallback.`);
           return fallbackData;
       }
   }
   
-  const dataStartIndex = headerRowDetected ? 1 : 0; // Start from row 1 if headers are present, else row 0
+  const dataStartIndex = headerRowDetected ? 1 : 0;
   const objects: T[] = [];
   const dataRowsToParse = parsedData.slice(dataStartIndex);
 
@@ -391,50 +390,38 @@ function csvToObjectsArray<T extends Record<string, any>>(
 
   for (let i = 0; i < dataRowsToParse.length; i++) {
     const row = dataRowsToParse[i];
-    // Skip row if all cells are empty strings
     if (row.every(cell => cell === "")) {
       console.warn(`${sheetNameForLog} (csvToObjectsArray): Skipping empty row ${i + dataStartIndex}.`);
       continue;
     }
-
     const obj: Partial<T> = {};
-    let hasEssentialData = false; // Flag to check if row has enough data to be considered valid
+    let hasEssentialData = false;
 
     for (const headerKey of expectedHeaders) {
       const headerString = String(headerKey).toLowerCase();
       let colIndex = columnMap[headerString];
 
-      // Special handling for FAQ id if not in columnMap (meaning it wasn't in headers)
       if (sheetNameForLog === "FAQ" && headerString === 'id' && colIndex === undefined) {
-        obj[headerKey] = `faq_csv_${i}` as any; // Auto-generate ID for FAQ
-        // Don't set hasEssentialData based on auto-generated ID
+        obj[headerKey] = `faq_csv_${i}` as any;
         continue;
       }
       
       if (colIndex !== undefined && colIndex !== -1 && colIndex < row.length) {
-        obj[headerKey] = row[colIndex] as any;
-        // Define what's essential. For FAQ, question is essential. For others, at least one key field.
-        if (row[colIndex] !== "" && row[colIndex] !== undefined) { // Check if the cell for this header has content
-            if (sheetNameForLog === "FAQ" && headerString === 'question') hasEssentialData = true;
-            else if (sheetNameForLog === "SwiperSlides" && headerString === 'imagesrc') hasEssentialData = true;
-            else if (sheetNameForLog === "Videos" && headerString === 'videoid') hasEssentialData = true;
-            else if (sheetNameForLog === "HomePageGallerySwiper" && headerString === 'imagesrc') hasEssentialData = true;
-            // Add more specific essential checks for other types if needed
-            else if (!['id', 'imageorder', 'imagehint', 'thumbnailhint', 'daynameoverride', 'delay', 'alt'].includes(headerString) && sheetNameForLog !== "FAQ") {
-                 hasEssentialData = true; // Generic essential data check, excluding typically optional fields
+        const cellValue = row[colIndex];
+        obj[headerKey] = cellValue as any;
+        if (cellValue !== "" && cellValue !== undefined) {
+            if (["question", "quote", "author", "imagesrc", "videoid", "title", "category", "captiontitle", "yearslug", "dayslug", "dayname", "thumbnail", "src", "alt"].includes(headerString)) {
+                 hasEssentialData = true;
             }
         }
       } else {
-        // If an expected header is not found in columnMap (should not happen if allExpectedHeadersPresent was true)
-        // or if colIndex is out of bounds for the current row.
         if (expectedHeadersLowerCase.includes(headerString)){
              console.warn(`${sheetNameForLog} (csvToObjectsArray): Missing data for header '${headerString}' in row ${i + dataStartIndex}. Row: ${row.join(',')}`);
         }
-        obj[headerKey] = undefined; // Or a default value if appropriate
+        obj[headerKey] = undefined;
       }
     }
     
-    // Add object only if it has essential data
     if (hasEssentialData) {
       objects.push(obj as T);
     } else {
@@ -451,94 +438,89 @@ function csvToObjectsArray<T extends Record<string, any>>(
   }
 }
 
-
 // --- Data Fetching Functions ---
 
-// SiteConfig will remain static as per user request
 export async function getSiteConfig(): Promise<SiteConfig> {
-    console.log("getSiteConfig: Returning hardcoded fallbackSiteConfig data only.");
-    return fallbackSiteConfig;
+  // Per user request, SiteConfig is static for now.
+  console.log("getSiteConfig: Returning hardcoded fallbackSiteConfig data only.");
+  return fallbackSiteConfig;
 }
 
 export async function getHeroConfigData(): Promise<HeroConfigData> {
-  console.log(`HeroConfig: Attempting to fetch from direct CSV URL: ${HERO_CONFIG_CSV_URL}`);
+  console.log(`HeroConfig: Attempting to fetch from CSV URL: ${HERO_CONFIG_CSV_URL}`);
   const parsedData = await fetchCsvDataFromUrl(HERO_CONFIG_CSV_URL, "HeroConfig");
   if (parsedData) {
     const data = csvToKeyValueObject(parsedData, fallbackHeroConfigData, "HeroConfig");
-    if (Object.keys(data).length > Object.keys(fallbackHeroConfigData).length || (data.imageSrc && data.imageSrc !== fallbackHeroConfigData.imageSrc) ) { // Basic check if data was fetched
-        console.log("HeroConfig: Processed HeroConfigData from CSV URL.", data);
-        return data;
+    if (data && Object.keys(data).some(key => data[key] !== fallbackHeroConfigData[key])) {
+      console.log("HeroConfig: Processed HeroConfigData from CSV URL.", data);
+      return data;
     }
   }
-  console.log("HeroConfig: Using hardcoded fallbackHeroConfigData due to CSV fetch/parse failure or empty CSV.");
+  console.log("HeroConfig: Using fallbackHeroConfigData (CSV fetch/parse failed or data was same as fallback).");
   return fallbackHeroConfigData;
 }
 
 export async function getPrincipalMessageData(): Promise<PrincipalMessageData> {
-  console.log(`PrincipalMessage: Attempting to fetch from direct CSV URL: ${PRINCIPAL_MESSAGE_CSV_URL}`);
+  console.log(`PrincipalMessage: Attempting to fetch from CSV URL: ${PRINCIPAL_MESSAGE_CSV_URL}`);
   const parsedData = await fetchCsvDataFromUrl(PRINCIPAL_MESSAGE_CSV_URL, "PrincipalMessage");
   if (parsedData) {
-     const data = csvToKeyValueObject(parsedData, fallbackPrincipalMessageData, "PrincipalMessage");
-     if (Object.keys(data).length > Object.keys(fallbackPrincipalMessageData).length || (data.principalName && data.principalName !== fallbackPrincipalMessageData.principalName)) {
-        console.log("PrincipalMessage: Processed PrincipalMessageData from CSV URL.", data);
-        return data;
-     }
+    const data = csvToKeyValueObject(parsedData, fallbackPrincipalMessageData, "PrincipalMessage");
+    if (data && Object.keys(data).some(key => data[key] !== fallbackPrincipalMessageData[key])) {
+      console.log("PrincipalMessage: Processed PrincipalMessageData from CSV URL.", data);
+      return data;
+    }
   }
-  console.log("PrincipalMessage: Using hardcoded fallbackPrincipalMessageData due to CSV fetch/parse failure or empty CSV.");
+  console.log("PrincipalMessage: Using fallbackPrincipalMessageData (CSV fetch/parse failed or data was same as fallback).");
   return fallbackPrincipalMessageData;
 }
 
 export async function getAboutSectionContentData(): Promise<AboutSectionContentData> {
-  console.log(`AboutSectionContent: Attempting to fetch from direct CSV URL: ${ABOUT_SECTION_CONTENT_CSV_URL}`);
+  console.log(`AboutSectionContent: Attempting to fetch from CSV URL: ${ABOUT_SECTION_CONTENT_CSV_URL}`);
   const parsedData = await fetchCsvDataFromUrl(ABOUT_SECTION_CONTENT_CSV_URL, "AboutSectionContent");
-  if (parsedData) {
+   if (parsedData) {
     const data = csvToKeyValueObject(parsedData, fallbackAboutSectionContentData, "AboutSectionContent");
-    if (Object.keys(data).length > Object.keys(fallbackAboutSectionContentData).length || (data.sectionTitle && data.sectionTitle !== fallbackAboutSectionContentData.sectionTitle)) {
-        console.log("AboutSectionContent: Processed AboutSectionContentData from CSV URL.", data);
-        return data;
+    if (data && Object.keys(data).some(key => data[key] !== fallbackAboutSectionContentData[key])) {
+      console.log("AboutSectionContent: Processed AboutSectionContentData from CSV URL.", data);
+      return data;
     }
   }
-  console.log("AboutSectionContent: Using hardcoded fallbackAboutSectionContentData due to CSV fetch/parse failure or empty CSV.");
+  console.log("AboutSectionContent: Using fallbackAboutSectionContentData (CSV fetch/parse failed or data was same as fallback).");
   return fallbackAboutSectionContentData;
 }
 
 export async function getContactInfoData(): Promise<ContactInfoData> {
-  console.log(`ContactInfo: Attempting to fetch from direct CSV URL: ${CONTACT_INFO_CSV_URL}`);
+  console.log(`ContactInfo: Attempting to fetch from CSV URL: ${CONTACT_INFO_CSV_URL}`);
   const parsedData = await fetchCsvDataFromUrl(CONTACT_INFO_CSV_URL, "ContactInfo");
   if (parsedData) {
     const data = csvToKeyValueObject(parsedData, fallbackContactInfoData, "ContactInfo");
-     if (Object.keys(data).length > Object.keys(fallbackContactInfoData).length || (data.officeAddress && data.officeAddress !== fallbackContactInfoData.officeAddress)) {
+     if (data && Object.keys(data).some(key => data[key] !== fallbackContactInfoData[key])) {
         console.log("ContactInfo: Processed ContactInfoData from CSV URL.", data);
         return data;
      }
   }
-  console.log("ContactInfo: Using hardcoded fallbackContactInfoData due to CSV fetch/parse failure or empty CSV.");
+  console.log("ContactInfo: Using fallbackContactInfoData (CSV fetch/parse failed or data was same as fallback).");
   return fallbackContactInfoData;
 }
 
 
 export async function getFaqData(): Promise<FaqItem[]> {
-  console.log(`FAQ: Attempting to fetch from direct CSV URL: ${FAQ_CSV_URL}`);
+  console.log(`FAQ: Attempting to fetch from CSV URL: ${FAQ_CSV_URL}`);
   const parsedData = await fetchCsvDataFromUrl(FAQ_CSV_URL, "FAQ");
-
-  if (parsedData && parsedData.length > 0) {
-    // For FAQ, we expect 'id', 'question', 'answer'. 'id' can be auto-generated if missing.
+  if (parsedData) {
     const expectedHeaders: (keyof FaqItem)[] = ['id', 'question', 'answer'];
-    const faqs = csvToObjectsArray(parsedData, [], "FAQ", expectedHeaders);
-    
-    if (faqs.length > 0) {
+    const faqs = csvToObjectsArray(parsedData, fallbackFaqs, "FAQ", expectedHeaders);
+    if (faqs.length > 0 && JSON.stringify(faqs) !== JSON.stringify(fallbackFaqs.map((f,i)=>({...f, id: f.id || `faq_csv_${i}`})))) { // Compare with potentially auto-IDed fallbacks
         console.log(`FAQ: Processed ${faqs.length} FAQ items from CSV URL.`);
-        return faqs.map((faq, index) => ({ ...faq, id: faq.id || `faq_csv_${index}`, delay: String(index * 50) }));
+        return faqs.map((faq, index) => ({ ...faq, delay: String(index * 50) }));
     }
   }
-  
-  console.log("FAQ: Using hardcoded fallbackFaqs due to CSV fetch/parse failure or empty CSV.");
+  console.log("FAQ: Using fallbackFaqs (CSV fetch/parse failed or data was same as fallback).");
   return fallbackFaqs.map((faq, index) => ({ ...faq, delay: String(index * 50) }));
 }
 
 
 export async function getTestimonials(): Promise<Testimonial[]> {
-  console.log(`Testimonials: Attempting to fetch from direct CSV URL: ${TESTIMONIALS_CSV_URL}`);
+  console.log(`Testimonials: Attempting to fetch from CSV URL: ${TESTIMONIALS_CSV_URL}`);
   const parsedData = await fetchCsvDataFromUrl(TESTIMONIALS_CSV_URL, "Testimonials");
   if (parsedData) {
     const testimonials = csvToObjectsArray(parsedData, fallbackTestimonials, "Testimonials", ['id', 'quote', 'author']);
@@ -547,12 +529,12 @@ export async function getTestimonials(): Promise<Testimonial[]> {
       return testimonials;
     }
   }
-  console.log("Testimonials: Using hardcoded fallbackTestimonials due to CSV fetch/parse failure or empty CSV.");
+  console.log("Testimonials: Using fallbackTestimonials (CSV fetch/parse failed or data was same as fallback).");
   return fallbackTestimonials;
 }
 
 export async function getSwiperSlides(): Promise<SwiperSlideItem[]> {
-  console.log(`SwiperSlides: Attempting to fetch from direct CSV URL: ${SWIPER_SLIDES_CSV_URL}`);
+  console.log(`SwiperSlides: Attempting to fetch from CSV URL: ${SWIPER_SLIDES_CSV_URL}`);
   const parsedData = await fetchCsvDataFromUrl(SWIPER_SLIDES_CSV_URL, "SwiperSlides");
   if (parsedData) {
     const slides = csvToObjectsArray(parsedData, fallbackSwiperSlides, "SwiperSlides", ['id', 'imageSrc', 'imageAlt', 'imageHint', 'captionTitle', 'captionText']);
@@ -561,12 +543,12 @@ export async function getSwiperSlides(): Promise<SwiperSlideItem[]> {
       return slides;
     }
   }
-  console.log("SwiperSlides: Using hardcoded fallbackSwiperSlides due to CSV fetch/parse failure or empty CSV.");
+  console.log("SwiperSlides: Using fallbackSwiperSlides (CSV fetch/parse failed or data was same as fallback).");
   return fallbackSwiperSlides;
 }
 
 export async function getHomePageGallerySwiperData(): Promise<HomePageGallerySwiperItem[]> {
-    console.log(`HomePageGallerySwiper: Attempting to fetch from direct CSV URL: ${HOMEPAGE_GALLERY_SWIPER_CSV_URL}`);
+    console.log(`HomePageGallerySwiper: Attempting to fetch from CSV URL: ${HOMEPAGE_GALLERY_SWIPER_CSV_URL}`);
     const parsedData = await fetchCsvDataFromUrl(HOMEPAGE_GALLERY_SWIPER_CSV_URL, "HomePageGallerySwiper");
     if (parsedData) {
         const items = csvToObjectsArray(parsedData, fallbackHomePageGallerySwiper, "HomePageGallerySwiper", ['imageSrc', 'imageAlt', 'imageHint']);
@@ -575,12 +557,12 @@ export async function getHomePageGallerySwiperData(): Promise<HomePageGallerySwi
             return items;
         }
     }
-    console.log("HomePageGallerySwiper: Using hardcoded fallbackHomePageGallerySwiper due to CSV fetch/parse failure or empty CSV.");
+    console.log("HomePageGallerySwiper: Using fallbackHomePageGallerySwiper (CSV fetch/parse failed or data was same as fallback).");
     return fallbackHomePageGallerySwiper;
 }
 
 export async function getVideos(): Promise<VideoItem[]> {
-  console.log(`Videos: Attempting to fetch from direct CSV URL: ${VIDEOS_CSV_URL}`);
+  console.log(`Videos: Attempting to fetch from CSV URL: ${VIDEOS_CSV_URL}`);
   const parsedData = await fetchCsvDataFromUrl(VIDEOS_CSV_URL, "Videos");
   if (parsedData) {
     const videos = csvToObjectsArray(parsedData, fallbackVideos, "Videos", ['id', 'videoId', 'title', 'category']);
@@ -589,57 +571,57 @@ export async function getVideos(): Promise<VideoItem[]> {
       return videos;
     }
   }
-  console.log("Videos: Using hardcoded fallbackVideos due to CSV fetch/parse failure or empty CSV.");
+  console.log("Videos: Using fallbackVideos (CSV fetch/parse failed or data was same as fallback).");
   return fallbackVideos;
 }
 
-// Gallery data functions will remain static for now
 export async function getGalleryYears(): Promise<GalleryYearData[]> {
-  console.log("getGalleryYears: Returning hardcoded fallbackGalleryYears.");
-  const siteConfig = await getSiteConfig(); // Ensure siteConfig is loaded for the image
+  console.log("getGalleryYears: Returning hardcoded fallbackGalleryYears with updated image source from siteConfig.");
   return [
     { 
       yearSlug: "tashpad", 
       yearName: `ה'תשפ"ד`, 
-      yearImage: siteConfig.galleryTashpadYearImage || "https://placehold.co/300x300.png?text=תשפד-שנה",
+      yearImage: fallbackSiteConfig.galleryTashpadYearImage || "https://placehold.co/300x300.png?text=תשפד-שנה",
       yearImageHint: "camp collage" 
     }
   ];
 }
 
 export async function getGalleryDays(): Promise<GalleryDayData[]> {
-    console.log(`GalleryDaysMeta: Attempting to fetch from direct CSV URL: ${GALLERY_DAYS_META_CSV_URL}`);
-    const parsedData = await fetchCsvDataFromUrl(GALLERY_DAYS_META_CSV_URL, "GalleryDaysMeta");
-    if (parsedData) {
-        const days = csvToObjectsArray(parsedData, [], "GalleryDaysMeta", ['daySlug', 'dayName', 'thumbnail', 'thumbnailHint']);
-        if (days.length > 0) {
-            console.log(`GalleryDaysMeta: Processed ${days.length} days from CSV.`);
-            return days.map(d => ({ ...d, yearSlug: "tashpad" })); // Assuming all days are for "tashpad"
-        }
-    }
-    console.log("GalleryDaysMeta: Using hardcoded fallbackGalleryDays for Tashpad due to CSV fetch/parse failure or empty CSV.");
-    return fallbackGalleryDays.filter(d => d.yearSlug === 'tashpad');
+  console.log(`GalleryDaysMeta: Attempting to fetch from CSV URL: ${GALLERY_DAYS_META_CSV_URL}`);
+  const parsedData = await fetchCsvDataFromUrl(GALLERY_DAYS_META_CSV_URL, "GalleryDaysMeta");
+  if (parsedData) {
+      const days = csvToObjectsArray(parsedData, [], "GalleryDaysMeta", ['daySlug', 'dayName', 'thumbnail', 'thumbnailHint']);
+      if (days.length > 0) {
+          console.log(`GalleryDaysMeta: Processed ${days.length} days from CSV.`);
+          return days.map(d => ({ ...d, yearSlug: "tashpad" }));
+      }
+  }
+  console.log("GalleryDaysMeta: Using fallbackGalleryDays for Tashpad (CSV fetch/parse failed or data was same as fallback).");
+  return fallbackGalleryDays.filter(d => d.yearSlug === 'tashpad');
 }
 
-export async function getGalleryImages(yearSlugParam?: string, daySlugParam?: string): Promise<GalleryImageItem[]> {
-  console.log(`GalleryImages: Attempting to fetch for ${yearSlugParam || 'tashpad'}/${daySlugParam || 'all days'} from ${GALLERY_IMAGES_TASHPAD_CSV_URL}`);
+export async function getGalleryImages(daySlugParam?: string): Promise<GalleryImageItem[]> {
+  console.log(`GalleryImages: Attempting to fetch for tashpad/${daySlugParam || 'all days'} from CSV URL: ${GALLERY_IMAGES_TASHPAD_CSV_URL}`);
   const parsedData = await fetchCsvDataFromUrl(GALLERY_IMAGES_TASHPAD_CSV_URL, "GalleryImagesTashpad");
   
   if (parsedData) {
     const images = csvToObjectsArray(parsedData, [], "GalleryImagesTashpad", ['daySlug', 'imageOrder', 'src', 'alt', 'hint'])
-      .filter(img => img.daySlug && (!daySlugParam || img.daySlug === daySlugParam)) // Ensure daySlug exists before filtering
       .map(img => ({ ...img, yearSlug: "tashpad", imageOrder: Number(img.imageOrder) || undefined }))
       .sort((a, b) => (a.imageOrder || Infinity) - (b.imageOrder || Infinity));
 
-    if (images.length > 0) {
-      console.log(`GalleryImages: Processed ${images.length} images for tashpad/${daySlugParam || 'all days'} from CSV.`);
-      return images;
+    const filteredImages = daySlugParam ? images.filter(img => img.daySlug === daySlugParam) : images;
+
+    if (filteredImages.length > 0) {
+      console.log(`GalleryImages: Processed ${filteredImages.length} images for tashpad/${daySlugParam || 'all days'} from CSV.`);
+      return filteredImages;
     } else {
       console.log(`GalleryImages: No images found in CSV for tashpad/${daySlugParam || 'all days'}. Returning fallback for this day/year.`);
       return fallbackGalleryImages.filter(img => img.yearSlug === 'tashpad' && (!daySlugParam || img.daySlug === daySlugParam));
     }
   }
-
-  console.log(`GalleryImages: No data from CSV for tashpad/${daySlugParam || 'all days'}. Returning fallback.`);
+  console.log(`GalleryImages: Using fallbackGalleryImages for tashpad/${daySlugParam || 'all days'} (CSV fetch/parse failed).`);
   return fallbackGalleryImages.filter(img => img.yearSlug === 'tashpad' && (!daySlugParam || img.daySlug === daySlugParam));
 }
+
+// --- End of googleSheetsService.ts ---
